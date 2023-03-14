@@ -12,14 +12,14 @@ package {{.Package}}
 
 {{- range $e := .Enums}}
 // __{{$e.Name}}Mapping {{$e.Name}} mapping
-var __{{$e.Name}}Mapping = map[int]string{
+var __{{$e.Name}}Mapping = map[{{- if $e.MessageName}}{{$e.MessageName}}_{{- end}}{{$e.Name}}]string{
 {{- range $ee := $e.Values}}
 	{{$ee.Number}}: "{{$ee.Mapping}}",
 {{- end}}
 }
 // Get{{$e.Name}}Desc get mapping description
 // {{$e.Comment}}
-func Get{{$e.Name}}Desc(t int) string {
+func Get{{$e.Name}}Desc(t {{if $e.MessageName}}{{$e.MessageName}}_{{end}}{{$e.Name}}) string {
 	return __{{$e.Name}}Mapping[t]
 }
 {{- end}}

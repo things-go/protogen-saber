@@ -7,7 +7,7 @@
 package enums
 
 // __NonNestedStatusMapping NonNestedStatus mapping
-var __NonNestedStatusMapping = map[int]string{
+var __NonNestedStatusMapping = map[NonNestedStatus]string{
 	0: "未定义",
 	1: "打开",
 	2: "关闭",
@@ -18,6 +18,6 @@ var __NonNestedStatusMapping = map[int]string{
 // GetNonNestedStatusDesc get mapping description
 //
 //	Foo 状态值, [0:未定义,1:打开,2:关闭,3:左,4:右]
-func GetNonNestedStatusDesc(t int) string {
+func GetNonNestedStatusDesc(t NonNestedStatus) string {
 	return __NonNestedStatusMapping[t]
 }
