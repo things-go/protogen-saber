@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/hibiken/asynq v0.24.0
-	google.golang.org/protobuf v1.29.0
+	google.golang.org/protobuf v1.29.1
 )
 
 require (
