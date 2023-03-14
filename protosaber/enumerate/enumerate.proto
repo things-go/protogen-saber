@@ -2,8 +2,9 @@ syntax = "proto3";
 
 package things_go.enumerate;
 
-option go_package = "github.com/things-go/protogen-saber/protosaber/enumerate";
+option go_package = "github.com/things-go/protogen-saber/protosaber/enumerate;enumerate";
 option java_multiple_files = true;
+option java_package = "cn.things-go.enumerate";
 
 import "google/protobuf/descriptor.proto";
 

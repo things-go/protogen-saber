@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package protogen_saber.enums;
+package protogen_saber.examples.enums;
 
 option go_package = "github.com/things-go/examples/enums;enums";
 option java_multiple_files = true;
