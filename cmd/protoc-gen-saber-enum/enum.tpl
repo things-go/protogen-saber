@@ -16,7 +16,7 @@ package {{.Package}}
 {{$enumName = printf "%s_%s" $e.MessageName $e.Name}}
 {{end}}
 
-// __{{$enumName}}Mapping {{$e.enumName}} mapping
+// __{{$enumName}}Mapping {{$enumName}} mapping
 var __{{$enumName}}Mapping = map[{{$enumName}}]string{
 {{- range $ee := $e.Values}}
 	{{$ee.Number}}: "{{$ee.Mapping}}",

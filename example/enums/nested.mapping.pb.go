@@ -6,7 +6,7 @@
 
 package enums
 
-// __Nested_StatusMapping Status mapping
+// __Nested_StatusMapping Nested_Status mapping
 var __Nested_StatusMapping = map[Nested_Status]string{
 	0: "未定义",
 	1: "nested1",
@@ -22,7 +22,7 @@ func GetNested_StatusDesc(t Nested_Status) string {
 	return __Nested_StatusMapping[t]
 }
 
-// __Nested_Nested1_TypeMapping Type mapping
+// __Nested_Nested1_TypeMapping Nested_Nested1_Type mapping
 var __Nested_Nested1_TypeMapping = map[Nested_Nested1_Type]string{
 	0: "禁用",
 	1: "启用",
