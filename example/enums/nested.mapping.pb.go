@@ -6,8 +6,8 @@
 
 package enums
 
-// __StatusMapping Status mapping
-var __StatusMapping = map[Nested_Status]string{
+// __Nested_StatusMapping Status mapping
+var __Nested_StatusMapping = map[Nested_Status]string{
 	0: "未定义",
 	1: "nested1",
 	2: "nested2",
@@ -15,21 +15,21 @@ var __StatusMapping = map[Nested_Status]string{
 	4: "nested4",
 }
 
-// GetStatusDesc get mapping description
+// GetNested_StatusDesc get mapping description
 //
 //	Status 状态值, [0:未定义,1:nested1,2:nested2,3:nested3,4:nested4]
-func GetStatusDesc(t Nested_Status) string {
-	return __StatusMapping[t]
+func GetNested_StatusDesc(t Nested_Status) string {
+	return __Nested_StatusMapping[t]
 }
 
-// __TypeMapping Type mapping
-var __TypeMapping = map[Nested_Nested1_Type]string{
+// __Nested_Nested1_TypeMapping Type mapping
+var __Nested_Nested1_TypeMapping = map[Nested_Nested1_Type]string{
 	0: "禁用",
 	1: "启用",
 }
 
-// GetTypeDesc get mapping description
+// GetNested_Nested1_TypeDesc get mapping description
 // , [0:禁用,1:启用]
-func GetTypeDesc(t Nested_Nested1_Type) string {
-	return __TypeMapping[t]
+func GetNested_Nested1_TypeDesc(t Nested_Nested1_Type) string {
+	return __Nested_Nested1_TypeMapping[t]
 }

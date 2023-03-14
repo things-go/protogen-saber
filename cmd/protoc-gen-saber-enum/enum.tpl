@@ -20,7 +20,7 @@ var __{{- if $e.MessageName}}{{$e.MessageName}}_{{- end}}{{$e.Name}}Mapping = ma
 // Get{{- if $e.MessageName}}{{$e.MessageName}}_{{- end}}{{$e.Name}}Desc get mapping description
 // {{$e.Comment}}
 func Get{{- if $e.MessageName}}{{$e.MessageName}}_{{- end}}{{$e.Name}}Desc(t {{if $e.MessageName}}{{$e.MessageName}}_{{end}}{{$e.Name}}) string {
-	return __{{$e.Name}}Mapping[t]
+	return __{{- if $e.MessageName}}{{$e.MessageName}}_{{- end}}{{$e.Name}}Mapping[t]
 }
 {{- end}}
 
