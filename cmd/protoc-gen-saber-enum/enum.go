@@ -123,11 +123,16 @@ func intoEnums(nestedMessageName string, protoEnums []*protogen.Enum) []*Enum {
 		bb := strings.ReplaceAll(string(b), `"`, "")
 		bb = strings.Replace(bb, "{", "[", 1)
 		bb = strings.Replace(bb, "}", "]", 1)
-		name := string(pe.Desc.Name())
+		comment := strings.ReplaceAll(string(pe.Comments.Leading), "\n", "")
+		if comment == "" {
+			comment = bb
+		} else {
+			comment += ", " + bb
+		}
 		enums = append(enums, &Enum{
 			MessageName: nestedMessageName,
-			Name:        name,
-			Comment:     strings.ReplaceAll(string(pe.Comments.Leading), "\n", "") + ", " + bb,
+			Name:        string(pe.Desc.Name()),
+			Comment:     comment,
 			Values:      eValues,
 		})
 	}

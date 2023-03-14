@@ -11,16 +11,21 @@
 package {{.Package}}
 
 {{- range $e := .Enums}}
-// __{{- if $e.MessageName}}{{$e.MessageName}}_{{- end}}{{$e.Name}}Mapping {{$e.Name}} mapping
-var __{{- if $e.MessageName}}{{$e.MessageName}}_{{- end}}{{$e.Name}}Mapping = map[{{- if $e.MessageName}}{{$e.MessageName}}_{{- end}}{{$e.Name}}]string{
+{{$enumName := $e.Name}}
+{{if $e.MessageName}}
+{{$enumName = printf "%s_%s" $e.MessageName $e.Name}}
+{{end}}
+
+// __{{$enumName}}Mapping {{$e.Name}} mapping
+var __{{$enumName}}Mapping = map[{{$enumName}}]string{
 {{- range $ee := $e.Values}}
 	{{$ee.Number}}: "{{$ee.Mapping}}",
 {{- end}}
 }
-// Get{{- if $e.MessageName}}{{$e.MessageName}}_{{- end}}{{$e.Name}}Desc get mapping description
+// Get{{$enumName}}Desc get mapping description
 // {{$e.Comment}}
-func Get{{- if $e.MessageName}}{{$e.MessageName}}_{{- end}}{{$e.Name}}Desc(t {{if $e.MessageName}}{{$e.MessageName}}_{{end}}{{$e.Name}}) string {
-	return __{{- if $e.MessageName}}{{$e.MessageName}}_{{- end}}{{$e.Name}}Mapping[t]
+func Get{{$enumName}}Desc(t {{$enumName}}) string {
+	return __{{$enumName}}Mapping[t]
 }
 {{- end}}
 

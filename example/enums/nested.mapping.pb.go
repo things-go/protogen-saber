@@ -29,7 +29,7 @@ var __Nested_Nested1_TypeMapping = map[Nested_Nested1_Type]string{
 }
 
 // GetNested_Nested1_TypeDesc get mapping description
-// , [0:禁用,1:启用]
+// [0:禁用,1:启用]
 func GetNested_Nested1_TypeDesc(t Nested_Nested1_Type) string {
 	return __Nested_Nested1_TypeMapping[t]
 }
