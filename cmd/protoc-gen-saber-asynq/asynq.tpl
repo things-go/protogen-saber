@@ -4,7 +4,7 @@
 {{$svrName := .ServiceName}}
 
 {{- range .MethodSets}}
-const Pattern{{$svrType}}{{.Name}} = "{{.Pattern}}"
+const Pattern_{{$svrType}}_{{.Name}} = "{{.Pattern}}"
 {{- end}}
 
 type {{.ServiceType}}TaskHandler interface {
@@ -25,7 +25,7 @@ func (*Unimplemented{{.ServiceType}}TaskHandlerImpl) UnmarshalBinary(b []byte, v
 
 func Register{{.ServiceType}}TaskHandler(mux *asynq.ServeMux, srv {{.ServiceType}}TaskHandler) {
 	{{- range .Methods}}
-	mux.HandleFunc(Pattern{{$svrType}}{{.Name}}, _{{$svrType}}_{{.Name}}_Task_Handler(srv))
+	mux.HandleFunc(Pattern_{{$svrType}}_{{.Name}}, _{{$svrType}}_{{.Name}}_Task_Handler(srv))
 	{{- end}}
 }
 {{range .Methods}}
@@ -79,7 +79,7 @@ func (c *{{$svrType}}TaskClientImpl) {{.Name}}(ctx context.Context, in *{{.Reque
 	if err != nil {
 		return nil, err
 	}
-	task := asynq.NewTask(Pattern{{$svrType}}{{.Name}}, payload, opts...)
+	task := asynq.NewTask(Pattern_{{$svrType}}_{{.Name}}, payload, opts...)
 	taskInfo, err := c.cc.Enqueue(task)
 	if err != nil {
 		return nil, err

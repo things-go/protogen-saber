@@ -22,8 +22,8 @@ var _ = asynq.NewServeMux
 var _ = new(emptypb.Empty)
 var _ = proto.Reset
 
-const PatternUserCreateUser = "user:create"
-const PatternUserUpdateUser = "user:update"
+const Pattern_User_CreateUser = "user:create"
+const Pattern_User_UpdateUser = "user:update"
 
 type UserTaskHandler interface {
 	// CreateUser 异步创建用户
@@ -42,8 +42,8 @@ func (*UnimplementedUserTaskHandlerImpl) UnmarshalBinary(b []byte, v any) error 
 }
 
 func RegisterUserTaskHandler(mux *asynq.ServeMux, srv UserTaskHandler) {
-	mux.HandleFunc(PatternUserCreateUser, _User_CreateUser_Task_Handler(srv))
-	mux.HandleFunc(PatternUserUpdateUser, _User_UpdateUser_Task_Handler(srv))
+	mux.HandleFunc(Pattern_User_CreateUser, _User_CreateUser_Task_Handler(srv))
+	mux.HandleFunc(Pattern_User_UpdateUser, _User_UpdateUser_Task_Handler(srv))
 }
 
 func _User_CreateUser_Task_Handler(srv UserTaskHandler) func(context.Context, *asynq.Task) error {
@@ -104,7 +104,7 @@ func (c *UserTaskClientImpl) CreateUser(ctx context.Context, in *CreateUserPaylo
 	if err != nil {
 		return nil, err
 	}
-	task := asynq.NewTask(PatternUserCreateUser, payload, opts...)
+	task := asynq.NewTask(Pattern_User_CreateUser, payload, opts...)
 	taskInfo, err := c.cc.Enqueue(task)
 	if err != nil {
 		return nil, err
@@ -118,7 +118,7 @@ func (c *UserTaskClientImpl) UpdateUser(ctx context.Context, in *UpdateUserPaylo
 	if err != nil {
 		return nil, err
 	}
-	task := asynq.NewTask(PatternUserUpdateUser, payload, opts...)
+	task := asynq.NewTask(Pattern_User_UpdateUser, payload, opts...)
 	taskInfo, err := c.cc.Enqueue(task)
 	if err != nil {
 		return nil, err
