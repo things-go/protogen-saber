@@ -21,4 +21,4 @@ CREATE TABLE
 	{{- range $idx, $e := .Table.Indexes}}
 		{{$e}}{{- if ne $idxlen  $idx}},{{- end}}
 	{{- end}}
-	) ENGINE = {{.Table.Engine}} DEFAULT CHARSET = {{.Table.Charset}} COLLATE = utf8mb4_general_ci COMMENT = '{{.Table.Comment}}';
+	) ENGINE = {{.Table.Engine}} DEFAULT CHARSET = {{.Table.Charset}} COLLATE = {{.Table.Collate}} COMMENT = '{{.Table.Comment}}';

@@ -7,7 +7,7 @@ import (
 	"google.golang.org/protobuf/compiler/protogen"
 )
 
-const version = "v0.0.1"
+const version = "v0.0.2"
 
 var showVersion = flag.Bool("version", false, "print the version and exit")
 

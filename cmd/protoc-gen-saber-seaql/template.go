@@ -19,6 +19,7 @@ type Table struct {
 	Comment string   // 注释
 	Engine  string   // 引擎
 	Charset string   // 字符集
+	Collate string   // 排序规则
 	Indexes []string // 索引
 	Columns []Column // 列项
 }

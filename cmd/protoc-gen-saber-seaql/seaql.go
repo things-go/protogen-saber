@@ -61,7 +61,7 @@ func intoTable(protoMessages []*protogen.Message) []Table {
 			messageFieldOptions := proto.GetExtension(v.Desc.Options(), seaql.E_Field)
 			seaFieldOptions := messageFieldOptions.(*seaql.Field)
 
-			comment := strings.TrimSpace(strings.TrimSuffix(string(v.Comments.Leading), "\n"))
+			comment := strings.ReplaceAll(strings.ReplaceAll(strings.TrimSuffix(string(v.Comments.Leading), "\n"), "\n", ","), " ", "")
 			if enumComment := intoEnumComment(v.Enum); enumComment != "" {
 				comment += "," + enumComment
 			}
@@ -83,11 +83,16 @@ func intoTable(protoMessages []*protogen.Message) []Table {
 		if seaOptions.Charset != "" {
 			charset = seaOptions.Charset
 		}
+		collate := "utf8mb4_general_ci"
+		if seaOptions.Collate != "" {
+			collate = seaOptions.Collate
+		}
 		tables = append(tables, Table{
 			Name:    infra.SnakeCase(tableName, false),
 			Comment: strings.TrimSpace(strings.ReplaceAll(string(pe.Comments.Leading), "\n", "")),
 			Engine:  engine,
 			Charset: charset,
+			Collate: collate,
 			Columns: columns,
 			Indexes: seaOptions.Index,
 		})

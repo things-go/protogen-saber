@@ -19,8 +19,10 @@ message Options {
     string engine = 2;
     // 字符集
     string charset = 3;
+    // 排序规则
+    string  collate  = 4;
     // 索引
-    repeated string index = 4;
+    repeated string index = 10;
 }
 
 
