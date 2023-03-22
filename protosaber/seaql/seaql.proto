@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package things_go.seaql;
+
+option go_package = "github.com/things-go/protogen-saber/protosaber/seaql;seaql";
+option java_multiple_files = true;
+option java_package = "cn.things-go.seaql";
+
+import "google/protobuf/descriptor.proto";
+
+extend google.protobuf.MessageOptions {
+    Options options = 95272001;
+}
+
+message Options {
+    // 表名
+    string table_name  =1;
+    // 引擎
+    string engine = 2;
+    // 字符集
+    string charset = 3;
+    // 索引
+    repeated string index = 4;
+}
+
+
+// Field level specifications
+extend google.protobuf.FieldOptions {
+    Field field = 95272101;
+}
+
+message Field {
+    string type = 1;
+}

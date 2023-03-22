@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package protogen_saber.seaql;
+
+option go_package = "github.com/things-go/examples/seaql;seaql";
+option java_multiple_files = true;
+option java_package = "cn.things-go.examples.Seaql";
+option java_outer_classname = "Seaql";
+
+import "seaql/seaql.proto";
+
+// Dict 字典表
+message Dict {
+    option (things_go.seaql.options) = {
+      table_name: "dict",
+      engine: 'InnoDB',
+      charset: "utf8mb4",
+      index: [
+          'PRIMARY KEY (`id`)',
+          'KEY `idx_key` (`key`) USING BTREE'
+      ];
+    };
+
+    // 系统序号
+    int64 id  = 1[(things_go.seaql.field) = {type: "bigint NOT NULL AUTO_INCREMENT"}];
+    // 名称
+    string key =2 [(things_go.seaql.field) = {type: "varchar(64) NOT NULL DEFAULT ''"}];
+    // 名称
+    string name = 3[(things_go.seaql.field) = {type: "varchar(64) NOT NULL DEFAULT ''"}];
+    // 是否锁定
+    bool is_pin = 4 [(things_go.seaql.field) = {type: "tinyint(1) NOT NULL COMMENT"}];
+    // 创建时间
+    int64 created_at = 5 [(things_go.seaql.field) = {type: "datetime NOT NULL"}];
+    // 更新时间
+    int64 updated_at = 6 [(things_go.seaql.field) = {type: "datetime NOT NULL"}];
+}
