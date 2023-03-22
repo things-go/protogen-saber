@@ -8,9 +8,9 @@
 CREATE TABLE 
 	`dict_item` (
 		`id` bigint NOT NULL AUTO_INCREMENT COMMENT '系统序号',
-		`dict_id` bigint NOT NULL COMMENT '字典id',
-		`key` varchar(64) NOT NULL DEFAULT '' COMMENT '关键字',
+		`key` varchar(64) NOT NULL DEFAULT '' COMMENT '名称',
 		`name` varchar(64) NOT NULL DEFAULT '' COMMENT '名称',
+		`status` tinyint(3) unsigned NOT NULL COMMENT '状态,[0:未定义,1:nested1,2:nested2,3:nested3,4:nested4]',
 		`created_at` datetime NOT NULL COMMENT '创建时间',
 		`updated_at` datetime NOT NULL COMMENT '更新时间'
 	) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = 'DictItem 字典项表';

@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package protogen_saber.seaql;
+
+option go_package = "github.com/things-go/examples/seaql;seaql";
+option java_multiple_files = true;
+option java_package = "cn.things-go.examples.Seaql";
+option java_outer_classname = "Seaql";
+
+import "enumerate/enumerate.proto";
+
+message Infra {
+    // Status 状态值
+    enum Status {
+      option (things_go.enumerate.enabled) = true;
+      // 未定义
+      STATUS_UNSPECIFIED = 0 [(things_go.enumerate.mapping) = "未定义"];
+      // 打开
+      STATUS_UP = 1 [(things_go.enumerate.mapping) = "nested1"];
+      // 关闭
+      STATUS_DOWN = 2 [(things_go.enumerate.mapping) = "nested2"];
+      // 左
+      STATUS_LEFT = 3 [(things_go.enumerate.mapping) = "nested3"];
+      // 右
+      STATUS_RIGHT = 4 [(things_go.enumerate.mapping) = "nested4"];
+    }
+    message Nested1 {
+      enum Type {
+      option (things_go.enumerate.enabled) = true;
+      // 未定义
+      TYPE_DISABLE = 0 [(things_go.enumerate.mapping) = "禁用"];
+      // 打开
+      TYPE_Enable = 1 [(things_go.enumerate.mapping) = "启用"];
+      }
+    }
+  }

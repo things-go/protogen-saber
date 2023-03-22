@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"path/filepath"
 	"strings"
 
@@ -9,6 +10,7 @@ import (
 	"google.golang.org/protobuf/types/pluginpb"
 
 	"github.com/things-go/protogen-saber/internal/infra"
+	"github.com/things-go/protogen-saber/protosaber/enumerate"
 	"github.com/things-go/protogen-saber/protosaber/seaql"
 )
 
@@ -58,10 +60,15 @@ func intoTable(protoMessages []*protogen.Message) []Table {
 		for _, v := range pe.Fields {
 			messageFieldOptions := proto.GetExtension(v.Desc.Options(), seaql.E_Field)
 			seaFieldOptions := messageFieldOptions.(*seaql.Field)
+
+			comment := strings.TrimSpace(strings.TrimSuffix(string(v.Comments.Leading), "\n"))
+			if enumComment := intoEnumComment(v.Enum); enumComment != "" {
+				comment += "," + enumComment
+			}
 			columns = append(columns, Column{
 				Name:    string(v.Desc.Name()),
 				Type:    seaFieldOptions.Type,
-				Comment: strings.TrimSpace(strings.TrimSuffix(string(v.Comments.Leading), "\n")),
+				Comment: comment,
 			})
 		}
 		tableName := string(pe.Desc.Name())
@@ -90,4 +97,29 @@ func intoTable(protoMessages []*protogen.Message) []Table {
 	}
 
 	return tables
+}
+
+// intoEnumComment generates enum comment if it exists
+func intoEnumComment(pe *protogen.Enum) string {
+	if pe == nil || len(pe.Values) == 0 {
+		return ""
+	}
+	isEnabled := proto.GetExtension(pe.Desc.Options(), enumerate.E_Enabled)
+	ok := isEnabled.(bool)
+	if !ok {
+		return ""
+	}
+
+	eValueMp := make(map[int]string, len(pe.Values))
+	for _, v := range pe.Values {
+		mpv := proto.GetExtension(v.Desc.Options(), enumerate.E_Mapping)
+		mappingValue, _ := mpv.(string)
+
+		eValueMp[v.Desc.Index()] = mappingValue
+	}
+	b, _ := json.Marshal(eValueMp)
+	bb := strings.ReplaceAll(string(b), `"`, "")
+	bb = strings.Replace(bb, "{", "[", 1)
+	bb = strings.Replace(bb, "}", "]", 1)
+	return bb
 }
