@@ -2,6 +2,8 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
+	"os"
 	"path/filepath"
 	"strings"
 
@@ -21,7 +23,10 @@ func runProtoGen(gen *protogen.Plugin) error {
 		if !f.Generate {
 			continue
 		}
-		tables := intoTable(f.Messages)
+		tables, err := intoTable(f.Messages)
+		if err != nil {
+			_, _ = fmt.Fprintf(os.Stderr, "\u001B[31mERROR\u001B[m: %v\n", err)
+		}
 		if len(tables) == 0 {
 			continue
 		}
@@ -47,7 +52,7 @@ func runProtoGen(gen *protogen.Plugin) error {
 }
 
 // intoTable generates the errors definitions, excluding the package statement.
-func intoTable(protoMessages []*protogen.Message) []Table {
+func intoTable(protoMessages []*protogen.Message) ([]Table, error) {
 	tables := make([]Table, 0, len(protoMessages))
 	for _, pe := range protoMessages {
 		if len(pe.Fields) == 0 {
@@ -63,6 +68,14 @@ func intoTable(protoMessages []*protogen.Message) []Table {
 		for _, v := range pe.Fields {
 			messageFieldOptions := proto.GetExtension(v.Desc.Options(), seaql.E_Field)
 			seaFieldOptions := messageFieldOptions.(*seaql.Field)
+			if seaFieldOptions == nil {
+
+				return nil, fmt.Errorf("seaql: message(%s) - field(%s) is not set seaql type", pe.Desc.Name(), string(v.Desc.Name()))
+			}
+			seaFieldOptions.Type = strings.TrimSpace(seaFieldOptions.Type)
+			if seaFieldOptions.Type == "" {
+				return nil, fmt.Errorf("seaql: message(%s) - field(%s) should be not empty", pe.Desc.Name(), string(v.Desc.Name()))
+			}
 
 			comment := strings.ReplaceAll(strings.ReplaceAll(strings.TrimSuffix(string(v.Comments.Leading), "\n"), "\n", ","), " ", "")
 			if enumComment := intoEnumComment(v.Enum); enumComment != "" {
@@ -100,11 +113,15 @@ func intoTable(protoMessages []*protogen.Message) []Table {
 			Indexes: seaOptions.Index,
 		})
 		if len(pe.Messages) > 0 {
-			tables = append(tables, intoTable(pe.Messages)...)
+			tmpTables, err := intoTable(pe.Messages)
+			if err != nil {
+				return nil, err
+			}
+			tables = append(tables, tmpTables...)
 		}
 	}
 
-	return tables
+	return tables, nil
 }
 
 // intoEnumComment generates enum comment if it exists
