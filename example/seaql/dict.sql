@@ -5,7 +5,7 @@
 -- source: seaql.proto
 -- 
 -- Dict 字典表
-CREATE TABLE 
+CREATE TABLE
 	`dict` (
 		`id` bigint NOT NULL AUTO_INCREMENT COMMENT '系统序号',
 		`key` varchar(64) NOT NULL DEFAULT '' COMMENT '名称',
@@ -13,6 +13,5 @@ CREATE TABLE
 		`is_pin` tinyint(1) NOT NULL COMMENT '是否锁定',
 		`created_at` datetime NOT NULL COMMENT '创建时间',
 		`updated_at` datetime NOT NULL COMMENT '更新时间',
-		PRIMARY KEY (`id`),
-		KEY `idx_key` (`key`) USING BTREE
+		PRIMARY KEY (`id`)
 	) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = 'Dict 字典表';

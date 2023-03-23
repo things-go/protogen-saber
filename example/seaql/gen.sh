@@ -7,7 +7,7 @@ script_dir=$(
 project_dir=$(dirname $(dirname $script_dir)) # 项目路径
 
 proto_dir=${project_dir}/example/seaql
-out_dir=${project_dir}/example # 生成代码路径
+out_dir=${project_dir}/example/seaql # 生成代码路径
 third_party_dir=${project_dir}/internal/third_party
 
 protoc \

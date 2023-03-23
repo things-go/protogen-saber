@@ -17,8 +17,7 @@ message Dict {
       engine: 'InnoDB',
       charset: "utf8mb4",
       index: [
-          'PRIMARY KEY (`id`)',
-          'KEY `idx_key` (`key`) USING BTREE'
+          'PRIMARY KEY (`id`)'
       ];
     };
 

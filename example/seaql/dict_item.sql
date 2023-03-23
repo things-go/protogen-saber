@@ -5,7 +5,7 @@
 -- source: seaql.proto
 -- 
 -- DictItem 字典项表
-CREATE TABLE 
+CREATE TABLE
 	`dict_item` (
 		`id` bigint NOT NULL AUTO_INCREMENT COMMENT '系统序号',
 		`key` varchar(64) NOT NULL DEFAULT '' COMMENT '名称',

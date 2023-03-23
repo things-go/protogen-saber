@@ -9,16 +9,14 @@
 {{- end}}
 -- 
 -- {{.Table.Comment}}
-{{- $colen := len .Table.Columns}}
-{{- $idxlen := len .Table.Indexes}}
 CREATE TABLE 
 	`{{.Table.Name}}` (
-	{{- $colen = add $colen -1}}
-	{{- $idxlen = add $idxlen -1}}
+	{{- $colen := len .Table.Columns}}
+	{{- $idxlen := len .Table.Indexes}}
 	{{- range $idx, $e := .Table.Columns}}
-		`{{$e.Name}}` {{$e.Type}} COMMENT '{{$e.Comment}}'{{- if eq $colen $idx }}{{- if gt $idxlen 0}},{{- end}}{{- else}},{{- end}}
+		`{{$e.Name}}` {{$e.Type}} COMMENT '{{$e.Comment}}'{{- if eq (add $colen -1) $idx}}{{- if gt $idxlen 0}},{{- end}}{{- else}},{{- end}}
 	{{- end}}
 	{{- range $idx, $e := .Table.Indexes}}
-		{{$e}}{{- if ne $idxlen  $idx}},{{- end}}
+		{{$e}}{{- if ne (add $idxlen -1)  $idx}},{{- end}}
 	{{- end}}
 	) ENGINE = {{.Table.Engine}} DEFAULT CHARSET = {{.Table.Charset}} COLLATE = {{.Table.Collate}} COMMENT = '{{.Table.Comment}}';
