@@ -10,6 +10,7 @@ import (
 const version = "v0.0.2"
 
 var showVersion = flag.Bool("version", false, "print the version and exit")
+var trimPrefix = flag.Bool("trim_prefix", false, "trim filename prefix")
 
 func main() {
 	flag.Parse()

@@ -1,19 +1,21 @@
-scriptDir=$(
+#!/bin/bash
+
+script_dir=$(
     cd $(dirname $0)
     pwd
-)                                        # 脚本路径
-projDir=$(dirname $(dirname $scriptDir)) # 项目路径
+)                                             # 脚本路径
+project_dir=$(dirname $(dirname $script_dir)) # 项目路径
 
-protoDir=${projDir}/example/asynq
-outDir=${projDir}/example/asynq # 生成代码路径
-thirdPartyDir=${projDir}/internal/third_party
+proto_dir=${project_dir}/example/asynq
+out_dir=${project_dir}/example/asynq # 生成代码路径
+third_party_dir=${project_dir}/internal/third_party
 
 protoc \
-    -I ${protoDir} \
-    -I ${thirdPartyDir} \
-    -I ${projDir}/protosaber \
-    --go_out=${outDir} \
+    -I ${proto_dir} \
+    -I ${third_party_dir} \
+    -I ${project_dir}/protosaber \
+    --go_out=${out_dir} \
     --go_opt paths=source_relative \
-    --saber-asynq_out ${outDir} \
+    --saber-asynq_out ${out_dir} \
     --saber-asynq_opt paths=source_relative \
     asynq.proto

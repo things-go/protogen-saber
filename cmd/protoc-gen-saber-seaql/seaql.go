@@ -27,6 +27,9 @@ func runProtoGen(gen *protogen.Plugin) error {
 		}
 
 		dir := filepath.Dir(f.GeneratedFilenamePrefix)
+		if *trimPrefix {
+			dir = ""
+		}
 		for _, tb := range tables {
 			g := gen.NewGeneratedFile(filepath.Join(dir, tb.Name)+".sql", f.GoImportPath)
 			e := &File{

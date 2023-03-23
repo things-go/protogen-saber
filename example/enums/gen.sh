@@ -1,31 +1,33 @@
-scriptDir=$(
+#!/bin/bash
+
+script_dir=$(
     cd $(dirname $0)
     pwd
-)                                        # 脚本路径
-projDir=$(dirname $(dirname $scriptDir)) # 项目路径
+)                                             # 脚本路径
+project_dir=$(dirname $(dirname $script_dir)) # 项目路径
 
-protoDir=${projDir}/example/enums
-outDir=${projDir}/example/enums # 生成代码路径
-thirdPartyDir=${projDir}/internal/third_party
+proto_dir=${project_dir}/example/enums
+out_dir=${project_dir}/example/enums # 生成代码路径
+third_party_dir=${project_dir}/internal/third_party
 
 protoc \
-    -I ${protoDir} \
-    -I ${thirdPartyDir} \
-    -I ${projDir}/protosaber \
-    --go_out=${outDir} \
+    -I ${proto_dir} \
+    -I ${third_party_dir} \
+    -I ${project_dir}/protosaber \
+    --go_out=${out_dir} \
     --go_opt paths=source_relative \
-    --saber-enum_out ${outDir} \
+    --saber-enum_out ${out_dir} \
     --saber-enum_opt paths=source_relative \
     nested.proto \
     non_nested.proto
 
 protoc \
-    -I ${protoDir} \
-    -I ${thirdPartyDir} \
-    -I ${projDir}/protosaber \
-    --saber-enum_out ${outDir} \
+    -I ${proto_dir} \
+    -I ${third_party_dir} \
+    -I ${project_dir}/protosaber \
+    --saber-enum_out ${out_dir} \
     --saber-enum_opt suffix=".example.pb.go" \
-    --saber-enum_opt template=${protoDir}/mapper_template.tpl \
+    --saber-enum_opt template=${proto_dir}/mapper_template.tpl \
     --saber-enum_opt paths=source_relative \
     --saber-enum_opt merge=true \
     --saber-enum_opt filename=mapper \
