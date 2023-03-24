@@ -17,7 +17,15 @@ import (
 )
 
 func runProtoGen(gen *protogen.Plugin) error {
+	var mergeTables []Table
+	var source []string
+
 	gen.SupportedFeatures = uint64(pluginpb.CodeGeneratorResponse_FEATURE_PROTO3_OPTIONAL)
+
+	if *merge {
+		mergeTables = make([]Table, 0, len(gen.Files)*4)
+		source = make([]string, 0, len(gen.Files))
+	}
 
 	for _, f := range gen.Files {
 		if !f.Generate {
@@ -28,6 +36,11 @@ func runProtoGen(gen *protogen.Plugin) error {
 			_, _ = fmt.Fprintf(os.Stderr, "\u001B[31mERROR\u001B[m: %v\n", err)
 		}
 		if len(tables) == 0 {
+			continue
+		}
+		if *merge {
+			source = append(source, f.Desc.Path())
+			mergeTables = append(mergeTables, tables...)
 			continue
 		}
 
@@ -42,11 +55,21 @@ func runProtoGen(gen *protogen.Plugin) error {
 				ProtocVersion: infra.ProtocVersion(gen),
 				IsDeprecated:  f.Proto.GetOptions().GetDeprecated(),
 				Source:        f.Desc.Path(),
-				Table:         tb,
+				Tables:        []Table{tb},
 			}
-
-			_ = e.execute(enumTemplate, g)
+			_ = e.execute(seaqlTemplate, g)
 		}
+	}
+	if *merge {
+		g := gen.NewGeneratedFile(*filename+".sql", "")
+		mergeFile := &File{
+			Version:       version,
+			ProtocVersion: infra.ProtocVersion(gen),
+			IsDeprecated:  false,
+			Source:        strings.Join(source, ","),
+			Tables:        mergeTables,
+		}
+		return mergeFile.execute(seaqlTemplate, g)
 	}
 	return nil
 }
@@ -86,7 +109,8 @@ func intoTable(protoMessages []*protogen.Message) ([]Table, error) {
 				Comment: comment,
 			})
 		}
-		tableName := string(pe.Desc.Name())
+		rawTableName := string(pe.Desc.Name())
+		tableName := rawTableName
 		if seaOptions.TableName != "" {
 			tableName = seaOptions.TableName
 		}
@@ -102,9 +126,10 @@ func intoTable(protoMessages []*protogen.Message) ([]Table, error) {
 		if seaOptions.Collate != "" {
 			collate = seaOptions.Collate
 		}
+
 		tables = append(tables, Table{
 			Name:    infra.SnakeCase(tableName, false),
-			Comment: strings.TrimSpace(strings.ReplaceAll(string(pe.Comments.Leading), "\n", "")),
+			Comment: strings.TrimSpace(strings.TrimPrefix(strings.TrimSpace(strings.ReplaceAll(string(pe.Comments.Leading), "\n", "")), rawTableName)),
 			Engine:  engine,
 			Charset: charset,
 			Collate: collate,

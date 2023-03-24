@@ -34,7 +34,7 @@ var TemplateFuncs = template.FuncMap{
 	"camelcase":      func(s string) string { return infra.CamelCase(s) },
 	"smallcamelcase": func(s string) string { return infra.SmallCamelCase(s, false) },
 }
-var enumTemplate = template.Must(template.New("components").
+var seaqlTemplate = template.Must(template.New("components").
 	Funcs(TemplateFuncs).
 	ParseFS(Static, "seaql.tpl")).
 	Lookup("seaql.tpl")
@@ -44,7 +44,7 @@ type File struct {
 	ProtocVersion string
 	IsDeprecated  bool
 	Source        string
-	Table         Table
+	Tables        []Table
 }
 
 func (e *File) execute(t *template.Template, w io.Writer) error {

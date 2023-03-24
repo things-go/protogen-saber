@@ -7,16 +7,17 @@
 {{- else}}
 -- source: {{.Source}}
 {{- end}}
--- 
--- {{.Table.Comment}}
+{{- range $tb := .Tables}}
+-- {{$tb.Comment}}
 CREATE TABLE 
-	`{{.Table.Name}}` (
-	{{- $colen := len .Table.Columns}}
-	{{- $idxlen := len .Table.Indexes}}
-	{{- range $idx, $e := .Table.Columns}}
+	`{{$tb.Name}}` (
+	{{- $colen := len $tb.Columns}}
+	{{- $idxlen := len $tb.Indexes}}
+	{{- range $idx, $e := $tb.Columns}}
 		`{{$e.Name}}` {{$e.Type}} COMMENT '{{$e.Comment}}'{{- if eq (add $colen -1) $idx}}{{- if gt $idxlen 0}},{{- end}}{{- else}},{{- end}}
 	{{- end}}
-	{{- range $idx, $e := .Table.Indexes}}
+	{{- range $idx, $e := $tb.Indexes}}
 		{{$e}}{{- if ne (add $idxlen -1)  $idx}},{{- end}}
 	{{- end}}
-	) ENGINE = {{.Table.Engine}} DEFAULT CHARSET = {{.Table.Charset}} COLLATE = {{.Table.Collate}} COMMENT = '{{.Table.Comment}}';
+	) ENGINE = {{$tb.Engine}} DEFAULT CHARSET = {{$tb.Charset}} COLLATE = {{$tb.Collate}} COMMENT = '{{$tb.Comment}}';
+{{end -}}

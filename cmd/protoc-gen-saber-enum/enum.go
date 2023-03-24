@@ -63,6 +63,7 @@ func runProtoGen(gen *protogen.Plugin) error {
 		_ = e.execute(usedTemplate, g)
 	}
 	if isMerge {
+		g := gen.NewGeneratedFile(*filename+*suffix, protogen.GoImportPath(*goPackage))
 		mergeFile := &EnumFile{
 			Version:       version,
 			ProtocVersion: infra.ProtocVersion(gen),
@@ -71,7 +72,6 @@ func runProtoGen(gen *protogen.Plugin) error {
 			Package:       *_package,
 			Enums:         mergeEnums,
 		}
-		g := gen.NewGeneratedFile(*filename+*suffix, protogen.GoImportPath(*goPackage))
 		return mergeFile.execute(usedTemplate, g)
 	}
 	return nil
