@@ -9,7 +9,7 @@ package enums
 func EnumComment() []map[int32]string {
 	return []map[int32]string{
 		{
-			int32(Nested_STATUS_UNSPECIFIED): "未定义",
+			int32(Nested_STATUS_UNSPECIFIED): "\"unspecified\", aaaa",
 			int32(Nested_STATUS_UP):          "nested1",
 			int32(Nested_STATUS_DOWN):        "nested2",
 			int32(Nested_STATUS_LEFT):        "nested3",

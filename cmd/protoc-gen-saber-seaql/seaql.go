@@ -69,7 +69,6 @@ func intoTable(protoMessages []*protogen.Message) ([]Table, error) {
 			messageFieldOptions := proto.GetExtension(v.Desc.Options(), seaql.E_Field)
 			seaFieldOptions := messageFieldOptions.(*seaql.Field)
 			if seaFieldOptions == nil {
-
 				return nil, fmt.Errorf("seaql: message(%s) - field(%s) is not set seaql type", pe.Desc.Name(), string(v.Desc.Name()))
 			}
 			seaFieldOptions.Type = strings.TrimSpace(seaFieldOptions.Type)
@@ -139,7 +138,11 @@ func intoEnumComment(pe *protogen.Enum) string {
 	for _, v := range pe.Values {
 		mpv := proto.GetExtension(v.Desc.Options(), enumerate.E_Mapping)
 		mappingValue, _ := mpv.(string)
-
+		comment := strings.TrimSpace(strings.TrimSuffix(string(v.Comments.Leading), "\n"))
+		if mappingValue == "" && !*disableOrComment {
+			mappingValue = comment
+		}
+		mappingValue = strings.ReplaceAll(strings.ReplaceAll(mappingValue, "\n", ","), `"`, `\"`)
 		eValueMp[v.Desc.Index()] = mappingValue
 	}
 	b, _ := json.Marshal(eValueMp)

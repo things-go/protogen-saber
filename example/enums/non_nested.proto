@@ -14,7 +14,7 @@ enum NonNestedStatus {
   option (things_go.enumerate.enabled) = true;
 
   // 未定义
-  NON_NESTED_STATUS_UNSPECIFIED = 0[(things_go.enumerate.mapping) = "未定义"];
+  NON_NESTED_STATUS_UNSPECIFIED = 0;
   // 打开
   NON_NESTED_STATUS_UP = 1 [(things_go.enumerate.mapping) = "打开"];
   // 关闭
@@ -24,4 +24,3 @@ enum NonNestedStatus {
   // 右
   NON_NESTED_STATUS_RIGHT = 4 [(things_go.enumerate.mapping) = "右"];
 }
-

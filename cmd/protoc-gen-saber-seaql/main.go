@@ -10,6 +10,7 @@ import (
 const version = "v0.0.2"
 
 var showVersion = flag.Bool("version", false, "print the version and exit")
+var disableOrComment = flag.Bool("disable_or_comment", false, "disable use comment if mapping value not exist. just use empty string ")
 var trimPrefix = flag.Bool("trim_prefix", false, "trim filename prefix")
 
 func main() {

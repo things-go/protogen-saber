@@ -109,13 +109,17 @@ func intoEnums(nestedMessageName string, protoEnums []*protogen.Enum) []*Enum {
 		for _, v := range pe.Values {
 			mpv := proto.GetExtension(v.Desc.Options(), enumerate.E_Mapping)
 			mappingValue, _ := mpv.(string)
-
+			comment := strings.TrimSpace(strings.TrimSuffix(string(v.Comments.Leading), "\n"))
+			if mappingValue == "" && !*disableOrComment {
+				mappingValue = comment
+			}
+			mappingValue = strings.ReplaceAll(strings.ReplaceAll(mappingValue, "\n", ","), `"`, `\"`)
 			eValues = append(eValues, &EnumValue{
 				Value:      string(v.Desc.Name()),
 				Number:     int(v.Desc.Number()),
 				CamelValue: infra.CamelCase(string(v.Desc.Name())),
 				Mapping:    mappingValue,
-				Comment:    strings.TrimSuffix(string(v.Comments.Leading), "\n"),
+				Comment:    comment,
 			})
 			eValueMp[v.Desc.Index()] = mappingValue
 		}
@@ -123,7 +127,7 @@ func intoEnums(nestedMessageName string, protoEnums []*protogen.Enum) []*Enum {
 		bb := strings.ReplaceAll(string(b), `"`, "")
 		bb = strings.Replace(bb, "{", "[", 1)
 		bb = strings.Replace(bb, "}", "]", 1)
-		comment := strings.ReplaceAll(string(pe.Comments.Leading), "\n", "")
+		comment := strings.TrimSpace(strings.ReplaceAll(string(pe.Comments.Leading), "\n", ""))
 		if comment == "" {
 			comment = bb
 		} else {

@@ -8,7 +8,7 @@ package enums
 
 // __Nested_StatusMapping Nested_Status mapping
 var __Nested_StatusMapping = map[Nested_Status]string{
-	0: "未定义",
+	0: "\"unspecified\", aaaa",
 	1: "nested1",
 	2: "nested2",
 	3: "nested3",
@@ -16,8 +16,7 @@ var __Nested_StatusMapping = map[Nested_Status]string{
 }
 
 // GetNested_StatusDesc get mapping description
-//
-//	Status 状态值, [0:未定义,1:nested1,2:nested2,3:nested3,4:nested4]
+// Status 状态值, [0:\\\unspecified\\\, aaaa,1:nested1,2:nested2,3:nested3,4:nested4]
 func GetNested_StatusDesc(t Nested_Status) string {
 	return __Nested_StatusMapping[t]
 }
@@ -29,7 +28,7 @@ var __Nested_Nested1_TypeMapping = map[Nested_Nested1_Type]string{
 }
 
 // GetNested_Nested1_TypeDesc get mapping description
-// [0:禁用,1:启用]
+// Type 类型, [0:禁用,1:启用]
 func GetNested_Nested1_TypeDesc(t Nested_Nested1_Type) string {
 	return __Nested_Nested1_TypeMapping[t]
 }

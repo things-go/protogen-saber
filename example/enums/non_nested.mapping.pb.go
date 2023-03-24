@@ -16,8 +16,7 @@ var __NonNestedStatusMapping = map[NonNestedStatus]string{
 }
 
 // GetNonNestedStatusDesc get mapping description
-//
-//	Foo 状态值, [0:未定义,1:打开,2:关闭,3:左,4:右]
+// Foo 状态值, [0:未定义,1:打开,2:关闭,3:左,4:右]
 func GetNonNestedStatusDesc(t NonNestedStatus) string {
 	return __NonNestedStatusMapping[t]
 }

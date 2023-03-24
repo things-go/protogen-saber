@@ -1,0 +1,10 @@
+# We'll use defaults from the google style, but with 2 columns indentation.
+BasedOnStyle: google
+#AlignConsecutiveDeclarations: true
+#AlignConsecutiveAssignments: true
+ColumnLimit: 0
+IndentWidth: 2
+
+Language: Proto
+# Don't format .proto files.
+# DisableFormat: true
