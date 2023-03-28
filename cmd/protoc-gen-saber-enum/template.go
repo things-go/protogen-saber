@@ -35,10 +35,10 @@ var Static embed.FS
 
 var TemplateFuncs = template.FuncMap{
 	"add":            func(a, b int) int { return a + b },
-	"snakecase":      func(s string) string { return infra.SnakeCase(s, false) },
-	"kebabcase":      func(s string) string { return infra.Kebab(s, false) },
+	"snakecase":      func(s string) string { return infra.SnakeCase(s) },
+	"kebabcase":      func(s string) string { return infra.Kebab(s) },
 	"camelcase":      func(s string) string { return infra.CamelCase(s) },
-	"smallcamelcase": func(s string) string { return infra.SmallCamelCase(s, false) },
+	"smallcamelcase": func(s string) string { return infra.SmallCamelCase(s) },
 }
 var enumTemplate = template.Must(template.New("components").
 	Funcs(TemplateFuncs).

@@ -12,6 +12,7 @@ import (
 	"google.golang.org/protobuf/types/pluginpb"
 
 	"github.com/things-go/protogen-saber/internal/infra"
+	"github.com/things-go/protogen-saber/internal/protoutil"
 	"github.com/things-go/protogen-saber/protosaber/enumerate"
 	"github.com/things-go/protogen-saber/protosaber/seaql"
 )
@@ -52,7 +53,7 @@ func runProtoGen(gen *protogen.Plugin) error {
 			g := gen.NewGeneratedFile(filepath.Join(dir, tb.Name)+".sql", f.GoImportPath)
 			e := &File{
 				Version:       version,
-				ProtocVersion: infra.ProtocVersion(gen),
+				ProtocVersion: protoutil.ProtocVersion(gen),
 				IsDeprecated:  f.Proto.GetOptions().GetDeprecated(),
 				Source:        f.Desc.Path(),
 				Tables:        []Table{tb},
@@ -64,7 +65,7 @@ func runProtoGen(gen *protogen.Plugin) error {
 		g := gen.NewGeneratedFile(*filename+".sql", "")
 		mergeFile := &File{
 			Version:       version,
-			ProtocVersion: infra.ProtocVersion(gen),
+			ProtocVersion: protoutil.ProtocVersion(gen),
 			IsDeprecated:  false,
 			Source:        strings.Join(source, ","),
 			Tables:        mergeTables,
@@ -128,7 +129,7 @@ func intoTable(protoMessages []*protogen.Message) ([]Table, error) {
 		}
 
 		tables = append(tables, Table{
-			Name:    infra.SnakeCase(tableName, false),
+			Name:    infra.SnakeCase(tableName),
 			Comment: strings.TrimSpace(strings.TrimPrefix(strings.TrimSpace(strings.ReplaceAll(string(pe.Comments.Leading), "\n", "")), rawTableName)),
 			Engine:  engine,
 			Charset: charset,

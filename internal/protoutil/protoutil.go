@@ -1,4 +1,4 @@
-package infra
+package protoutil
 
 import (
 	"fmt"
@@ -17,3 +17,4 @@ func ProtocVersion(gen *protogen.Plugin) string {
 	}
 	return fmt.Sprintf("v%d.%d.%d%s", v.GetMajor(), v.GetMinor(), v.GetPatch(), suffix)
 }
+

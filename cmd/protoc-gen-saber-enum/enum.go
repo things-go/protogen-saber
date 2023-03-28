@@ -10,6 +10,7 @@ import (
 	"google.golang.org/protobuf/types/pluginpb"
 
 	"github.com/things-go/protogen-saber/internal/infra"
+	"github.com/things-go/protogen-saber/internal/protoutil"
 	"github.com/things-go/protogen-saber/protosaber/enumerate"
 )
 
@@ -54,7 +55,7 @@ func runProtoGen(gen *protogen.Plugin) error {
 		g := gen.NewGeneratedFile(f.GeneratedFilenamePrefix+*suffix, f.GoImportPath)
 		e := &EnumFile{
 			Version:       version,
-			ProtocVersion: infra.ProtocVersion(gen),
+			ProtocVersion: protoutil.ProtocVersion(gen),
 			IsDeprecated:  f.Proto.GetOptions().GetDeprecated(),
 			Source:        f.Desc.Path(),
 			Package:       string(f.GoPackageName),
@@ -66,7 +67,7 @@ func runProtoGen(gen *protogen.Plugin) error {
 		g := gen.NewGeneratedFile(*filename+*suffix, protogen.GoImportPath(*goPackage))
 		mergeFile := &EnumFile{
 			Version:       version,
-			ProtocVersion: infra.ProtocVersion(gen),
+			ProtocVersion: protoutil.ProtocVersion(gen),
 			IsDeprecated:  false,
 			Source:        strings.Join(source, ","),
 			Package:       *_package,
