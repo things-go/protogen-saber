@@ -14,7 +14,7 @@ var disableOrComment = flag.Bool("disable_or_comment", false, "disable use comme
 var trimPrefix = flag.Bool("trim_prefix", false, "trim filename prefix")
 
 var merge = flag.Bool("merge", false, "merge in a file")
-var filename = flag.String("filename", "merge_seaql", "filename when merge enabled")
+var filename = flag.String("filename", "create_table", "filename when merge enabled")
 
 func main() {
 	flag.Parse()
