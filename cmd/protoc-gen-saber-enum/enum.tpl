@@ -16,16 +16,28 @@ package {{.Package}}
 {{$enumName = printf "%s_%s" $e.MessageName $e.Name}}
 {{end}}
 
-// __{{$enumName}}Mapping {{$enumName}} mapping
-var __{{$enumName}}Mapping = map[{{$enumName}}]string{
-{{- range $ee := $e.Values}}
-	{{$ee.Number}}: "{{$ee.Mapping}}",
-{{- end}}
-}
+// Enum value mapping for {{$enumName}}.
+var (
+	__{{$enumName}}Mapping_Desc = map[{{$enumName}}]string{
+	{{- range $ee := $e.Values}}
+		{{$ee.Number}}: "{{$ee.Mapping}}",
+	{{- end}}
+	}
+	__{{$enumName}}Mapping_Value = map[string]{{$enumName}}{
+	{{- range $ee := $e.Values}}
+		"{{$ee.Mapping}}": {{$ee.Number}},
+	{{- end}}
+	}
+)
 // Get{{$enumName}}Desc get mapping description
 // {{$e.Comment}}
 func Get{{$enumName}}Desc(t {{$enumName}}) string {
-	return __{{$enumName}}Mapping[t]
+	return __{{$enumName}}Mapping_Desc[t]
+}
+// Get{{$enumName}}Value get mapping value
+// {{$e.Comment}}
+func Get{{$enumName}}Value(s string) int {
+	return int(__{{$enumName}}Mapping_Value[s])
 }
 {{- end}}
 

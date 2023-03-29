@@ -7,7 +7,7 @@ import (
 	"google.golang.org/protobuf/compiler/protogen"
 )
 
-const version = "v0.0.2"
+const version = "v0.0.3"
 
 var showVersion = flag.Bool("version", false, "print the version and exit")
 var disableOrComment = flag.Bool("disable_or_comment", false, "disable use comment if mapping value not exist. just use empty string ")
