@@ -101,7 +101,8 @@ func genService(gen *protogen.Plugin, file *protogen.File, g *protogen.Generated
 	if len(sd.Methods) == 0 {
 		return
 	}
-	err := sd.execute(g)
+	// err := sd.execute(g)
+	err := execute(g, sd)
 	if err != nil {
 		_, _ = fmt.Fprintf(os.Stderr,
 			"\u001B[31mWARN\u001B[m: execute template failed.\n")

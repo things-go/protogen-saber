@@ -49,6 +49,7 @@ func RegisterUserTaskHandler(mux *asynq.ServeMux, srv UserTaskHandler) {
 func _User_CreateUser_Task_Handler(srv UserTaskHandler) func(context.Context, *asynq.Task) error {
 	return func(ctx context.Context, task *asynq.Task) error {
 		var in CreateUserPayload
+
 		if err := srv.UnmarshalBinary(task.Payload(), &in); err != nil {
 			return err
 		}
@@ -59,6 +60,7 @@ func _User_CreateUser_Task_Handler(srv UserTaskHandler) func(context.Context, *a
 func _User_UpdateUser_Task_Handler(srv UserTaskHandler) func(context.Context, *asynq.Task) error {
 	return func(ctx context.Context, task *asynq.Task) error {
 		var in UpdateUserPayload
+
 		if err := srv.UnmarshalBinary(task.Payload(), &in); err != nil {
 			return err
 		}
@@ -70,9 +72,9 @@ type UserTaskClient interface {
 	// SetMarshaler set marshal the binary encoding of v function.
 	SetMarshaler(func(any) ([]byte, error)) UserTaskClient
 	// CreateUser 异步创建用户
-	CreateUser(ctx context.Context, req *CreateUserPayload, opts ...asynq.Option) (info *asynq.TaskInfo, err error)
+	CreateUser(context.Context, *CreateUserPayload, ...asynq.Option) (*asynq.TaskInfo, error)
 	// UpdateUser 异步更新用户
-	UpdateUser(ctx context.Context, req *UpdateUserPayload, opts ...asynq.Option) (info *asynq.TaskInfo, err error)
+	UpdateUser(context.Context, *UpdateUserPayload, ...asynq.Option) (*asynq.TaskInfo, error)
 }
 
 type UserTaskClientImpl struct {
