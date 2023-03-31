@@ -3,12 +3,12 @@
 {{$svrType := .ServiceType}}
 {{$svrName := .ServiceName}}
 
-{{- range .MethodSets}}
+{{- range .Methods}}
 const Pattern_{{$svrType}}_{{.Name}} = "{{.Pattern}}"
 {{- end}}
 
 type {{.ServiceType}}TaskHandler interface {
-{{- range .MethodSets}}
+{{- range .Methods}}
 	{{.Comment}}
 	{{.Name}}(context.Context, *{{.Request}}) (error)
 {{- end}}
@@ -43,7 +43,7 @@ func _{{$svrType}}_{{.Name}}_Task_Handler(srv {{$svrType}}TaskHandler) func(cont
 type {{.ServiceType}}TaskClient interface {
 	// SetMarshaler set marshal the binary encoding of v function.
 	SetMarshaler(func(any) ([]byte, error)) {{.ServiceType}}TaskClient
-{{- range .MethodSets}}
+{{- range .Methods}}
     {{.Comment}}
 	{{.Name}}(ctx context.Context, req *{{.Request}}, opts ...asynq.Option) (info *asynq.TaskInfo, err error) 
 {{- end}}
@@ -72,7 +72,7 @@ func (c *{{$svrType}}TaskClientImpl) SetMarshaler(marshaler func(any) ([]byte, e
 	return c
 }
 
-{{range .MethodSets}}
+{{range .Methods}}
 {{.Comment}}
 func (c *{{$svrType}}TaskClientImpl) {{.Name}}(ctx context.Context, in *{{.Request}}, opts ...asynq.Option) (*asynq.TaskInfo, error) {
 	payload, err := c.marshaler(in)

@@ -95,9 +95,6 @@ func genService(gen *protogen.Plugin, file *protogen.File, g *protogen.Generated
 		}
 		rule, ok := proto.GetExtension(method.Desc.Options(), asynq.E_Task).(*asynq.Task)
 		if rule != nil && ok {
-			// for _, bind := range rule.AdditionalBindings {
-			// 	sd.Methods = append(sd.Methods, buildHTTPRule(g, method, bind))
-			// }
 			sd.Methods = append(sd.Methods, buildAsynqRule(g, method, rule))
 		}
 	}

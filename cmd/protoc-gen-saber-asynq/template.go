@@ -17,7 +17,6 @@ type serviceDesc struct {
 	ServiceName string // helloworld.Greeter
 	Metadata    string // api/v1/helloworld.proto
 	Methods     []*methodDesc
-	MethodSets  map[string]*methodDesc // unique because additional_bindings
 }
 
 type methodDesc struct {
@@ -32,9 +31,5 @@ type methodDesc struct {
 }
 
 func (s *serviceDesc) execute(w io.Writer) error {
-	s.MethodSets = make(map[string]*methodDesc)
-	for _, m := range s.Methods {
-		s.MethodSets[m.Name] = m
-	}
 	return ginHttpTemplate.Execute(w, s)
 }
