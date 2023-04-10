@@ -169,7 +169,7 @@ func intoEnumComment(pe *protogen.Enum) string {
 			mappingValue = comment
 		}
 		mappingValue = strings.ReplaceAll(strings.ReplaceAll(mappingValue, "\n", ","), `"`, `\"`)
-		eValueMp[v.Desc.Index()] = mappingValue
+		eValueMp[int(v.Desc.Number())] = mappingValue
 	}
 	b, _ := json.Marshal(eValueMp)
 	bb := strings.ReplaceAll(string(b), `"`, "")
