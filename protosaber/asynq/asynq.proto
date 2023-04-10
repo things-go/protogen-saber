@@ -9,9 +9,10 @@ option java_package = "cn.things-go.asynq";
 import "google/protobuf/descriptor.proto";
 
 extend google.protobuf.MethodOptions {
-    Task task = 95270001;
+  Task task = 95270001;
 }
 
 message Task {
-    string pattern = 1;
+  string pattern = 1;
+  bool scheduler = 2;
 }

@@ -9,11 +9,12 @@ package enums
 // Enum value mapping for Nested_Status.
 var (
 	__Nested_StatusMapping_Desc = map[Nested_Status]string{
-		0: "\"unspecified\", aaaa",
-		1: "nested1",
-		2: "nested2",
-		3: "nested3",
-		4: "nested4",
+		0:   "\"unspecified\", aaaa",
+		1:   "nested1",
+		2:   "nested2",
+		3:   "nested3",
+		4:   "nested4",
+		999: "end",
 	}
 	__Nested_StatusMapping_Value = map[string]Nested_Status{
 		"\"unspecified\", aaaa": 0,
@@ -21,17 +22,18 @@ var (
 		"nested2":               2,
 		"nested3":               3,
 		"nested4":               4,
+		"end":                   999,
 	}
 )
 
 // GetNested_StatusDesc get mapping description
-// Status 状态值, [0:\\\unspecified\\\, aaaa,1:nested1,2:nested2,3:nested3,4:nested4]
+// Status 状态值, [0:\\\unspecified\\\, aaaa,1:nested1,2:nested2,3:nested3,4:nested4,999:end]
 func GetNested_StatusDesc(t Nested_Status) string {
 	return __Nested_StatusMapping_Desc[t]
 }
 
 // GetNested_StatusValue get mapping value
-// Status 状态值, [0:\\\unspecified\\\, aaaa,1:nested1,2:nested2,3:nested3,4:nested4]
+// Status 状态值, [0:\\\unspecified\\\, aaaa,1:nested1,2:nested2,3:nested3,4:nested4,999:end]
 func GetNested_StatusValue(s string) int {
 	return int(__Nested_StatusMapping_Value[s])
 }

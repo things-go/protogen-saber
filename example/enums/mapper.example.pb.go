@@ -14,6 +14,7 @@ func EnumComment() []map[int32]string {
 			int32(Nested_STATUS_DOWN):        "nested2",
 			int32(Nested_STATUS_LEFT):        "nested3",
 			int32(Nested_STATUS_RIGHT):       "nested4",
+			int32(Nested_STATUS_END):         "end",
 		},
 		{
 			int32(Nested_Nested1_TYPE_DISABLE): "禁用",

@@ -24,6 +24,8 @@ message Nested {
     STATUS_LEFT = 3;
     // nested4
     STATUS_RIGHT = 4;
+    // end
+    STATUS_END = 999;
   }
   message Nested1 {
     // Type 类型

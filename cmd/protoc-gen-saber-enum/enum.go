@@ -115,6 +115,7 @@ func intoEnums(nestedMessageName string, protoEnums []*protogen.Enum) []*Enum {
 				mappingValue = comment
 			}
 			mappingValue = strings.ReplaceAll(strings.ReplaceAll(mappingValue, "\n", ","), `"`, `\"`)
+
 			eValues = append(eValues, &EnumValue{
 				Value:      string(v.Desc.Name()),
 				Number:     int(v.Desc.Number()),
@@ -122,7 +123,7 @@ func intoEnums(nestedMessageName string, protoEnums []*protogen.Enum) []*Enum {
 				Mapping:    mappingValue,
 				Comment:    comment,
 			})
-			eValueMp[v.Desc.Index()] = mappingValue
+			eValueMp[int(v.Desc.Number())] = mappingValue
 		}
 		b, _ := json.Marshal(eValueMp)
 		bb := strings.ReplaceAll(string(b), `"`, "")
