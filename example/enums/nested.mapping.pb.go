@@ -27,13 +27,13 @@ var (
 )
 
 // GetNested_StatusDesc get mapping description
-// Status 状态值, [0:\\\unspecified\\\, aaaa,1:nested1,2:nested2,3:nested3,4:nested4,999:end]
+// Status 状态值, [0:\"unspecified\", aaaa,1:nested1,2:nested2,3:nested3,4:nested4,999:end]
 func GetNested_StatusDesc(t Nested_Status) string {
 	return __Nested_StatusMapping_Desc[t]
 }
 
 // GetNested_StatusValue get mapping value
-// Status 状态值, [0:\\\unspecified\\\, aaaa,1:nested1,2:nested2,3:nested3,4:nested4,999:end]
+// Status 状态值, [0:\"unspecified\", aaaa,1:nested1,2:nested2,3:nested3,4:nested4,999:end]
 func GetNested_StatusValue(s string) int {
 	return int(__Nested_StatusMapping_Value[s])
 }

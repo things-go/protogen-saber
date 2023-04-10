@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"errors"
 	"strings"
 
@@ -125,11 +124,9 @@ func intoEnums(nestedMessageName string, protoEnums []*protogen.Enum) []*Enum {
 			})
 			eValueMp[int(v.Desc.Number())] = mappingValue
 		}
-		b, _ := json.Marshal(eValueMp)
-		bb := strings.ReplaceAll(string(b), `"`, "")
-		bb = strings.Replace(bb, "{", "[", 1)
-		bb = strings.Replace(bb, "}", "]", 1)
+
 		comment := strings.TrimSpace(strings.ReplaceAll(string(pe.Comments.Leading), "\n", ""))
+		bb := infra.ToArray(eValueMp)
 		if comment == "" {
 			comment = bb
 		} else {

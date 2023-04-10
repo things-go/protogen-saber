@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -171,9 +170,5 @@ func intoEnumComment(pe *protogen.Enum) string {
 		mappingValue = strings.ReplaceAll(strings.ReplaceAll(mappingValue, "\n", ","), `"`, `\"`)
 		eValueMp[int(v.Desc.Number())] = mappingValue
 	}
-	b, _ := json.Marshal(eValueMp)
-	bb := strings.ReplaceAll(string(b), `"`, "")
-	bb = strings.Replace(bb, "{", "[", 1)
-	bb = strings.Replace(bb, "}", "]", 1)
-	return bb
+	return infra.ToArray(eValueMp)
 }
