@@ -36,34 +36,28 @@ func execute(g *protogen.GeneratedFile, s *serviceDesc) error {
 			g.P(m.Comment)
 			g.P(serverMethodDefinition(g, m))
 		}
-		g.P("// UnmarshalBinary parses the binary data and stores the result")
-		g.P("// in the value pointed to by v.")
-		g.P("UnmarshalBinary([]byte, any) error")
-		g.P("}")
-		g.P()
-		// server unimplemented with default unmarshaler.
-		g.P("type Unimplemented", s.ServiceType, "TaskHandlerImpl struct {}")
-		g.P()
-		g.P("func (*Unimplemented", s.ServiceType, "TaskHandlerImpl) UnmarshalBinary(b []byte, v any) error {")
-		g.P("return ", g.QualifiedGoIdent(protoPackage.Ident("Unmarshal")), "(b, v.(", g.QualifiedGoIdent(protoPackage.Ident("Message")), "))")
 		g.P("}")
 		g.P()
 		// server factory
-		g.P("func Register", s.ServiceType, "TaskHandler(mux *", g.QualifiedGoIdent(asynqPackage.Ident("ServeMux")), ", srv ", serverInterfaceName(s.ServiceType), ") {")
+		g.P("func Register", s.ServiceType, "TaskHandler(mux *", g.QualifiedGoIdent(asynqPackage.Ident("ServeMux")), ", srv ", serverInterfaceName(s.ServiceType), ", opts ...", g.QualifiedGoIdent(asynqAuxiliaryPackage.Ident("HandlerOption")), ") {")
+		g.P("settings :=", g.QualifiedGoIdent(asynqAuxiliaryPackage.Ident("NewHandlerSettings()")))
+		g.P("for _, opt := range opts {")
+		g.P("opt(settings)")
+		g.P("}")
 		for _, m := range s.Methods {
-			g.P("mux.HandleFunc(", patternConstant(s.ServiceType, m.Name), ", ", serviceHandlerMethodName(s.ServiceType, m.Name), "(srv))")
+			g.P("mux.HandleFunc(", patternConstant(s.ServiceType, m.Name), ", ", serviceHandlerMethodName(s.ServiceType, m.Name), "(srv, settings))")
 		}
 		g.P("}")
 		g.P()
 
 		// server handler
 		for _, m := range s.Methods {
-			g.P("func ", serviceHandlerMethodName(s.ServiceType, m.Name), "(srv ", serverInterfaceName(s.ServiceType), ") ", asynqHandler(g, true), " {")
+			g.P("func ", serviceHandlerMethodName(s.ServiceType, m.Name), "(srv ", serverInterfaceName(s.ServiceType), ", settings *", g.QualifiedGoIdent(asynqAuxiliaryPackage.Ident("HandlerSettings")), ") ", asynqHandler(g, true), " {")
 			{ // closure
 				g.P("return ", asynqHandler(g, false), " {")
 				g.P("var in ", m.Request)
 				g.P()
-				g.P("if err := srv.UnmarshalBinary(task.Payload(), &in); err != nil {")
+				g.P("if err := settings.UnmarshalBinary(task.Payload(), &in); err != nil {")
 				g.P("return err")
 				g.P("}")
 				g.P("return srv.", m.Name, "(ctx, &in)")
@@ -78,8 +72,6 @@ func execute(g *protogen.GeneratedFile, s *serviceDesc) error {
 	{
 		// client interface
 		g.P("type ", clientInterfaceName(s.ServiceType), " interface {")
-		g.P("// SetMarshaler set marshal the binary encoding of v function.")
-		g.P("SetMarshaler(func(any) ([]byte, error)) ", clientInterfaceName(s.ServiceType))
 		for _, m := range s.Methods {
 			g.P(m.Comment)
 			g.P(clientMethodDefinition(g, m, true))
@@ -90,35 +82,29 @@ func execute(g *protogen.GeneratedFile, s *serviceDesc) error {
 		// client impl
 		g.P("type ", clientImplStructName(s.ServiceType), " struct {")
 		g.P("cc *", g.QualifiedGoIdent(asynqPackage.Ident("Client")))
-		g.P("marshaler func(any) ([]byte, error)")
+		g.P("settings *", g.QualifiedGoIdent(asynqAuxiliaryPackage.Ident("ClientSettings")))
 		g.P("}")
 		g.P()
 		// client factory
 		g.P("// ", clientFactoryMethodName(s.ServiceType), " new client. use default proto.Marhsal.")
-		g.P("func ", clientFactoryMethodName(s.ServiceType), " (client *", g.QualifiedGoIdent(asynqPackage.Ident("Client")), ") ", clientInterfaceName(s.ServiceType), " {")
+		g.P("func ", clientFactoryMethodName(s.ServiceType), " (client *", g.QualifiedGoIdent(asynqPackage.Ident("Client")), ", opts ...", g.QualifiedGoIdent(asynqAuxiliaryPackage.Ident("ClientOption")), ") ", clientInterfaceName(s.ServiceType), " {")
 		{ // closure
+			g.P("settings := ", g.QualifiedGoIdent(asynqAuxiliaryPackage.Ident("NewClientSettings()")))
+			g.P("for _, opt := range opts {")
+			g.P("opt(settings)")
+			g.P("}")
 			g.P("return &", clientImplStructName(s.ServiceType), " {")
 			g.P("cc: client,")
-			g.P("marshaler: func(v any) ([]byte, error) {")
-			g.P("return ", g.QualifiedGoIdent(protoPackage.Ident("Marshal")), "(v.(", g.QualifiedGoIdent(protoPackage.Ident("Message")), "))")
-			g.P("},")
+			g.P("settings: settings,")
 			g.P("}")
 		}
 		g.P("}")
 		g.P()
 		// client method
-		g.P("// SetMarshaler set marshal the binary encoding of v function.")
-		g.P("func (c *", clientImplStructName(s.ServiceType), ") SetMarshaler(marshaler func(any) ([]byte, error)) ", clientInterfaceName(s.ServiceType), " {")
-		g.P("if marshaler != nil {")
-		g.P("c.marshaler = marshaler")
-		g.P("}")
-		g.P("return c")
-		g.P("}")
-		g.P()
 		for _, m := range s.Methods {
 			g.P(m.Comment)
 			g.P("func (c *", clientImplStructName(s.ServiceType), ")", clientMethodDefinition(g, m, false), " {")
-			g.P("payload, err := c.marshaler(in)")
+			g.P("payload, err := c.settings.MarshalBinary(in)")
 			g.P("if err != nil {")
 			g.P("return nil, err")
 			g.P("}")

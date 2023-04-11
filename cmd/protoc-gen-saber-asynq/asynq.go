@@ -16,11 +16,12 @@ import (
 const deprecationComment = "// Deprecated: Do not use."
 
 var (
-	errorsPackage  = protogen.GoImportPath("errors")
-	contextPackage = protogen.GoImportPath("context")
-	asynqPackage   = protogen.GoImportPath("github.com/hibiken/asynq")
-	emptyPackage   = protogen.GoImportPath("google.golang.org/protobuf/types/known/emptypb")
-	protoPackage   = protogen.GoImportPath("google.golang.org/protobuf/proto")
+	errorsPackage         = protogen.GoImportPath("errors")
+	contextPackage        = protogen.GoImportPath("context")
+	asynqPackage          = protogen.GoImportPath("github.com/hibiken/asynq")
+	emptyPackage          = protogen.GoImportPath("google.golang.org/protobuf/types/known/emptypb")
+	protoPackage          = protogen.GoImportPath("google.golang.org/protobuf/proto")
+	asynqAuxiliaryPackage = protogen.GoImportPath("github.com/things-go/protogen-saber/core/asynq_auxiliary")
 )
 
 var methodSets = make(map[string]int)
