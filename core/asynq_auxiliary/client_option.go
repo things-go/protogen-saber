@@ -1,6 +1,10 @@
 package asynq_auxiliary
 
-import "google.golang.org/protobuf/proto"
+import (
+	"encoding/json"
+
+	"google.golang.org/protobuf/proto"
+)
 
 type ClientSettings struct {
 	MarshalBinary func(any) ([]byte, error)
@@ -21,5 +25,11 @@ func WithClientMarshalBinary(f func(any) ([]byte, error)) ClientOption {
 		if f != nil {
 			cs.MarshalBinary = f
 		}
+	}
+}
+
+func WithClientJsonMarshalBinary() ClientOption {
+	return func(cs *ClientSettings) {
+		cs.MarshalBinary = json.Marshal
 	}
 }

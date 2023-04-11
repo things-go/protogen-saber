@@ -1,6 +1,10 @@
 package asynq_auxiliary
 
-import "google.golang.org/protobuf/proto"
+import (
+	"encoding/json"
+
+	"google.golang.org/protobuf/proto"
+)
 
 type HandlerSettings struct {
 	// UnmarshalBinary parses the binary data and stores the result
@@ -23,5 +27,11 @@ func WithHandlerUnmarshalBinary(f func([]byte, any) error) HandlerOption {
 		if f != nil {
 			cs.UnmarshalBinary = f
 		}
+	}
+}
+
+func WithHandlerJsonUnmarshalBinary() HandlerOption {
+	return func(cs *HandlerSettings) {
+		cs.UnmarshalBinary = json.Unmarshal
 	}
 }
