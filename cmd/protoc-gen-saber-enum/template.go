@@ -7,28 +7,8 @@ import (
 	"text/template"
 
 	"github.com/things-go/protogen-saber/internal/infra"
+	"github.com/things-go/protogen-saber/internal/protoenum"
 )
-
-// EnumValue 枚举的枚举项
-type EnumValue struct {
-	Number     int    // 编号
-	Value      string // 值
-	CamelValue string // 驼峰值
-	Mapping    string // 映射值
-	Comment    string // 注释
-}
-
-// Enum 枚举
-// NOTE:
-//
-//	如果 MessageName 为空, 表明枚举独立, 枚举类型为 ${{Name}}, 枚举值为 ${{Name}}_${{Value}}
-//	如果 MessageName 为不为空, 表明枚举嵌套在message里, 枚举类型为 ${{MessageName}}_{{Name}}, 枚举值为 ${{MessageName}}_${{Value}}
-type Enum struct {
-	MessageName string       // 嵌套消息名
-	Name        string       // 名称
-	Comment     string       // 注释
-	Values      []*EnumValue // 枚举项
-}
 
 //go:embed enum.tpl
 var Static embed.FS
@@ -51,7 +31,7 @@ type EnumFile struct {
 	IsDeprecated  bool
 	Source        string
 	Package       string
-	Enums         []*Enum
+	Enums         []*protoenum.Enum
 }
 
 func (e *EnumFile) execute(t *template.Template, w io.Writer) error {

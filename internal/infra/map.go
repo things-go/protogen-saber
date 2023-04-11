@@ -6,7 +6,8 @@ import (
 	"strings"
 )
 
-func ToArray(values map[int]string) string {
+// ToArrayString convert to array string format [0:aaa,1:bbb,3:ccc]
+func ToArrayString(values map[int]string) string {
 	if len(values) == 0 {
 		return "[]"
 	}

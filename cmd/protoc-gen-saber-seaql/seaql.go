@@ -11,8 +11,8 @@ import (
 	"google.golang.org/protobuf/types/pluginpb"
 
 	"github.com/things-go/protogen-saber/internal/infra"
+	"github.com/things-go/protogen-saber/internal/protoenum"
 	"github.com/things-go/protogen-saber/internal/protoutil"
-	"github.com/things-go/protogen-saber/protosaber/enumerate"
 	"github.com/things-go/protogen-saber/protosaber/seaql"
 )
 
@@ -100,7 +100,7 @@ func intoTable(protoMessages []*protogen.Message) ([]Table, error) {
 			}
 
 			comment := strings.ReplaceAll(strings.ReplaceAll(strings.TrimSuffix(string(v.Comments.Leading), "\n"), "\n", ","), " ", "")
-			if enumComment := intoEnumComment(v.Enum); enumComment != "" {
+			if enumComment := protoenum.IntoEnumComment(v.Enum, *disableOrComment); enumComment != "" {
 				comment += "," + enumComment
 			}
 			columns = append(columns, Column{
@@ -146,29 +146,4 @@ func intoTable(protoMessages []*protogen.Message) ([]Table, error) {
 	}
 
 	return tables, nil
-}
-
-// intoEnumComment generates enum comment if it exists
-func intoEnumComment(pe *protogen.Enum) string {
-	if pe == nil || len(pe.Values) == 0 {
-		return ""
-	}
-	isEnabled := proto.GetExtension(pe.Desc.Options(), enumerate.E_Enabled)
-	ok := isEnabled.(bool)
-	if !ok {
-		return ""
-	}
-
-	eValueMp := make(map[int]string, len(pe.Values))
-	for _, v := range pe.Values {
-		mpv := proto.GetExtension(v.Desc.Options(), enumerate.E_Mapping)
-		mappingValue, _ := mpv.(string)
-		comment := strings.TrimSpace(strings.TrimSuffix(string(v.Comments.Leading), "\n"))
-		if mappingValue == "" && !*disableOrComment {
-			mappingValue = comment
-		}
-		mappingValue = strings.ReplaceAll(strings.ReplaceAll(mappingValue, "\n", ","), `"`, `\"`)
-		eValueMp[int(v.Desc.Number())] = mappingValue
-	}
-	return infra.ToArray(eValueMp)
 }
