@@ -22,7 +22,7 @@ func runProtoGen(gen *protogen.Plugin) error {
 
 	gen.SupportedFeatures = uint64(pluginpb.CodeGeneratorResponse_FEATURE_PROTO3_OPTIONAL)
 
-	if *merge {
+	if args.Merge {
 		mergeTables = make([]Table, 0, len(gen.Files)*4)
 		source = make([]string, 0, len(gen.Files))
 	}
@@ -38,14 +38,14 @@ func runProtoGen(gen *protogen.Plugin) error {
 		if len(tables) == 0 {
 			continue
 		}
-		if *merge {
+		if args.Merge {
 			source = append(source, f.Desc.Path())
 			mergeTables = append(mergeTables, tables...)
 			continue
 		}
 
 		dir := filepath.Dir(f.GeneratedFilenamePrefix)
-		if *trimPrefix {
+		if args.TrimPrefix {
 			dir = ""
 		}
 		for _, tb := range tables {
@@ -60,8 +60,8 @@ func runProtoGen(gen *protogen.Plugin) error {
 			_ = e.execute(seaqlTemplate, g)
 		}
 	}
-	if *merge {
-		g := gen.NewGeneratedFile(*filename+".sql", "")
+	if args.Merge {
+		g := gen.NewGeneratedFile(args.Filename+".sql", "")
 		mergeFile := &File{
 			Version:       version,
 			ProtocVersion: protoutil.ProtocVersion(gen),
@@ -100,7 +100,7 @@ func intoTable(protoMessages []*protogen.Message) ([]Table, error) {
 			}
 
 			comment := strings.ReplaceAll(strings.ReplaceAll(strings.TrimSuffix(string(v.Comments.Leading), "\n"), "\n", ","), " ", "")
-			if enumComment := protoenum.IntoEnumComment(v.Enum, *disableOrComment); enumComment != "" {
+			if enumComment := protoenum.IntoEnumComment(v.Enum, args.DisableOrComment); enumComment != "" {
 				comment += "," + enumComment
 			}
 			columns = append(columns, Column{

@@ -16,19 +16,19 @@ func runProtoGen(gen *protogen.Plugin) error {
 	var source []string
 	gen.SupportedFeatures = uint64(pluginpb.CodeGeneratorResponse_FEATURE_PROTO3_OPTIONAL)
 
-	isMerge := *merge
-	if *merge {
-		if *_package == "" ||
-			*filename == "" ||
-			*goPackage == "" {
+	isMerge := args.Merge
+	if isMerge {
+		if args.Package == "" ||
+			args.Filename == "" ||
+			args.GoPackage == "" {
 			return errors.New("when enable merge, filename,package,go_package must be set")
 		}
 		mergeEnums = make([]*protoenum.Enum, 0, len(gen.Files)*4)
 		source = make([]string, 0, len(gen.Files))
 	}
 	usedTemplate := enumTemplate
-	if *customTemplate != "" {
-		t, err := ParseTemplateFromFile(*customTemplate)
+	if args.CustomTemplate != "" {
+		t, err := ParseTemplateFromFile(args.CustomTemplate)
 		if err != nil {
 			return err
 		}
@@ -39,8 +39,8 @@ func runProtoGen(gen *protogen.Plugin) error {
 		if !f.Generate {
 			continue
 		}
-		enums := protoenum.IntoEnums("", f.Enums, *disableOrComment)
-		enums = append(enums, protoenum.IntoEnumsFromMessage("", f.Messages, *disableOrComment)...)
+		enums := protoenum.IntoEnums("", f.Enums, args.DisableOrComment)
+		enums = append(enums, protoenum.IntoEnumsFromMessage("", f.Messages, args.DisableOrComment)...)
 		if len(enums) == 0 {
 			continue
 		}
@@ -49,7 +49,7 @@ func runProtoGen(gen *protogen.Plugin) error {
 			mergeEnums = append(mergeEnums, enums...)
 			continue
 		}
-		g := gen.NewGeneratedFile(f.GeneratedFilenamePrefix+*suffix, f.GoImportPath)
+		g := gen.NewGeneratedFile(f.GeneratedFilenamePrefix+args.Suffix, f.GoImportPath)
 		e := &EnumFile{
 			Version:       version,
 			ProtocVersion: protoutil.ProtocVersion(gen),
@@ -61,13 +61,13 @@ func runProtoGen(gen *protogen.Plugin) error {
 		_ = e.execute(usedTemplate, g)
 	}
 	if isMerge {
-		g := gen.NewGeneratedFile(*filename+*suffix, protogen.GoImportPath(*goPackage))
+		g := gen.NewGeneratedFile(args.Filename+args.Suffix, protogen.GoImportPath(args.GoPackage))
 		mergeFile := &EnumFile{
 			Version:       version,
 			ProtocVersion: protoutil.ProtocVersion(gen),
 			IsDeprecated:  false,
 			Source:        strings.Join(source, ","),
-			Package:       *_package,
+			Package:       args.Package,
 			Enums:         mergeEnums,
 		}
 		return mergeFile.execute(usedTemplate, g)

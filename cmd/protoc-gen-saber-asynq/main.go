@@ -7,13 +7,17 @@ import (
 	"google.golang.org/protobuf/compiler/protogen"
 )
 
-const version = "v0.1.0"
+var args = &Args{
+	ShowVersion: false,
+}
 
-var showVersion = flag.Bool("version", false, "print the version and exit")
+func init() {
+	flag.BoolVar(&args.ShowVersion, "version", false, "print the version and exit")
+}
 
 func main() {
 	flag.Parse()
-	if *showVersion {
+	if args.ShowVersion {
 		fmt.Printf("protoc-gen-saber-asynq %v\n", version)
 		return
 	}

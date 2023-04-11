@@ -7,21 +7,31 @@ import (
 	"google.golang.org/protobuf/compiler/protogen"
 )
 
-const version = "v0.0.3"
+var args = &Args{
+	ShowVersion:      false,
+	DisableOrComment: false,
+	CustomTemplate:   "",
+	Suffix:           "",
+	Merge:            false,
+	Filename:         "",
+	Package:          "",
+	GoPackage:        "",
+}
 
-var showVersion = flag.Bool("version", false, "print the version and exit")
-var disableOrComment = flag.Bool("disable_or_comment", false, "disable use comment if mapping value not exist. just use empty string ")
-var customTemplate = flag.String("template", "", "use custom template")
-var suffix = flag.String("suffix", ".mapping.pb.go", "use custom file suffix")
+func init() {
+	flag.BoolVar(&args.ShowVersion, "version", false, "print the version and exit")
+	flag.BoolVar(&args.DisableOrComment, "disable_or_comment", false, "disable use comment if mapping value not exist. just use empty string ")
+	flag.StringVar(&args.CustomTemplate, "template", "", "use custom template")
+	flag.StringVar(&args.Suffix, "suffix", ".mapping.pb.go", "use custom file suffix")
 
-var merge = flag.Bool("merge", false, "merge in a file")
-var filename = flag.String("filename", "", "filename when merge enabled")
-var _package = flag.String("package", "", "package name when merge enabled")
-var goPackage = flag.String("go_package", "", "go package when merge enabled")
-
+	flag.BoolVar(&args.Merge, "merge", false, "merge in a file")
+	flag.StringVar(&args.Filename, "filename", "", "filename when merge enabled")
+	flag.StringVar(&args.Package, "package", "", "package name when merge enabled")
+	flag.StringVar(&args.GoPackage, "go_package", "", "go package when merge enabled")
+}
 func main() {
 	flag.Parse()
-	if *showVersion {
+	if args.ShowVersion {
 		fmt.Printf("protoc-gen-saber-enum %v\n", version)
 		return
 	}
