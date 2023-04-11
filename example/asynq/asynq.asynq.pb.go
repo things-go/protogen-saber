@@ -95,11 +95,7 @@ func (c *UserTaskClientImpl) CreateUser(ctx context.Context, in *CreateUserPaylo
 		return nil, err
 	}
 	task := asynq.NewTask(Pattern_User_CreateUser, payload, opts...)
-	taskInfo, err := c.cc.Enqueue(task)
-	if err != nil {
-		return nil, err
-	}
-	return taskInfo, nil
+	return c.cc.Enqueue(task)
 }
 
 // UpdateUser 异步更新用户
@@ -109,9 +105,5 @@ func (c *UserTaskClientImpl) UpdateUser(ctx context.Context, in *UpdateUserPaylo
 		return nil, err
 	}
 	task := asynq.NewTask(Pattern_User_UpdateUser, payload, opts...)
-	taskInfo, err := c.cc.Enqueue(task)
-	if err != nil {
-		return nil, err
-	}
-	return taskInfo, nil
+	return c.cc.Enqueue(task)
 }

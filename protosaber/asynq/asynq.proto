@@ -14,5 +14,4 @@ extend google.protobuf.MethodOptions {
 
 message Task {
   string pattern = 1;
-  bool scheduler = 2;
 }

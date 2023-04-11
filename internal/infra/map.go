@@ -26,7 +26,6 @@ func ToArray(values map[int]string) string {
 		b.WriteString(strconv.Itoa(k))
 		b.WriteString(":")
 		b.WriteString(values[k])
-
 	}
 	b.WriteString("]")
 	return b.String()

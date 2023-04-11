@@ -109,11 +109,7 @@ func execute(g *protogen.GeneratedFile, s *serviceDesc) error {
 			g.P("return nil, err")
 			g.P("}")
 			g.P("task := ", g.QualifiedGoIdent(asynqPackage.Ident("NewTask")), "(", patternConstant(s.ServiceType, m.Name), ", payload, opts...)")
-			g.P("taskInfo, err := c.cc.Enqueue(task)")
-			g.P("if err != nil {")
-			g.P("return nil, err")
-			g.P("}")
-			g.P("return taskInfo, nil")
+			g.P("return c.cc.Enqueue(task)")
 			g.P("}")
 			g.P()
 		}
