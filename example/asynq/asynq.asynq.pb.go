@@ -108,3 +108,17 @@ func (c *UserTaskClientImpl) UpdateUser(ctx context.Context, in *UpdateUserPaylo
 	task := asynq.NewTask(Pattern_User_UpdateUser, payload, opts...)
 	return c.cc.Enqueue(task)
 }
+
+func RegisterSchedulerUpdateUser(scheduler *asynq.Scheduler, in *UpdateUserPayload, settings *asynq_auxiliary.ClientSettings, opts ...asynq.Option) (entryId string, err error) {
+	var payload []byte
+
+	if settings.MarshalBinary != nil {
+		payload, err = settings.MarshalBinary(in)
+	} else {
+		payload, err = proto.Marshal(in)
+	}
+	if err != nil {
+		return "", err
+	}
+	return scheduler.Register(CronSpec_User_UpdateUser, asynq.NewTask(Pattern_User_UpdateUser, payload, opts...))
+}

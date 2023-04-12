@@ -7,6 +7,7 @@ import (
 )
 
 func execute(g *protogen.GeneratedFile, s *serviceDesc) error {
+	schedulerMethods := make([]*methodDesc, 0, len(s.Methods))
 	// pattern constants
 	for _, m := range s.Methods {
 		if m.Pattern == "" {
@@ -15,6 +16,7 @@ func execute(g *protogen.GeneratedFile, s *serviceDesc) error {
 		g.P("const ", patternConstant(s.ServiceType, m.Name), ` = "`, m.Pattern, `"`)
 		if m.CronSpec != "" {
 			g.P("const ", cronSpecConstant(s.ServiceType, m.Name), ` = "`, m.CronSpec, `"`)
+			schedulerMethods = append(schedulerMethods, m)
 		}
 	}
 	g.P()
@@ -101,6 +103,32 @@ func execute(g *protogen.GeneratedFile, s *serviceDesc) error {
 			g.P("}")
 			g.P("task := ", g.QualifiedGoIdent(asynqPackage.Ident("NewTask")), "(", patternConstant(s.ServiceType, m.Name), ", payload, opts...)")
 			g.P("return c.cc.Enqueue(task)")
+			g.P("}")
+			g.P()
+		}
+	}
+	if len(schedulerMethods) > 0 {
+		for _, m := range schedulerMethods {
+			// _, err = scheduler.Register(
+			// 	mq_bank.CronSpec_Bank_BankTransferQueryScheduler,
+			// 	asynq.NewTask(mq_bank.Pattern_Bank_BankTransferQueryScheduler, emptyData),
+			// )
+			g.P("func RegisterScheduler", m.Name,
+				"(scheduler *", g.QualifiedGoIdent(asynqPackage.Ident("Scheduler")),
+				", in *", m.Request,
+				", settings *", g.QualifiedGoIdent(asynqAuxiliaryPackage.Ident("ClientSettings")),
+				", opts ..."+g.QualifiedGoIdent(asynqPackage.Ident("Option")), ") (entryId string, err error) {")
+			g.P("var payload []byte")
+			g.P()
+			g.P("if settings.MarshalBinary != nil {")
+			g.P("payload, err = settings.MarshalBinary(in)")
+			g.P("} else {")
+			g.P("payload, err = ", g.QualifiedGoIdent(protoPackage.Ident("Marshal")), "(in)")
+			g.P("}")
+			g.P("if err != nil {")
+			g.P("return \"\", err")
+			g.P("}")
+			g.P("return scheduler.Register(", cronSpecConstant(s.ServiceType, m.Name), ", ", g.QualifiedGoIdent(asynqPackage.Ident("NewTask")), "(", patternConstant(s.ServiceType, m.Name), ", payload, opts...))")
 			g.P("}")
 			g.P()
 		}
