@@ -25,6 +25,7 @@ var _ = proto.Reset
 
 const Pattern_User_CreateUser = "user:create"
 const Pattern_User_UpdateUser = "user:update"
+const CronSpec_User_UpdateUser = "@every 120s"
 
 type UserTaskHandler interface {
 	// CreateUser 异步创建用户

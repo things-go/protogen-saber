@@ -102,11 +102,10 @@ func genService(gen *protogen.Plugin, file *protogen.File, g *protogen.Generated
 	if len(sd.Methods) == 0 {
 		return
 	}
-	// err := sd.execute(g)
 	err := execute(g, sd)
 	if err != nil {
 		_, _ = fmt.Fprintf(os.Stderr,
-			"\u001B[31mWARN\u001B[m: execute template failed.\n")
+			"\u001B[31mWARN\u001B[m: generate failed. %v\n", err)
 	}
 }
 
@@ -126,10 +125,10 @@ func hasHTTPRule(services []*protogen.Service) bool {
 }
 
 func buildAsynqRule(g *protogen.GeneratedFile, m *protogen.Method, rule *asynq.Task) *methodDesc {
-	return buildMethodDesc(g, m, rule.Pattern)
+	return buildMethodDesc(g, m, rule)
 }
 
-func buildMethodDesc(g *protogen.GeneratedFile, m *protogen.Method, pattern string) *methodDesc {
+func buildMethodDesc(g *protogen.GeneratedFile, m *protogen.Method, rule *asynq.Task) *methodDesc {
 	defer func() { methodSets[m.GoName]++ }()
 	comment := m.Comments.Leading.String() + m.Comments.Trailing.String()
 	if comment != "" {
@@ -138,11 +137,12 @@ func buildMethodDesc(g *protogen.GeneratedFile, m *protogen.Method, pattern stri
 		comment = "// " + m.GoName
 	}
 	return &methodDesc{
-		Name:    m.GoName,
-		Num:     methodSets[m.GoName],
-		Request: g.QualifiedGoIdent(m.Input.GoIdent),
-		Reply:   g.QualifiedGoIdent(m.Output.GoIdent),
-		Comment: comment,
-		Pattern: pattern,
+		Name:     m.GoName,
+		Num:      methodSets[m.GoName],
+		Request:  g.QualifiedGoIdent(m.Input.GoIdent),
+		Reply:    g.QualifiedGoIdent(m.Output.GoIdent),
+		Comment:  comment,
+		Pattern:  rule.Pattern,
+		CronSpec: rule.CronSpec,
 	}
 }

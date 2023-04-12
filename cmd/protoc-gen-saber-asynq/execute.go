@@ -1,13 +1,21 @@
 package main
 
 import (
+	"fmt"
+
 	"google.golang.org/protobuf/compiler/protogen"
 )
 
 func execute(g *protogen.GeneratedFile, s *serviceDesc) error {
 	// pattern constants
 	for _, m := range s.Methods {
+		if m.Pattern == "" {
+			return fmt.Errorf("service %s(%s) pattern should be not empty", s.ServiceType, m.Name)
+		}
 		g.P("const ", patternConstant(s.ServiceType, m.Name), ` = "`, m.Pattern, `"`)
+		if m.CronSpec != "" {
+			g.P("const ", cronSpecConstant(s.ServiceType, m.Name), ` = "`, m.CronSpec, `"`)
+		}
 	}
 	g.P()
 
@@ -103,6 +111,10 @@ func execute(g *protogen.GeneratedFile, s *serviceDesc) error {
 
 func patternConstant(serviceType, name string) string {
 	return "Pattern_" + serviceType + "_" + name
+}
+
+func cronSpecConstant(serviceType, name string) string {
+	return "CronSpec_" + serviceType + "_" + name
 }
 
 func serverInterfaceName(serviceType string) string {

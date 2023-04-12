@@ -21,5 +21,6 @@ type methodDesc struct {
 	Reply   string // 回复结构
 	Comment string // 方法注释
 	// asynq rule
-	Pattern string // 匹配器
+	Pattern  string // 匹配器
+	CronSpec string // cron specification
 }

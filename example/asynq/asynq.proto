@@ -20,7 +20,8 @@ service User {
   // 异步更新用户
   rpc UpdateUser(UpdateUserPayload) returns (google.protobuf.Empty) {
     option (things_go.asynq.task) = {
-      pattern: "user:update"
+      pattern: "user:update",
+      cron_spec: "@every 120s"
     };
   };
 }
