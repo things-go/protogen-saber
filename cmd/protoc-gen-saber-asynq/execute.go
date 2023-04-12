@@ -109,14 +109,10 @@ func execute(g *protogen.GeneratedFile, s *serviceDesc) error {
 	}
 	if len(schedulerMethods) > 0 {
 		for _, m := range schedulerMethods {
-			// _, err = scheduler.Register(
-			// 	mq_bank.CronSpec_Bank_BankTransferQueryScheduler,
-			// 	asynq.NewTask(mq_bank.Pattern_Bank_BankTransferQueryScheduler, emptyData),
-			// )
-			g.P("func RegisterScheduler", m.Name,
+			g.P("func Register", s.ServiceType, "Scheduler_", m.Name,
 				"(scheduler *", g.QualifiedGoIdent(asynqPackage.Ident("Scheduler")),
-				", in *", m.Request,
 				", settings *", g.QualifiedGoIdent(asynqAuxiliaryPackage.Ident("ClientSettings")),
+				", in *", m.Request,
 				", opts ..."+g.QualifiedGoIdent(asynqPackage.Ident("Option")), ") (entryId string, err error) {")
 			g.P("var payload []byte")
 			g.P()
