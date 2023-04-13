@@ -109,7 +109,7 @@ func (c *UserTaskClientImpl) UpdateUser(ctx context.Context, in *UpdateUserPaylo
 	return c.cc.Enqueue(task)
 }
 
-func RegisterUserScheduler_UpdateUser(scheduler *asynq.Scheduler, settings *asynq_auxiliary.ClientSettings, in *UpdateUserPayload, opts ...asynq.Option) (entryId string, err error) {
+func RegisterScheduler_User_UpdateUser(scheduler *asynq.Scheduler, settings *asynq_auxiliary.ClientSettings, in *UpdateUserPayload, opts ...asynq.Option) (entryId string, err error) {
 	var payload []byte
 
 	if settings.MarshalBinary != nil {
