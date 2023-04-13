@@ -109,7 +109,7 @@ func execute(g *protogen.GeneratedFile, s *serviceDesc) error {
 	}
 	if len(schedulerMethods) > 0 {
 		for _, m := range schedulerMethods {
-			g.P("func Register", s.ServiceType, "Scheduler_", m.Name,
+			g.P("func RegisterScheduler_", s.ServiceType, "_", m.Name,
 				"(scheduler *", g.QualifiedGoIdent(asynqPackage.Ident("Scheduler")),
 				", settings *", g.QualifiedGoIdent(asynqAuxiliaryPackage.Ident("ClientSettings")),
 				", in *", m.Request,
