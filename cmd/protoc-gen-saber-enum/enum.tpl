@@ -29,10 +29,16 @@ var (
 	{{- end}}
 	}
 )
-// Get{{$enumName}}Desc get mapping description
-// {{$e.Comment}}
-func Get{{$enumName}}Desc(t {{$enumName}}) string {
+
+// MappingDescriptor mapping description.
+func (t {{$enumName}}) MappingDescriptor() string {
 	return __{{$enumName}}Mapping_Desc[t]
+}
+
+// Get{{$enumName}}Desc mapping description.
+// Deprecated: Use {{$enumName}}.MappingDescriptor instead.
+func Get{{$enumName}}Desc(t {{$enumName}}) string {
+	return t.MappingDescriptor()
 }
 // Get{{$enumName}}Value get mapping value
 // {{$e.Comment}}
