@@ -31,6 +31,7 @@ var (
 )
 
 // MappingDescriptor mapping description.
+// {{$e.Comment}}
 func (t {{$enumName}}) MappingDescriptor() string {
 	return __{{$enumName}}Mapping_Desc[t]
 }
