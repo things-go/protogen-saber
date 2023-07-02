@@ -26,7 +26,8 @@ jobs:
         uses: actions/setup-go@v4
         with:
           go-version: ${{ matrix.go-version }}
-
+          cache: false
+          
       - name: Check out code into the Go module directory
         uses: actions/checkout@v3
 
