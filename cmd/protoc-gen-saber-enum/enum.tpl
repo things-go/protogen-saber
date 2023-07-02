@@ -10,6 +10,10 @@
 
 package {{.Package}}
 
+import (
+	"strconv"
+)
+
 {{- range $e := .Enums}}
 {{$enumName := $e.Name}}
 {{if $e.MessageName}}
@@ -30,16 +34,26 @@ var (
 	}
 )
 
+// IntoNumber returns the enum value as an integer.
+func (x {{$enumName}}) IntoNumber() int32 {
+	return int32(x)
+}
+
+// IntoNumberString returns the enum value as an integer string.
+func (x {{$enumName}}) IntoNumberString() string {
+	return strconv.FormatInt(int64(x), 10)
+}
+
 // MappingDescriptor mapping description.
 // {{$e.Comment}}
-func (t {{$enumName}}) MappingDescriptor() string {
-	return __{{$enumName}}Mapping_Desc[t]
+func (x {{$enumName}}) MappingDescriptor() string {
+	return __{{$enumName}}Mapping_Desc[x]
 }
 
 // Get{{$enumName}}Desc mapping description.
 // Deprecated: Use {{$enumName}}.MappingDescriptor instead.
-func Get{{$enumName}}Desc(t {{$enumName}}) string {
-	return t.MappingDescriptor()
+func Get{{$enumName}}Desc(x {{$enumName}}) string {
+	return x.MappingDescriptor()
 }
 // Get{{$enumName}}Value get mapping value
 // {{$e.Comment}}

@@ -1,6 +1,6 @@
 package main
 
-const version = "v0.0.4"
+const version = "v0.0.5"
 
 // Args flag 参数
 type Args struct {

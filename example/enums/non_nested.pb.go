@@ -21,7 +21,7 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// Foo 状态值
+// NonNestedStatus 状态值
 type NonNestedStatus int32
 
 const (

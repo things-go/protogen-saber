@@ -9,7 +9,7 @@ option java_outer_classname = "Enums";
 
 import "enumerate/enumerate.proto";
 
-// Foo 状态值
+// NonNestedStatus 状态值
 enum NonNestedStatus {
   option (things_go.enumerate.enabled) = true;
 
