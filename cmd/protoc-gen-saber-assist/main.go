@@ -9,6 +9,7 @@ import (
 
 var args = &Args{
 	ShowVersion:      false,
+	TrimPrefix:       false,
 	DisableOrComment: false,
 	Package:          "",
 	ModelSource:      "",
@@ -16,6 +17,7 @@ var args = &Args{
 
 func init() {
 	flag.BoolVar(&args.ShowVersion, "version", false, "print the version and exit")
+	flag.BoolVar(&args.TrimPrefix, "trim_prefix", false, "trim filename prefix")
 	flag.BoolVar(&args.DisableOrComment, "disable_or_comment", false, "disable use comment if mapping value not exist. just use empty string ")
 	flag.StringVar(&args.Package, "package", "", "override default package name")
 	flag.StringVar(&args.ModelSource, "model_source", "", "model package")

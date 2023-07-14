@@ -31,6 +31,9 @@ func runProtoGen(gen *protogen.Plugin) error {
 		}
 
 		dir := filepath.Dir(f.GeneratedFilenamePrefix)
+		if args.TrimPrefix {
+			dir = ""
+		}
 		for _, tb := range tables {
 			filename := filepath.Join(dir, tb.Name) + ".assist.go"
 			g := gen.NewGeneratedFile(filename, f.GoImportPath)
