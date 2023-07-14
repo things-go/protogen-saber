@@ -12,7 +12,7 @@ var args = &Args{
 	TrimPrefix:       false,
 	DisableOrComment: false,
 	Package:          "",
-	ModelSource:      "",
+	ModelPackage:     "",
 }
 
 func init() {
@@ -20,7 +20,7 @@ func init() {
 	flag.BoolVar(&args.TrimPrefix, "trim_prefix", false, "trim filename prefix")
 	flag.BoolVar(&args.DisableOrComment, "disable_or_comment", false, "disable use comment if mapping value not exist. just use empty string ")
 	flag.StringVar(&args.Package, "package", "", "override default package name")
-	flag.StringVar(&args.ModelSource, "model_source", "", "model package")
+	flag.StringVar(&args.ModelPackage, "model_package", "", "model package")
 }
 
 func main() {
