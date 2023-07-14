@@ -6,6 +6,12 @@ import (
 	"google.golang.org/protobuf/compiler/protogen"
 )
 
+// Source proto file source
+type Source struct {
+	Path         string
+	IsDeprecated bool
+}
+
 func ProtocVersion(gen *protogen.Plugin) string {
 	v := gen.Request.GetCompilerVersion()
 	if v == nil {

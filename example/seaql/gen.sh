@@ -27,3 +27,11 @@ protoc \
     --saber-seaql_opt paths=source_relative \
     --saber-seaql_opt merge=true \
     seaql.proto
+
+# protoc \
+#     -I ${proto_dir} \
+#     -I ${third_party_dir} \
+#     -I ${project_dir}/protosaber \
+#     --saber-assist_out ${out_dir} \
+#     --saber-assist_opt paths=source_relative \
+#     seaql.proto
