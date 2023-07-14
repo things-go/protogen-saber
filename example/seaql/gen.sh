@@ -32,6 +32,17 @@ protoc \
 #     -I ${proto_dir} \
 #     -I ${third_party_dir} \
 #     -I ${project_dir}/protosaber \
-#     --saber-assist_out ${out_dir} \
+#     --saber-model_out ${out_dir}/model \
+#     --saber-model_opt paths=source_relative \
+#     --saber-model_opt package=model \
+#     seaql.proto
+
+# protoc \
+#     -I ${proto_dir} \
+#     -I ${third_party_dir} \
+#     -I ${project_dir}/protosaber \
+#     --saber-assist_out ${out_dir}/repo \
 #     --saber-assist_opt paths=source_relative \
+#     --saber-assist_opt package=model \
+#     --saber-assist_opt model_source=github.com/proa/model \
 #     seaql.proto
