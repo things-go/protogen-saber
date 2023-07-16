@@ -49,8 +49,7 @@ func runProtoGen(gen *protogen.Plugin) error {
 				continue
 			}
 			d := mysqlDriver.SQL{
-				CreateTableSQL:    buf.String(),
-				DisableCommentTag: false,
+				CreateTableSQL: buf.String(),
 			}
 			schmaer, err := d.GetSchema()
 			if err != nil {

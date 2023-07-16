@@ -49,8 +49,7 @@ func runProtoGen(gen *protogen.Plugin) error {
 				continue
 			}
 			d := mysqlDriver.SQL{
-				CreateTableSQL:    buf.String(),
-				DisableCommentTag: false,
+				CreateTableSQL: buf.String(),
 			}
 			schmaer, err := d.GetSchema()
 			if err != nil {
@@ -77,7 +76,7 @@ func runProtoGen(gen *protogen.Plugin) error {
 					codegen.WithPackageName(packageName),
 					codegen.WithDisableDocComment(true),
 				).
-				GenAssist(args.ModelPackage)
+				GenAssist(args.ModelImportPath)
 			data, err := gen.FormatSource()
 			if err != nil {
 				_, _ = fmt.Fprintf(os.Stderr, "\u001B[31mERROR, format %s source, \u001B[m: %v\n", filename, err)
