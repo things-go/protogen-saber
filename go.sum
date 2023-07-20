@@ -55,8 +55,8 @@ github.com/spf13/cast v1.5.0/go.mod h1:SpXXQ5YoyJw6s3/6cMTQuxvgRl3PCJiyaX9p6b155
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/testify v1.2.2/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXfy6kDkUVs=
 github.com/stretchr/testify v1.7.0/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
-github.com/things-go/ens v0.0.0-20230720023628-aa2031ebd3a7 h1:IiLye+hNyhtPC4FIbME2GjpE+tHY4dqm/guUBZ6woP4=
-github.com/things-go/ens v0.0.0-20230720023628-aa2031ebd3a7/go.mod h1:VPWkf2YcSXeP0wK0EMQueTAgxmrYcIE98cN5HI+73qo=
+github.com/things-go/ens v0.0.0-20230720031128-45881efbfb54 h1:wgiM8dRE6VMZbUCT/8nLVrv6aAF9dD6Vf3C+sABxTLo=
+github.com/things-go/ens v0.0.0-20230720031128-45881efbfb54/go.mod h1:VPWkf2YcSXeP0wK0EMQueTAgxmrYcIE98cN5HI+73qo=
 github.com/xwb1989/sqlparser v0.0.0-20180606152119-120387863bf2 h1:zzrxE1FKn5ryBNl9eKOeqQ58Y/Qpo3Q9QNxKHX5uzzQ=
 github.com/xwb1989/sqlparser v0.0.0-20180606152119-120387863bf2/go.mod h1:hzfGeIUDq/j97IG+FhNqkowIyEcD88LrW6fyU3K3WqY=
 github.com/yuin/goldmark v1.3.5/go.mod h1:mwnBkeHKe2W/ZEtQ+71ViKU8L12m81fl3OWwC1Zlc8k=
