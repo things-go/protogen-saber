@@ -1,10 +1,10 @@
 package main
 
-const version = "v0.1.0"
+const version = "v0.2.0"
 
 // Args flag参数
 type Args struct {
-	ShowVersion bool
+	ShowVersion bool // 显示版本
 }
 
 type serviceDesc struct {

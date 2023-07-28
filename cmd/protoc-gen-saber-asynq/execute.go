@@ -33,10 +33,7 @@ func execute(g *protogen.GeneratedFile, s *serviceDesc) error {
 		g.P()
 		// server factory
 		g.P("func Register", s.ServiceType, "TaskHandler(mux *", g.QualifiedGoIdent(asynqPackage.Ident("ServeMux")), ", srv ", serverInterfaceName(s.ServiceType), ", opts ...", g.QualifiedGoIdent(asynqAuxiliaryPackage.Ident("HandlerOption")), ") {")
-		g.P("settings :=", g.QualifiedGoIdent(asynqAuxiliaryPackage.Ident("NewHandlerSettings()")))
-		g.P("for _, opt := range opts {")
-		g.P("opt(settings)")
-		g.P("}")
+		g.P("settings :=", g.QualifiedGoIdent(asynqAuxiliaryPackage.Ident("NewHandlerSettings(opts...)")))
 		for _, m := range s.Methods {
 			g.P("mux.HandleFunc(", patternConstant(s.ServiceType, m.Name), ", ", serviceHandlerMethodName(s.ServiceType, m.Name), "(srv, settings))")
 		}
@@ -50,7 +47,7 @@ func execute(g *protogen.GeneratedFile, s *serviceDesc) error {
 				g.P("return ", asynqHandler(g, false), " {")
 				g.P("var in ", m.Request)
 				g.P()
-				g.P("if err := settings.UnmarshalBinary(task.Payload(), &in); err != nil {")
+				g.P("if err := settings.Unmarshaler.UnmarshalBinary(task.Payload(), &in); err != nil {")
 				g.P("return err")
 				g.P("}")
 				g.P("return srv.", m.Name, "(ctx, &in)")
@@ -79,13 +76,10 @@ func execute(g *protogen.GeneratedFile, s *serviceDesc) error {
 		g.P("}")
 		g.P()
 		// client factory
-		g.P("// ", clientFactoryMethodName(s.ServiceType), " new client. use default proto.Marhsal.")
+		g.P("// ", clientFactoryMethodName(s.ServiceType), " new client.")
 		g.P("func ", clientFactoryMethodName(s.ServiceType), " (client *", g.QualifiedGoIdent(asynqPackage.Ident("Client")), ", opts ...", g.QualifiedGoIdent(asynqAuxiliaryPackage.Ident("ClientOption")), ") ", clientInterfaceName(s.ServiceType), " {")
 		{ // closure
-			g.P("settings := ", g.QualifiedGoIdent(asynqAuxiliaryPackage.Ident("NewClientSettings()")))
-			g.P("for _, opt := range opts {")
-			g.P("opt(settings)")
-			g.P("}")
+			g.P("settings := ", g.QualifiedGoIdent(asynqAuxiliaryPackage.Ident("NewClientSettings(opts...)")))
 			g.P("return &", clientImplStructName(s.ServiceType), " {")
 			g.P("cc: client,")
 			g.P("settings: settings,")
@@ -97,7 +91,7 @@ func execute(g *protogen.GeneratedFile, s *serviceDesc) error {
 		for _, m := range s.Methods {
 			g.P(m.Comment)
 			g.P("func (c *", clientImplStructName(s.ServiceType), ")", clientMethodDefinition(g, m, false), " {")
-			g.P("payload, err := c.settings.MarshalBinary(in)")
+			g.P("payload, err := c.settings.Marshaler.MarshalBinary(in)")
 			g.P("if err != nil {")
 			g.P("return nil, err")
 			g.P("}")
@@ -114,13 +108,10 @@ func execute(g *protogen.GeneratedFile, s *serviceDesc) error {
 				", settings *", g.QualifiedGoIdent(asynqAuxiliaryPackage.Ident("ClientSettings")),
 				", in *", m.Request,
 				", opts ..."+g.QualifiedGoIdent(asynqPackage.Ident("Option")), ") (entryId string, err error) {")
-			g.P("var payload []byte")
-			g.P()
-			g.P("if settings.MarshalBinary != nil {")
-			g.P("payload, err = settings.MarshalBinary(in)")
-			g.P("} else {")
-			g.P("payload, err = ", g.QualifiedGoIdent(protoPackage.Ident("Marshal")), "(in)")
+			g.P("if settings == nil {")
+			g.P("settings = ", g.QualifiedGoIdent(asynqAuxiliaryPackage.Ident("NewClientSettings()")))
 			g.P("}")
+			g.P("payload, err := settings.Marshaler.MarshalBinary(in)")
 			g.P("if err != nil {")
 			g.P("return \"\", err")
 			g.P("}")
@@ -186,3 +177,17 @@ func asynqHandler(g *protogen.GeneratedFile, isDeclaration bool) string {
 	return "func(" + ctxParam + " " + g.QualifiedGoIdent(contextPackage.Ident("Context")) + ", " +
 		taskParam + " *" + g.QualifiedGoIdent(asynqPackage.Ident("Task")) + ") error"
 }
+
+// func defaultHandlerUnmarshalBinary(g *protogen.GeneratedFile) string {
+// 	var f string
+// 	switch args.Serialize {
+// 	case "json":
+// 		f = g.QualifiedGoIdent(jsonPackage.Ident("Unmarshal"))
+// 	case "protobuf":
+// 		fallthrough
+// 	default:
+// 		f = "func(b []byte, v any) error { return " + g.QualifiedGoIdent(jsonPackage.Ident("Unmarshal")) + "(b, v.(proto.Message)) }"
+// 	}
+// 	return g.QualifiedGoIdent(asynqAuxiliaryPackage.Ident("WithHandlerUnmarshalBinary")) +
+// 		"(" + f + ")"
+// }

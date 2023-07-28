@@ -1,40 +1,43 @@
 package asynq_auxiliary
 
-import (
-	"encoding/json"
-
-	"google.golang.org/protobuf/proto"
-)
-
 // ClientSettings 客户端配置
 type ClientSettings struct {
-	MarshalBinary func(any) ([]byte, error)
+	Marshaler BinaryMarshaler
 }
 
 // ClientOption 客户端选项
 type ClientOption func(*ClientSettings)
 
-// NewClientSettings 新建配置, 默认使用 proto.Marshal
-func NewClientSettings() *ClientSettings {
-	return &ClientSettings{
-		MarshalBinary: func(v any) ([]byte, error) {
-			return proto.Marshal(v.(proto.Message))
-		},
+// NewClientSettings 新建配置, 默认使用 json.Marshal
+func NewClientSettings(opts ...ClientOption) *ClientSettings {
+	cs := &ClientSettings{
+		Marshaler: BinaryProtobuf,
 	}
+	for _, opt := range opts {
+		opt(cs)
+	}
+	return cs
 }
 
-// WithClientMarshalBinary 使用指定序列化
-func WithClientMarshalBinary(f func(any) ([]byte, error)) ClientOption {
+// WithClientMarshaler 使用指定序列化
+func WithClientMarshaler(marshaler BinaryMarshaler) ClientOption {
 	return func(cs *ClientSettings) {
-		if f != nil {
-			cs.MarshalBinary = f
+		if marshaler != nil {
+			cs.Marshaler = marshaler
 		}
 	}
 }
 
-// WithClientJsonMarshalBinary 使用 json.Marshal
-func WithClientJsonMarshalBinary() ClientOption {
+// WithClientMarshalerJSON 使用 json.Marshal Marshaler
+func WithClientMarshalerJSON() ClientOption {
 	return func(cs *ClientSettings) {
-		cs.MarshalBinary = json.Marshal
+		cs.Marshaler = BinaryJSON
+	}
+}
+
+// WithClientMarshalerProtobuf 使用 proto.Marshal Marshaler
+func WithClientMarshalerProtobuf() ClientOption {
+	return func(cs *ClientSettings) {
+		cs.Marshaler = BinaryProtobuf
 	}
 }

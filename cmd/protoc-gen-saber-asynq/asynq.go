@@ -20,8 +20,9 @@ var (
 	contextPackage        = protogen.GoImportPath("context")
 	asynqPackage          = protogen.GoImportPath("github.com/hibiken/asynq")
 	emptyPackage          = protogen.GoImportPath("google.golang.org/protobuf/types/known/emptypb")
-	protoPackage          = protogen.GoImportPath("google.golang.org/protobuf/proto")
 	asynqAuxiliaryPackage = protogen.GoImportPath("github.com/things-go/protogen-saber/core/asynq_auxiliary")
+	// protoPackage          = protogen.GoImportPath("google.golang.org/protobuf/proto")
+	// jsonPackage           = protogen.GoImportPath("encoding/json")
 )
 
 var methodSets = make(map[string]int)
@@ -71,7 +72,6 @@ func generateFileContent(gen *protogen.Plugin, file *protogen.File, g *protogen.
 	g.P("var _ = ", contextPackage.Ident("TODO"))
 	g.P("var _ = ", asynqPackage.Ident("NewServeMux"))
 	g.P("var _ = new(", emptyPackage.Ident("Empty"), ")")
-	g.P("var _ = ", protoPackage.Ident("Reset"))
 	g.P()
 
 	for _, service := range file.Services {
