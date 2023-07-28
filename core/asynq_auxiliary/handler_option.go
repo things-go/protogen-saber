@@ -28,15 +28,15 @@ func WithHandlerUnmarshaler(unmarshaler BinaryUnmarshaler) HandlerOption {
 	}
 }
 
-// WithClientUnmarshalerJSON 使用 json.Unmarshal Unmarshaler
-func WithClientUnmarshalerJSON() HandlerOption {
+// WithHandlerUnmarshalerJSON 使用 json.Unmarshal Unmarshaler
+func WithHandlerUnmarshalerJSON() HandlerOption {
 	return func(hs *HandlerSettings) {
 		hs.Unmarshaler = BinaryJSON
 	}
 }
 
-// WithClientUnmarshalerProtobuf 使用 proto.Unmarshal Unmarshaler
-func WithClientUnmarshalerProtobuf() HandlerOption {
+// WithHandlerUnmarshalerProtobuf 使用 proto.Unmarshal Unmarshaler
+func WithHandlerUnmarshalerProtobuf() HandlerOption {
 	return func(hs *HandlerSettings) {
 		hs.Unmarshaler = BinaryProtobuf
 	}
