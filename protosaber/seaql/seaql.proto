@@ -9,28 +9,28 @@ option java_package = "cn.things-go.seaql";
 import "google/protobuf/descriptor.proto";
 
 extend google.protobuf.MessageOptions {
-    Options options = 95272001;
+  Options options = 95272001;
 }
 
 message Options {
-    // 表名
-    string table_name  =1;
-    // 引擎
-    string engine = 2;
-    // 字符集
-    string charset = 3;
-    // 排序规则
-    string  collate  = 4;
-    // 索引
-    repeated string index = 10;
+  // 表名
+  string table_name = 1;
+  // 引擎
+  string engine = 2;
+  // 字符集
+  string charset = 3;
+  // 排序规则
+  string collate = 4;
+  // 索引
+  repeated string index = 10;
+  repeated string foreign_key = 11;
 }
-
 
 // Field level specifications
 extend google.protobuf.FieldOptions {
-    Field field = 95272101;
+  Field field = 95272101;
 }
 
 message Field {
-    string type = 1;
+  string type = 1;
 }
