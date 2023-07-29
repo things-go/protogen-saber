@@ -13,13 +13,13 @@ import (
 )
 
 type Schema struct {
-	Tables []Table
+	Tables []Table // 表
 }
 
 type Column struct {
-	Name    string
-	Type    string
-	Comment string
+	Name    string // 列名
+	Type    string // sql 定义
+	Comment string // 注释
 }
 
 type Table struct {
@@ -38,19 +38,18 @@ func Execute(w io.Writer, data *Schema) error {
 		fmt.Fprintf(w, "-- %s\n", tb.Comment)
 		fmt.Fprintf(w, "CREATE TABLE \n")
 		fmt.Fprintf(w, "\t`%s` (\n", tb.Name)
-		colLen := len(tb.Columns)
 		extLen := len(tb.Indexes) + len(tb.ForeignKeys)
 		for idx, col := range tb.Columns {
-			suffix := ""
-			if idx != colLen-1 || (idx == colLen-1 && extLen > 0) {
-				suffix = ","
+			suffix := ","
+			if len(tb.Columns) == idx+1 && extLen == 0 {
+				suffix = ""
 			}
 			fmt.Fprintf(w, "\t\t`%s` %s COMMENT '%s'%s\n", col.Name, col.Type, col.Comment, suffix)
 		}
 		for idx, val := range append(tb.Indexes, tb.ForeignKeys...) {
-			suffix := ""
-			if idx != extLen-1 {
-				suffix = ","
+			suffix := ","
+			if idx == extLen-1 {
+				suffix = ""
 			}
 			fmt.Fprintf(w, "\t\t%s%s\n", val, suffix)
 		}
