@@ -6,7 +6,6 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-
 var BinaryProtobuf = Protobuf{}
 var BinaryJSON = JSON{}
 
