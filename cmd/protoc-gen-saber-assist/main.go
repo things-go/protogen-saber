@@ -13,6 +13,7 @@ var args = &Args{
 	DisableOrComment: false,
 	Package:          "",
 	ModelImportPath:  "",
+	Schema:           "file+mysql",
 }
 
 func init() {
@@ -21,6 +22,7 @@ func init() {
 	flag.BoolVar(&args.DisableOrComment, "disable_or_comment", false, "disable use comment if mapping value not exist. just use empty string ")
 	flag.StringVar(&args.Package, "package", "", "override default package name")
 	flag.StringVar(&args.ModelImportPath, "model_import_path", "", "model import path")
+	flag.StringVar(&args.Schema, "schema", "file+mysql", "ens driver, [file+mysql, file+tidy]")
 }
 
 func main() {

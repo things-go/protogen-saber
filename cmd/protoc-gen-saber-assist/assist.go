@@ -7,18 +7,25 @@ import (
 	"path/filepath"
 	"strings"
 
+	"ariga.io/atlas/sql/schema"
 	"github.com/things-go/ens"
 	"github.com/things-go/ens/codegen"
-	mysqlDriver "github.com/things-go/ens/driver/mysql"
+	"github.com/things-go/ens/driver"
 	"github.com/things-go/protogen-saber/internal/protoseaql"
 	"github.com/things-go/protogen-saber/internal/protoutil"
 	"google.golang.org/protobuf/compiler/protogen"
 	"google.golang.org/protobuf/types/pluginpb"
+
+	_ "github.com/things-go/ens/driver/mysql"
 )
 
 func runProtoGen(gen *protogen.Plugin) error {
 	gen.SupportedFeatures = uint64(pluginpb.CodeGeneratorResponse_FEATURE_PROTO3_OPTIONAL)
 
+	d, ok := driver.LoadDriver(args.Schema)
+	if !ok {
+		return fmt.Errorf("Unsupported driver, only support %v", strings.Join(driver.DriverNames(), ", "))
+	}
 	for _, f := range gen.Files {
 		if !f.Generate {
 			continue
@@ -49,10 +56,11 @@ func runProtoGen(gen *protogen.Plugin) error {
 				_, _ = fmt.Fprintf(os.Stderr, "\u001B[31mERROR\u001B[m: %v\n", err)
 				continue
 			}
-			d := mysqlDriver.SQL{
-				CreateTableSQL: buf.String(),
-			}
-			schmaer, err := d.InspectSchema(context.Background(), nil)
+			schmaer, err := d.InspectSchema(context.Background(), &driver.InspectOption{
+				URL:            "",
+				Data:           buf.String(),
+				InspectOptions: schema.InspectOptions{},
+			})
 			if err != nil {
 				_, _ = fmt.Fprintf(os.Stderr, "\u001B[31mERROR\u001B[m: %v\n", err)
 				continue

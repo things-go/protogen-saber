@@ -12,6 +12,7 @@ var args = &Args{
 	TrimPrefix:       false,
 	DisableOrComment: false,
 	Package:          "",
+	Schema:           "file+mysql",
 }
 
 func init() {
@@ -19,6 +20,7 @@ func init() {
 	flag.BoolVar(&args.TrimPrefix, "trim_prefix", false, "trim filename prefix")
 	flag.BoolVar(&args.DisableOrComment, "disable_or_comment", false, "disable use comment if mapping value not exist. just use empty string ")
 	flag.StringVar(&args.Package, "package", "", "override default package name")
+	flag.StringVar(&args.Schema, "schema", "file+mysql", "ens driver, [file+mysql, file+tidy]")
 }
 
 func main() {

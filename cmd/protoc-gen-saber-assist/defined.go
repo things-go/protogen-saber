@@ -8,5 +8,6 @@ type Args struct {
 	TrimPrefix       bool   // 去掉文件前缀
 	DisableOrComment bool   // 不使用注释作为mapping
 	Package          string // 覆盖默认包名
-	ModelImportPath  string
+	ModelImportPath  string // 
+	Schema           string // file+mysql, file+tidb
 }
