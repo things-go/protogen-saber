@@ -7,7 +7,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"ariga.io/atlas/sql/schema"
 	"github.com/things-go/ens"
 	"github.com/things-go/ens/codegen"
 	"github.com/things-go/ens/driver"
@@ -57,9 +56,8 @@ func runProtoGen(gen *protogen.Plugin) error {
 				continue
 			}
 			schmaer, err := d.InspectSchema(context.Background(), &driver.InspectOption{
-				URL:            "",
-				Data:           buf.String(),
-				InspectOptions: schema.InspectOptions{},
+				URL:  "",
+				Data: buf.String(),
 			})
 			if err != nil {
 				_, _ = fmt.Fprintf(os.Stderr, "\u001B[31mERROR\u001B[m: %v\n", err)
