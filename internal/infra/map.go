@@ -4,7 +4,12 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+
+	"golang.org/x/exp/slices"
 )
+
+// just for fix exp version
+var _ = slices.SortFunc[[]int]
 
 // ToArrayString convert to array string format [0:aaa,1:bbb,3:ccc]
 func ToArrayString(values map[int]string) string {

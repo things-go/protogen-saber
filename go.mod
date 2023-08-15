@@ -5,6 +5,7 @@ go 1.20
 require (
 	github.com/hibiken/asynq v0.24.1
 	github.com/things-go/ens v0.0.1-rc6
+	golang.org/x/exp v0.0.0-20230711005742-c3f37128e5a4
 	google.golang.org/protobuf v1.31.0
 )
 
@@ -38,7 +39,6 @@ require (
 	go.uber.org/atomic v1.11.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	go.uber.org/zap v1.25.0 // indirect
-	golang.org/x/exp v0.0.0-20230728194245-b0cb94b80691 // indirect
 	golang.org/x/mod v0.12.0 // indirect
 	golang.org/x/sys v0.11.0 // indirect
 	golang.org/x/text v0.11.0 // indirect
