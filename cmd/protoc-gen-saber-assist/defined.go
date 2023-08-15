@@ -7,7 +7,8 @@ type Args struct {
 	ShowVersion      bool   // 显示当前版本
 	TrimPrefix       bool   // 去掉文件前缀
 	DisableOrComment bool   // 不使用注释作为mapping
+	DisableField     bool   // 禁输出field
 	Package          string // 覆盖默认包名
-	ModelImportPath  string // 
+	ModelImportPath  string //
 	Schema           string // file+mysql, file+tidb
 }
