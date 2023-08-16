@@ -82,7 +82,6 @@ func runProtoGen(gen *protogen.Plugin) error {
 					schema.Entities,
 					codegen.WithPackageName(packageName),
 					codegen.WithDisableDocComment(true),
-					codegen.WithDisableField(args.DisableField),
 				).
 				GenAssist(args.ModelImportPath)
 			data, err := gen.FormatSource()

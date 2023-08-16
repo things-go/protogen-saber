@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/hibiken/asynq v0.24.1
-	github.com/things-go/ens v0.0.1-rc7
+	github.com/things-go/ens v0.0.1-rc8
 	golang.org/x/exp v0.0.0-20230711005742-c3f37128e5a4
 	google.golang.org/protobuf v1.31.0
 )
