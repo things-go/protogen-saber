@@ -9,8 +9,6 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-const DuplicateValue = "Duplicate value: "
-
 // EnumValue 枚举的枚举项
 type EnumValue struct {
 	Number      int    // 编号
