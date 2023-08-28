@@ -24,7 +24,7 @@ import (
 var (
 	__{{$enumName}}Mapping_Desc = map[{{$enumName}}]string{
 	{{- range $ee := $e.Values}}
-		{{$ee.IsDuplicate}}// Duplicate value: {{end}}{{$ee.Number}}: "{{$ee.Mapping}}",
+		{{if $ee.IsDuplicate}}// Duplicate value: {{end}}{{$ee.Number}}: "{{$ee.Mapping}}",
 	{{- end}}
 	}
 	__{{$enumName}}Mapping_Value = map[string]{{$enumName}}{
