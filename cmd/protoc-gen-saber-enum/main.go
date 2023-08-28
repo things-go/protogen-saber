@@ -7,20 +7,28 @@ import (
 	"google.golang.org/protobuf/compiler/protogen"
 )
 
-var args = &Args{
-	ShowVersion:      false,
-	DisableOrComment: false,
-	CustomTemplate:   "",
-	Suffix:           "",
-	Merge:            false,
-	Filename:         "",
-	Package:          "",
-	GoPackage:        "",
+const version = "v0.0.5"
+
+var args = &struct {
+	ShowVersion    bool   // 显示版本
+	CustomTemplate string // 自定义模板
+	Suffix         string // 自定义文件名后缀, 默认 .mapping.pb.go
+	Merge          bool   // 合并到一个文件
+	Filename       string // 合并文件名
+	Package        string // 合并包名
+	GoPackage      string // 合并go包名
+}{
+	ShowVersion:    false,
+	CustomTemplate: "",
+	Suffix:         "",
+	Merge:          false,
+	Filename:       "",
+	Package:        "",
+	GoPackage:      "",
 }
 
 func init() {
 	flag.BoolVar(&args.ShowVersion, "version", false, "print the version and exit")
-	flag.BoolVar(&args.DisableOrComment, "disable_or_comment", false, "disable use comment if mapping value not exist. just use empty string ")
 	flag.StringVar(&args.CustomTemplate, "template", "", "use custom template")
 	flag.StringVar(&args.Suffix, "suffix", ".mapping.pb.go", "use custom file suffix")
 

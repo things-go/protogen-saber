@@ -7,7 +7,9 @@ import (
 	"google.golang.org/protobuf/compiler/protogen"
 )
 
-var args = &Args{
+var args = &struct {
+	ShowVersion bool // 显示版本
+}{
 	ShowVersion: false,
 }
 

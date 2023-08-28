@@ -9,13 +9,16 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
+const DuplicateValue = "Duplicate value: "
+
 // EnumValue 枚举的枚举项
 type EnumValue struct {
-	Number     int    // 编号
-	Value      string // 值
-	CamelValue string // 驼峰值
-	Mapping    string // 映射值
-	Comment    string // 注释
+	Number      int    // 编号
+	Value       string // 值
+	CamelValue  string // 驼峰值
+	Mapping     string // 映射值
+	Comment     string // 注释
+	IsDuplicate bool   // 是否是副本
 }
 
 // Enum 枚举
@@ -31,21 +34,21 @@ type Enum struct {
 }
 
 // IntoEnumsFromMessage generates the errors definitions, excluding the package statement.
-func IntoEnumsFromMessage(nestedMessageName string, protoMessages []*protogen.Message, disableOrComment bool) []*Enum {
+func IntoEnumsFromMessage(nestedMessageName string, protoMessages []*protogen.Message) []*Enum {
 	enums := make([]*Enum, 0, 128)
 	for _, pm := range protoMessages {
 		tmpNestedMessageName := string(pm.Desc.Name())
 		if nestedMessageName != "" {
 			tmpNestedMessageName = nestedMessageName + "_" + tmpNestedMessageName
 		}
-		enums = append(enums, IntoEnums(tmpNestedMessageName, pm.Enums, disableOrComment)...)
-		enums = append(enums, IntoEnumsFromMessage(tmpNestedMessageName, pm.Messages, disableOrComment)...)
+		enums = append(enums, IntoEnums(tmpNestedMessageName, pm.Enums)...)
+		enums = append(enums, IntoEnumsFromMessage(tmpNestedMessageName, pm.Messages)...)
 	}
 	return enums
 }
 
 // IntoEnums generates the errors definitions, excluding the package statement.
-func IntoEnums(nestedMessageName string, protoEnums []*protogen.Enum, disableOrComment bool) []*Enum {
+func IntoEnums(nestedMessageName string, protoEnums []*protogen.Enum) []*Enum {
 	enums := make([]*Enum, 0, len(protoEnums))
 	for _, pe := range protoEnums {
 		if len(pe.Values) == 0 {
@@ -63,19 +66,23 @@ func IntoEnums(nestedMessageName string, protoEnums []*protogen.Enum, disableOrC
 			mpv := proto.GetExtension(v.Desc.Options(), enumerate.E_Mapping)
 			mappingValue, _ := mpv.(string)
 			comment := strings.TrimSpace(strings.TrimSuffix(string(v.Comments.Leading), "\n"))
-			if mappingValue == "" && !disableOrComment {
+			if mappingValue == "" {
 				mappingValue = comment
 			}
 			mappingValue = strings.ReplaceAll(strings.ReplaceAll(mappingValue, "\n", ","), `"`, `\"`)
 
-			eValues = append(eValues, &EnumValue{
+			ev := &EnumValue{
 				Value:      string(v.Desc.Name()),
 				Number:     int(v.Desc.Number()),
 				CamelValue: infra.CamelCase(string(v.Desc.Name())),
 				Mapping:    mappingValue,
 				Comment:    comment,
-			})
-			eValueMp[int(v.Desc.Number())] = mappingValue
+			}
+			//* duplicate
+			if _, ev.IsDuplicate = eValueMp[ev.Number]; !ev.IsDuplicate {
+				eValueMp[ev.Number] = mappingValue
+			}
+			eValues = append(eValues, ev)
 		}
 
 		comment := strings.TrimSpace(strings.ReplaceAll(string(pe.Comments.Leading), "\n", ""))
@@ -96,8 +103,7 @@ func IntoEnums(nestedMessageName string, protoEnums []*protogen.Enum, disableOrC
 }
 
 // IntoEnumComment generates enum comment if it exists
-// disableOrComment mapping 值不存在, 则使用注释
-func IntoEnumComment(pe *protogen.Enum, disableOrComment bool) string {
+func IntoEnumComment(pe *protogen.Enum) string {
 	if pe == nil || len(pe.Values) == 0 {
 		return ""
 	}
@@ -112,7 +118,7 @@ func IntoEnumComment(pe *protogen.Enum, disableOrComment bool) string {
 		mpv := proto.GetExtension(v.Desc.Options(), enumerate.E_Mapping)
 		mappingValue, _ := mpv.(string)
 		comment := strings.TrimSpace(strings.TrimSuffix(string(v.Comments.Leading), "\n"))
-		if mappingValue == "" && !disableOrComment {
+		if mappingValue == "" {
 			mappingValue = comment
 		}
 		mappingValue = strings.ReplaceAll(strings.ReplaceAll(mappingValue, "\n", ","), `"`, `\"`)

@@ -39,8 +39,8 @@ func runProtoGen(gen *protogen.Plugin) error {
 		if !f.Generate {
 			continue
 		}
-		enums := protoenum.IntoEnums("", f.Enums, args.DisableOrComment)
-		enums = append(enums, protoenum.IntoEnumsFromMessage("", f.Messages, args.DisableOrComment)...)
+		enums := protoenum.IntoEnums("", f.Enums)
+		enums = append(enums, protoenum.IntoEnumsFromMessage("", f.Messages)...)
 		if len(enums) == 0 {
 			continue
 		}

@@ -2,11 +2,6 @@ package main
 
 const version = "v0.2.0"
 
-// Args flag参数
-type Args struct {
-	ShowVersion bool // 显示版本
-}
-
 type serviceDesc struct {
 	ServiceType string // Greeter
 	ServiceName string // helloworld.Greeter

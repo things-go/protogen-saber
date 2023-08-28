@@ -29,7 +29,7 @@ func runProtoGen(gen *protogen.Plugin) error {
 		if !f.Generate {
 			continue
 		}
-		tables, err := protoseaql.IntoTable(f.Messages, args.DisableOrComment)
+		tables, err := protoseaql.IntoTable(f.Messages)
 		if err != nil {
 			_, _ = fmt.Fprintf(os.Stderr, "\u001B[31mERROR\u001B[m: %v\n", err)
 		}

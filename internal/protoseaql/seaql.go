@@ -62,7 +62,7 @@ func Execute(w io.Writer, data *Schema) error {
 }
 
 // IntoTable generates the errors definitions, excluding the package statement.
-func IntoTable(protoMessages []*protogen.Message, disableOrComment bool) ([]Table, error) {
+func IntoTable(protoMessages []*protogen.Message) ([]Table, error) {
 	tables := make([]Table, 0, len(protoMessages))
 	for _, pe := range protoMessages {
 		if len(pe.Fields) == 0 {
@@ -87,7 +87,7 @@ func IntoTable(protoMessages []*protogen.Message, disableOrComment bool) ([]Tabl
 			}
 
 			comment := strings.ReplaceAll(strings.ReplaceAll(strings.TrimSuffix(string(v.Comments.Leading), "\n"), "\n", ","), " ", "")
-			if enumComment := protoenum.IntoEnumComment(v.Enum, disableOrComment); enumComment != "" {
+			if enumComment := protoenum.IntoEnumComment(v.Enum); enumComment != "" {
 				comment += "," + enumComment
 			}
 			columns = append(columns, Column{
@@ -125,7 +125,7 @@ func IntoTable(protoMessages []*protogen.Message, disableOrComment bool) ([]Tabl
 			ForeignKeys: seaOptions.ForeignKey,
 		})
 		if len(pe.Messages) > 0 {
-			tbs, err := IntoTable(pe.Messages, disableOrComment)
+			tbs, err := IntoTable(pe.Messages)
 			if err != nil {
 				return nil, err
 			}
