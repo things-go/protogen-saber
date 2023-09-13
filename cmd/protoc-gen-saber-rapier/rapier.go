@@ -42,7 +42,7 @@ func runProtoGen(gen *protogen.Plugin) error {
 			dir = ""
 		}
 		for _, tb := range tables {
-			filename := filepath.Join(dir, tb.Name) + ".assist.gen.go"
+			filename := filepath.Join(dir, tb.Name) + ".rapier.gen.go"
 			g := gen.NewGeneratedFile(filename, f.GoImportPath)
 			setGeneratedFileHeader(g, gen, []protoutil.Source{
 				{Path: f.Desc.Path(), IsDeprecated: f.Proto.GetOptions().GetDeprecated()},
