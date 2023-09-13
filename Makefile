@@ -12,5 +12,6 @@ tools:
 	go install github.com/things-go/protogen-saber/cmd/protoc-gen-saber-seaql
 	go install github.com/things-go/protogen-saber/cmd/protoc-gen-saber-model
 	go install github.com/things-go/protogen-saber/cmd/protoc-gen-saber-assist
+	go install github.com/things-go/protogen-saber/cmd/protoc-gen-saber-rapier
 
 .PHONY: generate tools
