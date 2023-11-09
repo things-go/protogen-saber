@@ -4,13 +4,13 @@ go 1.20
 
 require (
 	github.com/hibiken/asynq v0.24.1
-	github.com/things-go/ens v0.0.3
+	github.com/things-go/ens v0.0.4
 	golang.org/x/exp v0.0.0-20230711005742-c3f37128e5a4
 	google.golang.org/protobuf v1.31.0
 )
 
 require (
-	ariga.io/atlas v0.14.0 // indirect
+	ariga.io/atlas v0.15.0 // indirect
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/apparentlymart/go-textseg/v13 v13.0.0 // indirect
 	github.com/benbjohnson/clock v1.3.5 // indirect
@@ -39,11 +39,11 @@ require (
 	go.uber.org/atomic v1.11.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	go.uber.org/zap v1.25.0 // indirect
-	golang.org/x/mod v0.12.0 // indirect
-	golang.org/x/sys v0.12.0 // indirect
+	golang.org/x/mod v0.13.0 // indirect
+	golang.org/x/sys v0.13.0 // indirect
 	golang.org/x/text v0.11.0 // indirect
 	golang.org/x/time v0.3.0 // indirect
-	golang.org/x/tools v0.13.0 // indirect
+	golang.org/x/tools v0.14.0 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1 // indirect
 	gorm.io/datatypes v1.2.0 // indirect
 	gorm.io/driver/mysql v1.5.1 // indirect
