@@ -1,0 +1,8 @@
+version: v1
+name: buf.build/things-go/protogen-saber
+breaking:
+  use:
+    - FILE
+lint:
+  use:
+    - DEFAULT
