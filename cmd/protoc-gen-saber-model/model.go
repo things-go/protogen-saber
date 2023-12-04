@@ -65,11 +65,11 @@ func runProtoGen(gen *protogen.Plugin) error {
 				continue
 			}
 			schema := schmaer.Build(&ens.Option{
-				EnableInt:          false,                                       // no need
-				EnableIntegerInt:   false,                                       // no need
-				EnableBoolInt:      false,                                       // no need
-				DisableNullToPoint: false,                                       // no need
-				EnableForeignKey:   false,                                       // no need
+				EnableInt:          args.EnableInt,
+				EnableIntegerInt:   args.EnableIntegerInt,
+				EnableBoolInt:      args.EnableBoolInt,
+				DisableNullToPoint: args.DisableNullToPoint,
+				EnableForeignKey:   args.EnableForeignKey,
 				Tags:               map[string]string{"json": ens.TagSnakeCase}, // TODO: add more
 				EnableGogo:         false,                                       // no need
 				EnableSea:          false,                                       // no need
