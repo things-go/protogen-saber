@@ -6,3 +6,8 @@ breaking:
 lint:
   use:
     - DEFAULT
+build:
+  excludes:
+    - "internal"
+    - "example"
+
