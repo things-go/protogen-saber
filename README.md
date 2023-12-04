@@ -14,6 +14,10 @@ protogen-saber toolkit for proto generate go code.
 `protogen-saber`是一个`go`工程工具生成器
 
 - `proto-gen-saber-enum` 从 `proto` 的生成枚举映射的代码, 可自定义模板.
+- `proto-gen-saber-asynq` 从 `proto` 的生成`asynq`代码
+- `proto-gen-saber-model` 从 `proto` 的生成`gorm`模型.
+- `proto-gen-saber-rapier` 从 `proto` 的生成`gorm-rapier` CRUD.
+- `proto-gen-saber-seaql` 从 `proto` 的生成`SQL`.
 
 ### Installation
 
