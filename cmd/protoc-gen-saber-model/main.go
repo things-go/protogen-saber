@@ -21,10 +21,15 @@ var args = &struct {
 	DisableNullToPoint bool
 	EnableForeignKey   bool
 }{
-	ShowVersion: false,
-	TrimPrefix:  false,
-	Package:     "",
-	Schema:      "file+mysql",
+	ShowVersion:        false,
+	TrimPrefix:         false,
+	Package:            "",
+	Schema:             "file+mysql",
+	EnableInt:          false,
+	EnableIntegerInt:   false,
+	EnableBoolInt:      false,
+	DisableNullToPoint: false,
+	EnableForeignKey:   false,
 }
 
 func init() {
