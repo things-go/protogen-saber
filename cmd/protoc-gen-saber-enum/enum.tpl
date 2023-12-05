@@ -50,11 +50,6 @@ func (x {{$enumName}}) MappingDescriptor() string {
 	return __{{$enumName}}Mapping_Desc[x]
 }
 
-// Get{{$enumName}}Desc mapping description.
-// Deprecated: Use {{$enumName}}.MappingDescriptor instead.
-func Get{{$enumName}}Desc(x {{$enumName}}) string {
-	return x.MappingDescriptor()
-}
 // Get{{$enumName}}Value get mapping value
 // {{$e.Comment}}
 func Get{{$enumName}}Value(s string) int {
