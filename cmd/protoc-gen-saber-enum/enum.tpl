@@ -57,14 +57,6 @@ func ({{$enumName}}) EnumCount() int {
 	return {{len $e.Values}}
 }
 
-{{- range $ee := $e.Values}}
-// Value_{{$ee.Value}} the enum value.
-// {{$ee.Comment}}
-func ({{$enumName}}) Value_{{$ee.TrimValue}}() {{$enumName}} {
-	return {{$enumValuePrefix}}_{{$ee.Value}}
-}
-{{- end}}
-
 // Get{{$enumName}}Value get mapping value
 // {{$e.Comment}}
 func Get{{$enumName}}Value(s string) int {
