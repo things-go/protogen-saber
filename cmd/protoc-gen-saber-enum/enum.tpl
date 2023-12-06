@@ -50,6 +50,11 @@ func (x {{$enumName}}) MappingDescriptor() string {
 	return __{{$enumName}}Mapping_Desc[x]
 }
 
+// EnumCount the number of enum values.
+func ({{$enumName}}) EnumCount() int {
+	return {{len $e.Values}}
+}
+
 // Get{{$enumName}}Value get mapping value
 // {{$e.Comment}}
 func Get{{$enumName}}Value(s string) int {
