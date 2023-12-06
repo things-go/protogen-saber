@@ -18,7 +18,8 @@ func runProtoGen(gen *protogen.Plugin) error {
 
 	gen.SupportedFeatures = uint64(pluginpb.CodeGeneratorResponse_FEATURE_PROTO3_OPTIONAL)
 
-	if args.Merge {
+	hasMerge := args.Merge || args.ExtraMerge
+	if hasMerge {
 		mergeTables = make([]protoseaql.Table, 0, len(gen.Files)*4)
 		sources = make([]protoutil.Source, 0, len(gen.Files))
 	}
@@ -34,13 +35,15 @@ func runProtoGen(gen *protogen.Plugin) error {
 		if len(tables) == 0 {
 			continue
 		}
-		if args.Merge {
+		if hasMerge {
 			sources = append(sources, protoutil.Source{
 				Path:         f.Desc.Path(),
 				IsDeprecated: f.Proto.GetOptions().GetDeprecated(),
 			})
 			mergeTables = append(mergeTables, tables...)
-			continue
+			if !args.ExtraMerge {
+				continue
+			}
 		}
 
 		dir := filepath.Dir(f.GeneratedFilenamePrefix)
@@ -57,7 +60,7 @@ func runProtoGen(gen *protogen.Plugin) error {
 			})
 		}
 	}
-	if args.Merge {
+	if hasMerge && len(mergeTables) > 0 {
 		g := gen.NewGeneratedFile(args.Filename+".sql", "")
 		setGeneratedFileHeader(g, gen, sources)
 		return protoseaql.Execute(g, &protoseaql.Schema{
