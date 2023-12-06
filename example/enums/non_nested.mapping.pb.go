@@ -44,9 +44,34 @@ func (x NonNestedStatus) MappingDescriptor() string {
 	return __NonNestedStatusMapping_Desc[x]
 }
 
-// EnumCount the number of the enum value count.
+// EnumCount the number of enum values.
 func (NonNestedStatus) EnumCount() int {
 	return 5
+}
+
+// Value_NonNestedStatus_Unspecified 未定义
+func (NonNestedStatus) Value_Unspecified() NonNestedStatus {
+	return NonNestedStatus_NonNestedStatus_Unspecified
+}
+
+// Value_NonNestedStatus_Up 打开
+func (NonNestedStatus) Value_Up() NonNestedStatus {
+	return NonNestedStatus_NonNestedStatus_Up
+}
+
+// Value_NonNestedStatus_Down 关闭
+func (NonNestedStatus) Value_Down() NonNestedStatus {
+	return NonNestedStatus_NonNestedStatus_Down
+}
+
+// Value_NonNestedStatus_Left 左
+func (NonNestedStatus) Value_Left() NonNestedStatus {
+	return NonNestedStatus_NonNestedStatus_Left
+}
+
+// Value_NonNestedStatus_Right 右
+func (NonNestedStatus) Value_Right() NonNestedStatus {
+	return NonNestedStatus_NonNestedStatus_Right
 }
 
 // GetNonNestedStatusValue get mapping value

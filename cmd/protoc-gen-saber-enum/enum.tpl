@@ -16,8 +16,10 @@ import (
 
 {{- range $e := .Enums}}
 {{$enumName := $e.Name}}
+{{$enumValuePrefix := $e.Name}}
 {{if $e.MessageName}}
 {{$enumName = printf "%s_%s" $e.MessageName $e.Name}}
+{{$enumValuePrefix = $e.MessageName}}
 {{end}}
 
 // Enum value mapping for {{$enumName}}.
@@ -54,6 +56,13 @@ func (x {{$enumName}}) MappingDescriptor() string {
 func ({{$enumName}}) EnumCount() int {
 	return {{len $e.Values}}
 }
+
+{{- range $ee := $e.Values}}
+// Value_{{$ee.Value}} {{$ee.Comment}}
+func ({{$enumName}}) Value_{{$ee.TrimValue}}() {{$enumName}} {
+	return {{$enumValuePrefix}}_{{$ee.Value}}
+}
+{{- end}}
 
 // Get{{$enumName}}Value get mapping value
 // {{$e.Comment}}

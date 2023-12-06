@@ -14,13 +14,13 @@ enum NonNestedStatus {
   option (things_go.enumerate.enabled) = true;
 
   // 未定义
-  NON_NESTED_STATUS_UNSPECIFIED = 0;
+  NonNestedStatus_Unspecified = 0;
   // 打开
-  NON_NESTED_STATUS_UP = 1 [(things_go.enumerate.mapping) = "打开"];
+  NonNestedStatus_Up = 1 [(things_go.enumerate.mapping) = "打开"];
   // 关闭
-  NON_NESTED_STATUS_DOWN = 2 [(things_go.enumerate.mapping) = "关闭"];
+  NonNestedStatus_Down = 2 [(things_go.enumerate.mapping) = "关闭"];
   // 左
-  NON_NESTED_STATUS_LEFT = 3 [(things_go.enumerate.mapping) = "左"];
+  NonNestedStatus_Left = 3 [(things_go.enumerate.mapping) = "左"];
   // 右
-  NON_NESTED_STATUS_RIGHT = 4 [(things_go.enumerate.mapping) = "右"];
+  NonNestedStatus_Right = 4 [(things_go.enumerate.mapping) = "右"];
 }

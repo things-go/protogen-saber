@@ -15,26 +15,26 @@ message Nested {
     option (things_go.enumerate.enabled) = true;
     // "unspecified"
     // aaaa
-    STATUS_UNSPECIFIED = 0;
+    Status_Unspecified = 0;
     // nested1
-    STATUS_UP = 1;
+    Status_Up = 1;
     // nested2
-    STATUS_DOWN = 2;
+    Status_Down  = 2;
     // nested3
-    STATUS_LEFT = 3;
+    Status_Left  = 3;
     // nested4
-    STATUS_RIGHT = 4;
+    Status_Right  = 4;
     // end
-    STATUS_END = 999;
+    Status_End = 999;
   }
   message Nested1 {
     // Type 类型
     enum Type {
       option (things_go.enumerate.enabled) = true;
       // 禁用
-      TYPE_DISABLE = 0;
+      Type_Disable = 0;
       // 启用
-      TYPE_Enable = 1;
+      Type_Enable = 1;
     }
   }
 }

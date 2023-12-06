@@ -9,23 +9,23 @@ package enums
 func EnumComment() []map[int32]string {
 	return []map[int32]string{
 		{
-			int32(Nested_STATUS_UNSPECIFIED): "\"unspecified\", aaaa",
-			int32(Nested_STATUS_UP):          "nested1",
-			int32(Nested_STATUS_DOWN):        "nested2",
-			int32(Nested_STATUS_LEFT):        "nested3",
-			int32(Nested_STATUS_RIGHT):       "nested4",
-			int32(Nested_STATUS_END):         "end",
+			int32(Nested_Status_Unspecified): "\"unspecified\", aaaa",
+			int32(Nested_Status_Up):          "nested1",
+			int32(Nested_Status_Down):        "nested2",
+			int32(Nested_Status_Left):        "nested3",
+			int32(Nested_Status_Right):       "nested4",
+			int32(Nested_Status_End):         "end",
 		},
 		{
-			int32(Nested_Nested1_TYPE_DISABLE): "禁用",
-			int32(Nested_Nested1_TYPE_Enable):  "启用",
+			int32(Nested_Nested1_Type_Disable): "禁用",
+			int32(Nested_Nested1_Type_Enable):  "启用",
 		},
 		{
-			int32(NonNestedStatus_NON_NESTED_STATUS_UNSPECIFIED): "未定义",
-			int32(NonNestedStatus_NON_NESTED_STATUS_UP):          "打开",
-			int32(NonNestedStatus_NON_NESTED_STATUS_DOWN):        "关闭",
-			int32(NonNestedStatus_NON_NESTED_STATUS_LEFT):        "左",
-			int32(NonNestedStatus_NON_NESTED_STATUS_RIGHT):       "右",
+			int32(NonNestedStatus_NonNestedStatus_Unspecified): "未定义",
+			int32(NonNestedStatus_NonNestedStatus_Up):          "打开",
+			int32(NonNestedStatus_NonNestedStatus_Down):        "关闭",
+			int32(NonNestedStatus_NonNestedStatus_Left):        "左",
+			int32(NonNestedStatus_NonNestedStatus_Right):       "右",
 		},
 	}
 }

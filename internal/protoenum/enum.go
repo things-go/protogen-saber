@@ -14,6 +14,7 @@ type EnumValue struct {
 	Number      int    // 编号
 	Value       string // 值
 	CamelValue  string // 驼峰值
+	TrimValue   string // 值截断EnumName前缀
 	Mapping     string // 映射值
 	Comment     string // 注释
 	IsDuplicate bool   // 是否是副本
@@ -57,6 +58,7 @@ func IntoEnums(nestedMessageName string, protoEnums []*protogen.Enum) []*Enum {
 		if !ok {
 			continue
 		}
+		enumName := string(pe.Desc.Name())
 
 		eValueMp := make(map[int]string, len(pe.Values))
 		eValues := make([]*EnumValue, 0, len(pe.Values))
@@ -67,12 +69,15 @@ func IntoEnums(nestedMessageName string, protoEnums []*protogen.Enum) []*Enum {
 			if mappingValue == "" {
 				mappingValue = comment
 			}
+			comment = strings.ReplaceAll(strings.ReplaceAll(comment, "\n", ","), `"`, `\"`)
 			mappingValue = strings.ReplaceAll(strings.ReplaceAll(mappingValue, "\n", ","), `"`, `\"`)
 
+			enumValueName := string(v.Desc.Name())
 			ev := &EnumValue{
-				Value:      string(v.Desc.Name()),
 				Number:     int(v.Desc.Number()),
-				CamelValue: infra.CamelCase(string(v.Desc.Name())),
+				Value:      enumValueName,
+				CamelValue: infra.CamelCase(enumValueName),
+				TrimValue:  strings.TrimPrefix(strings.TrimPrefix(enumValueName, enumName), "_"),
 				Mapping:    mappingValue,
 				Comment:    comment,
 			}
@@ -92,7 +97,7 @@ func IntoEnums(nestedMessageName string, protoEnums []*protogen.Enum) []*Enum {
 		}
 		enums = append(enums, &Enum{
 			MessageName: nestedMessageName,
-			Name:        string(pe.Desc.Name()),
+			Name:        enumName,
 			Comment:     comment,
 			Values:      eValues,
 		})

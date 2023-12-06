@@ -46,9 +46,39 @@ func (x Nested_Status) MappingDescriptor() string {
 	return __Nested_StatusMapping_Desc[x]
 }
 
-// EnumCount the number of the enum value count.
+// EnumCount the number of enum values.
 func (Nested_Status) EnumCount() int {
 	return 6
+}
+
+// Value_Status_Unspecified \"unspecified\", aaaa
+func (Nested_Status) Value_Unspecified() Nested_Status {
+	return Nested_Status_Unspecified
+}
+
+// Value_Status_Up nested1
+func (Nested_Status) Value_Up() Nested_Status {
+	return Nested_Status_Up
+}
+
+// Value_Status_Down nested2
+func (Nested_Status) Value_Down() Nested_Status {
+	return Nested_Status_Down
+}
+
+// Value_Status_Left nested3
+func (Nested_Status) Value_Left() Nested_Status {
+	return Nested_Status_Left
+}
+
+// Value_Status_Right nested4
+func (Nested_Status) Value_Right() Nested_Status {
+	return Nested_Status_Right
+}
+
+// Value_Status_End end
+func (Nested_Status) Value_End() Nested_Status {
+	return Nested_Status_End
 }
 
 // GetNested_StatusValue get mapping value
@@ -85,9 +115,19 @@ func (x Nested_Nested1_Type) MappingDescriptor() string {
 	return __Nested_Nested1_TypeMapping_Desc[x]
 }
 
-// EnumCount the number of the enum value count.
+// EnumCount the number of enum values.
 func (Nested_Nested1_Type) EnumCount() int {
 	return 2
+}
+
+// Value_Type_Disable 禁用
+func (Nested_Nested1_Type) Value_Disable() Nested_Nested1_Type {
+	return Nested_Nested1_Type_Disable
+}
+
+// Value_Type_Enable 启用
+func (Nested_Nested1_Type) Value_Enable() Nested_Nested1_Type {
+	return Nested_Nested1_Type_Enable
 }
 
 // GetNested_Nested1_TypeValue get mapping value
