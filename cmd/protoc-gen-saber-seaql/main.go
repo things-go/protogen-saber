@@ -19,6 +19,7 @@ var args = &struct {
 	ShowVersion: false,
 	TrimPrefix:  false,
 	Merge:       false,
+	ExtraMerge:  false,
 	Filename:    "",
 }
 

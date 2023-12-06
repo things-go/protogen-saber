@@ -17,7 +17,6 @@ func runProtoGen(gen *protogen.Plugin) error {
 	var sources []protoutil.Source
 
 	gen.SupportedFeatures = uint64(pluginpb.CodeGeneratorResponse_FEATURE_PROTO3_OPTIONAL)
-
 	hasMerge := args.Merge || args.ExtraMerge
 	if hasMerge {
 		mergeTables = make([]protoseaql.Table, 0, len(gen.Files)*4)
