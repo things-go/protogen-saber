@@ -58,7 +58,8 @@ func ({{$enumName}}) EnumCount() int {
 }
 
 {{- range $ee := $e.Values}}
-// Value_{{$ee.Value}} {{$ee.Comment}}
+// Value_{{$ee.Value}} the enum value.
+// {{$ee.Comment}}
 func ({{$enumName}}) Value_{{$ee.TrimValue}}() {{$enumName}} {
 	return {{$enumValuePrefix}}_{{$ee.Value}}
 }
