@@ -12,9 +12,9 @@ import (
 // EnumValue 枚举的枚举项
 type EnumValue struct {
 	Number      int    // 编号
-	Value       string // 值
-	CamelValue  string // 驼峰值
-	TrimValue   string // 值截断EnumName前缀
+	Value       string // 值,例: Status_Enabled
+	CamelValue  string // 驼峰值,例: StatusEnabled
+	TrimValue   string // 值截断EnumName前缀,例: Enabled(EnumName=Status)
 	Mapping     string // 映射值
 	Comment     string // 注释
 	IsDuplicate bool   // 是否是副本
