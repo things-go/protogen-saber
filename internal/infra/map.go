@@ -1,11 +1,10 @@
 package infra
 
 import (
+	"slices"
 	"sort"
 	"strconv"
 	"strings"
-
-	"golang.org/x/exp/slices"
 )
 
 // just for fix exp version
