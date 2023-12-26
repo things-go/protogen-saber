@@ -7,9 +7,22 @@ import (
 
 	"github.com/things-go/protogen-saber/internal/infra"
 	"github.com/things-go/protogen-saber/internal/protoenum"
+	"github.com/things-go/protogen-saber/internal/protoutil"
 	"github.com/things-go/protogen-saber/protosaber/seaql"
 	"google.golang.org/protobuf/compiler/protogen"
 	"google.golang.org/protobuf/proto"
+)
+
+// annotation const value
+const (
+	annotation_Path           = "seaql"
+	annotation_Key_Name       = "table_name"
+	annotation_Key_Engine     = "engine"
+	annotation_Key_Charset    = "charset"
+	annotation_Key_Collate    = "collate"
+	annotation_Key_Index      = "index"
+	annotation_Key_ForeignKey = "foreign_key"
+	annotation_Key_Type       = "type"
 )
 
 type Schema struct {
@@ -68,61 +81,96 @@ func IntoTable(protoMessages []*protogen.Message) ([]Table, error) {
 		if len(pe.Fields) == 0 {
 			continue
 		}
-		messageOptions := proto.GetExtension(pe.Desc.Options(), seaql.E_Options)
-		seaOptions, ok := messageOptions.(*seaql.Options)
-		if !ok || seaOptions == nil {
-			continue
+		rawTableName := string(pe.Desc.Name())
+		var tableName = rawTableName
+		var engine = "InnoDB"
+		var charset = "utf8mb4"
+		var collate = "utf8mb4_general_ci"
+		var indexes []string
+		var foreignKey []string
+
+		// 先判断注解, 再判断扩展
+		annotates, remainComments := protoutil.NewComments(pe.Comments.Leading).FindAnnotation2(annotation_Path)
+		if len(annotates) > 0 {
+			for _, v := range annotates {
+				switch v.Key {
+				case annotation_Key_Name:
+					tableName = v.Value
+				case annotation_Key_Engine:
+					engine = v.Value
+				case annotation_Key_Charset:
+					charset = v.Value
+				case annotation_Key_Collate:
+					collate = v.Value
+				case annotation_Key_Index:
+					indexes = append(indexes, v.Value)
+				case annotation_Key_ForeignKey:
+					foreignKey = append(foreignKey, v.Value)
+				}
+			}
+		} else {
+			messageOptions := proto.GetExtension(pe.Desc.Options(), seaql.E_Options)
+			seaOptions, ok := messageOptions.(*seaql.Options)
+			if !ok || seaOptions == nil {
+				continue
+			}
+			if seaOptions.TableName != "" {
+				tableName = seaOptions.TableName
+			}
+			if seaOptions.Engine != "" {
+				engine = seaOptions.Engine
+			}
+			if seaOptions.Charset != "" {
+				charset = seaOptions.Charset
+			}
+			if seaOptions.Collate != "" {
+				collate = seaOptions.Collate
+			}
+			indexes = seaOptions.Index
+			foreignKey = seaOptions.ForeignKey
 		}
+		comment := strings.TrimSpace(strings.TrimPrefix(remainComments.LineString(), rawTableName))
 
 		columns := make([]Column, 0, len(pe.Fields))
 		for _, v := range pe.Fields {
-			messageFieldOptions := proto.GetExtension(v.Desc.Options(), seaql.E_Field)
-			seaFieldOptions := messageFieldOptions.(*seaql.Field)
-			if seaFieldOptions == nil {
-				return nil, fmt.Errorf("seaql: message(%s) - field(%s) is not set seaql type", pe.Desc.Name(), string(v.Desc.Name()))
-			}
-			seaFieldOptions.Type = strings.TrimSpace(seaFieldOptions.Type)
-			if seaFieldOptions.Type == "" {
-				return nil, fmt.Errorf("seaql: message(%s) - field(%s) should be not empty", pe.Desc.Name(), string(v.Desc.Name()))
+			ty := ""
+			// 先判断注解, 再判断扩展
+			annotateValues, remainComments := protoutil.NewComments(v.Comments.Leading).FindAnnotationValues2(annotation_Path, annotation_Key_Type)
+			if len(annotates) > 0 && annotateValues[0] != "" {
+				ty = annotateValues[0]
+			} else {
+				messageFieldOptions := proto.GetExtension(v.Desc.Options(), seaql.E_Field)
+				seaFieldOptions := messageFieldOptions.(*seaql.Field)
+				if seaFieldOptions == nil {
+					return nil, fmt.Errorf("seaql: message(%s) - field(%s) is not set seaql type", pe.Desc.Name(), string(v.Desc.Name()))
+				}
+				seaFieldOptions.Type = strings.TrimSpace(seaFieldOptions.Type)
+				if seaFieldOptions.Type == "" {
+					return nil, fmt.Errorf("seaql: message(%s) - field(%s) should be not empty", pe.Desc.Name(), string(v.Desc.Name()))
+				}
+				ty = seaFieldOptions.Type
 			}
 
-			comment := strings.ReplaceAll(strings.ReplaceAll(strings.TrimSuffix(string(v.Comments.Leading), "\n"), "\n", ","), " ", "")
+			comment := strings.ReplaceAll(remainComments.LineString(), " ", "")
 			if enumComment := protoenum.IntoEnumComment(v.Enum); enumComment != "" {
 				comment += "," + enumComment
 			}
 			columns = append(columns, Column{
 				Name:    string(v.Desc.Name()),
-				Type:    seaFieldOptions.Type,
+				Type:    ty,
 				Comment: comment,
 			})
-		}
-		rawTableName := string(pe.Desc.Name())
-		tableName := rawTableName
-		if seaOptions.TableName != "" {
-			tableName = seaOptions.TableName
-		}
-		engine := "InnoDB"
-		if seaOptions.Engine != "" {
-			engine = seaOptions.Engine
-		}
-		charset := "utf8mb4"
-		if seaOptions.Charset != "" {
-			charset = seaOptions.Charset
-		}
-		collate := "utf8mb4_general_ci"
-		if seaOptions.Collate != "" {
-			collate = seaOptions.Collate
 		}
 
 		tables = append(tables, Table{
 			Name:        infra.SnakeCase(tableName),
-			Comment:     strings.TrimSpace(strings.TrimPrefix(strings.TrimSpace(strings.ReplaceAll(string(pe.Comments.Leading), "\n", "")), rawTableName)),
+			Comment:     comment,
 			Engine:      engine,
 			Charset:     charset,
 			Collate:     collate,
 			Columns:     columns,
-			Indexes:     seaOptions.Index,
-			ForeignKeys: seaOptions.ForeignKey,
+			Indexes:     indexes,
+			ForeignKeys: foreignKey,
 		})
 		if len(pe.Messages) > 0 {
 			tbs, err := IntoTable(pe.Messages)

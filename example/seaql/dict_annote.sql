@@ -6,9 +6,9 @@
 
 -- 字典表
 CREATE TABLE 
-	`dict` (
+	`dict_annote` (
 		`id` bigint NOT NULL AUTO_INCREMENT COMMENT '系统序号',
-		`key` varchar(64) NOT NULL DEFAULT '' COMMENT '键,值',
+		`key` varchar(64) NOT NULL DEFAULT '' COMMENT '键',
 		`name` varchar(64) NOT NULL DEFAULT '' COMMENT '名称',
 		`is_pin` tinyint(1) NOT NULL COMMENT '是否锁定',
 		`created_at` datetime NOT NULL COMMENT '创建时间',

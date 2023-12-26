@@ -10,6 +10,12 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
+// annotation const value
+const (
+	annotation_Path        = "enum"
+	annotation_Key_Mapping = "mapping"
+)
+
 // EnumValue 枚举的枚举项
 type EnumValue struct {
 	Number      int    // 编号
@@ -56,9 +62,8 @@ func IntoEnums(nestedMessageName string, protoEnums []*protogen.Enum) []*Enum {
 		}
 
 		// 先判断注解, 再判断扩展
-		emComment := protoutil.NewComments(pe.Comments.Leading)
-		annotate := emComment.FindAnnotation("enum")
-		if len(annotate) == 0 {
+		annotates := protoutil.NewComments(pe.Comments.Leading).FindAnnotation(annotation_Path)
+		if len(annotates) == 0 {
 			isEnabled := proto.GetExtension(pe.Desc.Options(), enumerate.E_Enabled)
 			if ok := isEnabled.(bool); !ok {
 				continue
@@ -72,9 +77,9 @@ func IntoEnums(nestedMessageName string, protoEnums []*protogen.Enum) []*Enum {
 			mappingValue := ""
 			comment := strings.TrimSpace(strings.TrimSuffix(string(v.Comments.Leading), "\n"))
 			// 先判断注解, 再判断扩展
-			annotateVal := protoutil.NewComments(v.Comments.Leading).FindAnnotationValues("enum", "mapping")
-			if len(annotateVal) > 0 && annotateVal[0] != "" {
-				mappingValue = annotateVal[0]
+			annotateValues := protoutil.NewComments(v.Comments.Leading).FindAnnotationValues(annotation_Path, annotation_Key_Mapping)
+			if len(annotateValues) > 0 && annotateValues[0] != "" {
+				mappingValue = annotateValues[0]
 			} else {
 				mpv := proto.GetExtension(v.Desc.Options(), enumerate.E_Mapping)
 				mappingValue, _ = mpv.(string)
@@ -124,7 +129,7 @@ func IntoEnumComment(pe *protogen.Enum) string {
 	if pe == nil || len(pe.Values) == 0 {
 		return ""
 	}
-	annotate := protoutil.NewComments(pe.Comments.Leading).FindAnnotation("enum")
+	annotate := protoutil.NewComments(pe.Comments.Leading).FindAnnotation(annotation_Path)
 	if len(annotate) == 0 {
 		isEnabled := proto.GetExtension(pe.Desc.Options(), enumerate.E_Enabled)
 		if ok := isEnabled.(bool); !ok {
@@ -135,7 +140,7 @@ func IntoEnumComment(pe *protogen.Enum) string {
 	emValueMp := make(map[int]string, len(pe.Values))
 	for _, v := range pe.Values {
 		mappingValue := ""
-		annotateVal := protoutil.NewComments(v.Comments.Leading).FindAnnotationValues("enum", "mapping")
+		annotateVal := protoutil.NewComments(v.Comments.Leading).FindAnnotationValues(annotation_Path, annotation_Key_Mapping)
 		if len(annotateVal) > 0 && annotateVal[0] != "" {
 			mappingValue = annotateVal[0]
 		} else {

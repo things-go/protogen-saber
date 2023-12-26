@@ -13,7 +13,7 @@ import "enums.proto";
 // Dict 字典表
 message Dict {
   option (things_go.seaql.options) = {
-    table_name: "dict",
+    // table_name: "dict",
     engine: 'InnoDB',
     charset: "utf8mb4",
     index: [
@@ -23,7 +23,8 @@ message Dict {
 
 // 系统序号
 int64 id = 1 [(things_go.seaql.field) = { type: "bigint NOT NULL AUTO_INCREMENT" }];
-// 名称
+// 键
+// 值
 string key = 2 [(things_go.seaql.field) = { type: "varchar(64) NOT NULL DEFAULT ''" }];
 // 名称
 string name = 3 [(things_go.seaql.field) = { type: "varchar(64) NOT NULL DEFAULT ''" }];
@@ -55,7 +56,7 @@ message DictItem {
   int64 updated_at = 6 [(things_go.seaql.field) = { type: "datetime NOT NULL" }];
 }
 
-// Dict 字典表
+// DictAnnote 字典表
 // #[seaql(name="dict")]
 // #[seaql(engine="InnoDB")]
 // #[seaql(charset="utf8mb4")]
@@ -81,7 +82,8 @@ message DictAnnote {
   int64 updated_at = 6;
 }
 
-// DictItem 字典项表
+// DictItemAnnote 字典项表
+// #[seaql]
 message DictItemAnnote  {
   // 系统序号
   // #[seaql(type="bigint NOT NULL AUTO_INCREMENT")]
