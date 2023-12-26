@@ -1,6 +1,20 @@
 package main
 
-const version = "v0.2.0"
+import (
+	"strings"
+
+	"github.com/things-go/protogen-saber/internal/protoutil"
+	"google.golang.org/protobuf/compiler/protogen"
+)
+
+const version = "v0.3.0"
+
+// annotation const value
+const (
+	annotation_Path         = "asynq"
+	annotation_Key_Pattern  = "pattern"
+	annotation_Key_CronSpec = "cron_spec"
+)
 
 type serviceDesc struct {
 	ServiceType string // Greeter
@@ -18,4 +32,27 @@ type methodDesc struct {
 	// asynq rule
 	Pattern  string // 匹配器
 	CronSpec string // cron specification
+}
+
+type Task struct {
+	Pattern  string
+	CronSpec string
+}
+
+func MatchAsynqRule(c protogen.Comments) (*Task, bool) {
+	annotes := protoutil.NewComments(c).FindAnnotation(annotation_Path)
+	if len(annotes) > 0 {
+		t := &Task{}
+		for _, v := range annotes {
+			if strings.EqualFold(v.Key, annotation_Key_Pattern) {
+				t.Pattern = v.Value
+			} else if strings.EqualFold(v.Key, annotation_Key_CronSpec) {
+				t.CronSpec = v.Value
+			}
+		}
+		if t.Pattern != "" && t.CronSpec != "" {
+			return t, true
+		}
+	}
+	return nil, false
 }

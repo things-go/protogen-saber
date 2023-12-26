@@ -94,9 +94,17 @@ func genService(gen *protogen.Plugin, file *protogen.File, g *protogen.Generated
 		if method.Desc.IsStreamingClient() || method.Desc.IsStreamingServer() {
 			continue
 		}
-		rule, ok := proto.GetExtension(method.Desc.Options(), asynq.E_Task).(*asynq.Task)
-		if rule != nil && ok {
+		rule, ok := MatchAsynqRule(method.Comments.Leading)
+		if ok {
 			sd.Methods = append(sd.Methods, buildAsynqRule(g, method, rule))
+		} else {
+			r, ok := proto.GetExtension(method.Desc.Options(), asynq.E_Task).(*asynq.Task)
+			if r != nil && ok {
+				sd.Methods = append(sd.Methods, buildAsynqRule(g, method, &Task{
+					Pattern:  r.Pattern,
+					CronSpec: r.CronSpec,
+				}))
+			}
 		}
 	}
 	if len(sd.Methods) == 0 {
@@ -115,20 +123,24 @@ func hasHTTPRule(services []*protogen.Service) bool {
 			if method.Desc.IsStreamingClient() || method.Desc.IsStreamingServer() {
 				continue
 			}
-			rule, ok := proto.GetExtension(method.Desc.Options(), asynq.E_Task).(*asynq.Task)
-			if rule != nil && ok {
+			if _, ok := MatchAsynqRule(method.Comments.Leading); ok {
 				return true
+			} else {
+				rule, ok := proto.GetExtension(method.Desc.Options(), asynq.E_Task).(*asynq.Task)
+				if rule != nil && ok {
+					return true
+				}
 			}
 		}
 	}
 	return false
 }
 
-func buildAsynqRule(g *protogen.GeneratedFile, m *protogen.Method, rule *asynq.Task) *methodDesc {
+func buildAsynqRule(g *protogen.GeneratedFile, m *protogen.Method, rule *Task) *methodDesc {
 	return buildMethodDesc(g, m, rule)
 }
 
-func buildMethodDesc(g *protogen.GeneratedFile, m *protogen.Method, rule *asynq.Task) *methodDesc {
+func buildMethodDesc(g *protogen.GeneratedFile, m *protogen.Method, rule *Task) *methodDesc {
 	defer func() { methodSets[m.GoName]++ }()
 	comment := m.Comments.Leading.String() + m.Comments.Trailing.String()
 	if comment != "" {

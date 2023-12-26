@@ -29,6 +29,8 @@ type UserTaskHandler interface {
 	// CreateUser 异步创建用户
 	CreateUser(context.Context, *CreateUserPayload) error
 	// UpdateUser 异步更新用户
+	// #[asynq(pattern="user:update")]
+	// #[asynq(cron_spec="@every 120s")]
 	UpdateUser(context.Context, *UpdateUserPayload) error
 }
 
@@ -64,6 +66,8 @@ type UserTaskClient interface {
 	// CreateUser 异步创建用户
 	CreateUser(context.Context, *CreateUserPayload, ...asynq.Option) (*asynq.TaskInfo, error)
 	// UpdateUser 异步更新用户
+	// #[asynq(pattern="user:update")]
+	// #[asynq(cron_spec="@every 120s")]
 	UpdateUser(context.Context, *UpdateUserPayload, ...asynq.Option) (*asynq.TaskInfo, error)
 }
 
@@ -92,6 +96,8 @@ func (c *UserTaskClientImpl) CreateUser(ctx context.Context, in *CreateUserPaylo
 }
 
 // UpdateUser 异步更新用户
+// #[asynq(pattern="user:update")]
+// #[asynq(cron_spec="@every 120s")]
 func (c *UserTaskClientImpl) UpdateUser(ctx context.Context, in *UpdateUserPayload, opts ...asynq.Option) (*asynq.TaskInfo, error) {
 	payload, err := c.settings.Marshaler.MarshalBinary(in)
 	if err != nil {
