@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/things-go/protogen-saber/internal/infra"
+	"github.com/things-go/protogen-saber/internal/protoutil"
 	"github.com/things-go/protogen-saber/protosaber/enumerate"
 	"google.golang.org/protobuf/compiler/protogen"
 	"google.golang.org/protobuf/proto"
@@ -53,22 +54,35 @@ func IntoEnums(nestedMessageName string, protoEnums []*protogen.Enum) []*Enum {
 		if len(pe.Values) == 0 {
 			continue
 		}
-		isEnabled := proto.GetExtension(pe.Desc.Options(), enumerate.E_Enabled)
-		ok := isEnabled.(bool)
-		if !ok {
-			continue
-		}
-		enumName := string(pe.Desc.Name())
 
-		eValueMp := make(map[int]string, len(pe.Values))
-		eValues := make([]*EnumValue, 0, len(pe.Values))
-		for _, v := range pe.Values {
-			mpv := proto.GetExtension(v.Desc.Options(), enumerate.E_Mapping)
-			mappingValue, _ := mpv.(string)
-			comment := strings.TrimSpace(strings.TrimSuffix(string(v.Comments.Leading), "\n"))
-			if mappingValue == "" {
-				mappingValue = comment
+		// 先判断注解, 再判断扩展
+		emComment := protoutil.NewComments(pe.Comments.Leading)
+		annotate := emComment.FindAnnotation("enum")
+		if len(annotate) == 0 {
+			isEnabled := proto.GetExtension(pe.Desc.Options(), enumerate.E_Enabled)
+			if ok := isEnabled.(bool); !ok {
+				continue
 			}
+		}
+
+		emName := string(pe.Desc.Name())
+		emValueMp := make(map[int]string, len(pe.Values))
+		emValues := make([]*EnumValue, 0, len(pe.Values))
+		for _, v := range pe.Values {
+			mappingValue := ""
+			comment := strings.TrimSpace(strings.TrimSuffix(string(v.Comments.Leading), "\n"))
+			// 先判断注解, 再判断扩展
+			annotateVal := protoutil.NewComments(v.Comments.Leading).FindAnnotationValues("enum", "mapping")
+			if len(annotateVal) > 0 && annotateVal[0] != "" {
+				mappingValue = annotateVal[0]
+			} else {
+				mpv := proto.GetExtension(v.Desc.Options(), enumerate.E_Mapping)
+				mappingValue, _ = mpv.(string)
+				if mappingValue == "" {
+					mappingValue = comment
+				}
+			}
+
 			comment = strings.ReplaceAll(strings.ReplaceAll(comment, "\n", ","), `"`, `\"`)
 			mappingValue = strings.ReplaceAll(strings.ReplaceAll(mappingValue, "\n", ","), `"`, `\"`)
 
@@ -77,29 +91,29 @@ func IntoEnums(nestedMessageName string, protoEnums []*protogen.Enum) []*Enum {
 				Number:     int(v.Desc.Number()),
 				Value:      enumValueName,
 				CamelValue: infra.CamelCase(enumValueName),
-				TrimValue:  strings.TrimPrefix(strings.TrimPrefix(enumValueName, enumName), "_"),
+				TrimValue:  strings.TrimPrefix(strings.TrimPrefix(enumValueName, emName), "_"),
 				Mapping:    mappingValue,
 				Comment:    comment,
 			}
 			//* duplicate
-			if _, ev.IsDuplicate = eValueMp[ev.Number]; !ev.IsDuplicate {
-				eValueMp[ev.Number] = mappingValue
+			if _, ev.IsDuplicate = emValueMp[ev.Number]; !ev.IsDuplicate {
+				emValueMp[ev.Number] = mappingValue
 			}
-			eValues = append(eValues, ev)
+			emValues = append(emValues, ev)
 		}
 
-		comment := strings.TrimSpace(strings.ReplaceAll(string(pe.Comments.Leading), "\n", ""))
-		bb := infra.ToArrayString(eValueMp)
-		if comment == "" {
-			comment = bb
-		} else {
-			comment += ", " + bb
+		comment := strings.TrimSpace(string(pe.Comments.Leading.String()))
+		bb := infra.ToArrayString(emValueMp)
+		if comment != "" {
+			comment = comment + "\n"
 		}
+		comment = comment + "// " + bb
+
 		enums = append(enums, &Enum{
 			MessageName: nestedMessageName,
-			Name:        enumName,
+			Name:        emName,
 			Comment:     comment,
-			Values:      eValues,
+			Values:      emValues,
 		})
 	}
 	return enums
@@ -110,22 +124,29 @@ func IntoEnumComment(pe *protogen.Enum) string {
 	if pe == nil || len(pe.Values) == 0 {
 		return ""
 	}
-	isEnabled := proto.GetExtension(pe.Desc.Options(), enumerate.E_Enabled)
-	ok := isEnabled.(bool)
-	if !ok {
-		return ""
+	annotate := protoutil.NewComments(pe.Comments.Leading).FindAnnotation("enum")
+	if len(annotate) == 0 {
+		isEnabled := proto.GetExtension(pe.Desc.Options(), enumerate.E_Enabled)
+		if ok := isEnabled.(bool); !ok {
+			return ""
+		}
 	}
 
-	eValueMp := make(map[int]string, len(pe.Values))
+	emValueMp := make(map[int]string, len(pe.Values))
 	for _, v := range pe.Values {
-		mpv := proto.GetExtension(v.Desc.Options(), enumerate.E_Mapping)
-		mappingValue, _ := mpv.(string)
-		comment := strings.TrimSpace(strings.TrimSuffix(string(v.Comments.Leading), "\n"))
-		if mappingValue == "" {
-			mappingValue = comment
+		mappingValue := ""
+		annotateVal := protoutil.NewComments(v.Comments.Leading).FindAnnotationValues("enum", "mapping")
+		if len(annotateVal) > 0 && annotateVal[0] != "" {
+			mappingValue = annotateVal[0]
+		} else {
+			mpv := proto.GetExtension(v.Desc.Options(), enumerate.E_Mapping)
+			mappingValue, _ = mpv.(string)
+			if mappingValue == "" {
+				mappingValue = strings.TrimSpace(strings.TrimSuffix(string(v.Comments.Leading), "\n"))
+			}
 		}
 		mappingValue = strings.ReplaceAll(strings.ReplaceAll(mappingValue, "\n", ","), `"`, `\"`)
-		eValueMp[int(v.Desc.Number())] = mappingValue
+		emValueMp[int(v.Desc.Number())] = mappingValue
 	}
-	return infra.ToArrayString(eValueMp)
+	return infra.ToArrayString(emValueMp)
 }

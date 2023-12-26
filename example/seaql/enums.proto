@@ -7,12 +7,10 @@ option java_multiple_files = true;
 option java_package = "cn.things-go.examples.Seaql";
 option java_outer_classname = "Seaql";
 
-import "enumerate/enumerate.proto";
-
 message Infra {
   // Status 状态值
+  // #[enum]
   enum Status {
-    option (things_go.enumerate.enabled) = true;
     // unspecified
     STATUS_UNSPECIFIED = 0;
     // nested1
@@ -25,8 +23,8 @@ message Infra {
     STATUS_RIGHT = 4;
   }
   message Nested1 {
+    // #[enum]
     enum Type {
-      option (things_go.enumerate.enabled) = true;
       // 禁用
       TYPE_DISABLE = 0;
       // 启用

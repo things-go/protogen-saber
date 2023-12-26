@@ -47,7 +47,7 @@ func (x {{$enumName}}) IntoNumberString() string {
 }
 
 // MappingDescriptor mapping description.
-// {{$e.Comment}}
+{{$e.Comment}}
 func (x {{$enumName}}) MappingDescriptor() string {
 	return __{{$enumName}}Mapping_Desc[x]
 }
@@ -58,7 +58,7 @@ func ({{$enumName}}) EnumCount() int {
 }
 
 // Get{{$enumName}}Value get mapping value
-// {{$e.Comment}}
+{{$e.Comment}}
 func Get{{$enumName}}Value(s string) int {
 	return int(__{{$enumName}}Mapping_Value[s])
 }

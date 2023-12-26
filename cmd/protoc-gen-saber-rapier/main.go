@@ -7,7 +7,7 @@ import (
 	"google.golang.org/protobuf/compiler/protogen"
 )
 
-const version = "v0.0.2"
+const version = "v0.1.0"
 
 var args = &struct {
 	ShowVersion      bool   // 显示当前版本
