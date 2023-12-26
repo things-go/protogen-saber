@@ -62,7 +62,7 @@ func IntoEnums(nestedMessageName string, protoEnums []*protogen.Enum) []*Enum {
 		}
 
 		// 先判断注解, 再判断扩展
-		annotates := protoutil.NewComments(pe.Comments.Leading).FindAnnotation(annotation_Path)
+		annotates, remainComments := protoutil.NewComments(pe.Comments.Leading).FindAnnotation2(annotation_Path)
 		if len(annotates) == 0 {
 			isEnabled := proto.GetExtension(pe.Desc.Options(), enumerate.E_Enabled)
 			if ok := isEnabled.(bool); !ok {
@@ -107,13 +107,7 @@ func IntoEnums(nestedMessageName string, protoEnums []*protogen.Enum) []*Enum {
 			emValues = append(emValues, ev)
 		}
 
-		comment := strings.TrimSpace(string(pe.Comments.Leading.String()))
-		bb := infra.ToArrayString(emValueMp)
-		if comment != "" {
-			comment = comment + "\n"
-		}
-		comment = comment + "// " + bb
-
+		comment := remainComments.Append(infra.ToArrayString(emValueMp)).String()
 		enums = append(enums, &Enum{
 			MessageName: nestedMessageName,
 			Name:        emName,
