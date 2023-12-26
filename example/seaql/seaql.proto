@@ -61,6 +61,7 @@ message DictItem {
 // #[seaql(engine="InnoDB")]
 // #[seaql(charset="utf8mb4")]
 // #[seaql(index="PRIMARY KEY (`id`)")]
+// #[seaql(index="UNIQUE KEY `uk_key_value` (`key`, `value`) USING BTREE")]
 message DictAnnote {
   // 系统序号
   // #[seaql(type="bigint NOT NULL AUTO_INCREMENT")]

@@ -13,5 +13,6 @@ CREATE TABLE
 		`is_pin` tinyint(1) NOT NULL COMMENT '是否锁定',
 		`created_at` datetime NOT NULL COMMENT '创建时间',
 		`updated_at` datetime NOT NULL COMMENT '更新时间',
-		PRIMARY KEY (`id`)
+		PRIMARY KEY (`id`),
+		UNIQUE KEY `uk_key_value` (`key`, `value`) USING BTREE
 	) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '字典表';
