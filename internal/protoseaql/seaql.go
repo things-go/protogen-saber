@@ -89,22 +89,23 @@ func IntoTable(protoMessages []*protogen.Message) ([]Table, error) {
 		var foreignKey []string
 
 		annotates, remainComments := protoutil.NewCommentLines(pe.Comments.Leading).FindAnnotation(annotation_Path)
-		if len(annotates) > 0 {
-			for _, v := range annotates {
-				switch v.Key {
-				case annotation_Key_Name:
-					tableName = v.Value
-				case annotation_Key_Engine:
-					engine = v.Value
-				case annotation_Key_Charset:
-					charset = v.Value
-				case annotation_Key_Collate:
-					collate = v.Value
-				case annotation_Key_Index:
-					indexes = append(indexes, v.Value)
-				case annotation_Key_ForeignKey:
-					foreignKey = append(foreignKey, v.Value)
-				}
+		if len(annotates) == 0 {
+			continue
+		}
+		for _, v := range annotates {
+			switch v.Key {
+			case annotation_Key_Name:
+				tableName = v.Value
+			case annotation_Key_Engine:
+				engine = v.Value
+			case annotation_Key_Charset:
+				charset = v.Value
+			case annotation_Key_Collate:
+				collate = v.Value
+			case annotation_Key_Index:
+				indexes = append(indexes, v.Value)
+			case annotation_Key_ForeignKey:
+				foreignKey = append(foreignKey, v.Value)
 			}
 		}
 		comment := strings.TrimSpace(strings.TrimPrefix(remainComments.LineString(), rawTableName))
