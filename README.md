@@ -1,5 +1,6 @@
 # protogen-saber
-protogen-saber toolkit for proto generate go code. 
+
+protogen-saber toolkit for proto generate go code. use annotation on comments like `// #[enum]` and `// #[enum(mapping="value")]`.
 
 [![GoDoc](https://godoc.org/github.com/things-go/protogen-saber?status.svg)](https://godoc.org/github.com/things-go/protogen-saber)
 [![Go.Dev reference](https://img.shields.io/badge/go.dev-reference-blue?logo=go&logoColor=white)](https://pkg.go.dev/github.com/things-go/protogen-saber?tab=doc)
