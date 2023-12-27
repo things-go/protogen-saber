@@ -38,6 +38,7 @@ builds:
       - -trimpath
     ldflags:
       - -s -w
+
   - id: protoc-gen-saber-enum
     main: ./cmd/protoc-gen-saber-enum
     binary: protoc-gen-saber-enum
@@ -59,6 +60,51 @@ builds:
       - -trimpath
     ldflags:
       - -s -w
+
+  - id: protoc-gen-saber-model
+    main: ./cmd/protoc-gen-saber-model
+    binary: protoc-gen-saber-model
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - windows
+      - darwin
+    goarch:
+      - "386"
+      - amd64
+      - arm
+      - arm64
+    goarm:
+      - "7"
+    mod_timestamp: "{{ .CommitTimestamp }}"
+    flags:
+      - -trimpath
+    ldflags:
+      - -s -w
+
+  - id: protoc-gen-saber-rapier
+    main: ./cmd/protoc-gen-saber-rapier
+    binary: protoc-gen-saber-rapier
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - windows
+      - darwin
+    goarch:
+      - "386"
+      - amd64
+      - arm
+      - arm64
+    goarm:
+      - "7"
+    mod_timestamp: "{{ .CommitTimestamp }}"
+    flags:
+      - -trimpath
+    ldflags:
+      - -s -w
+
   - id: protoc-gen-saber-seaql
     main: ./cmd/protoc-gen-saber-seaql
     binary: protoc-gen-saber-seaql
