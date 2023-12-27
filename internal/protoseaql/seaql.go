@@ -136,7 +136,7 @@ func IntoTable(protoMessages []*protogen.Message) ([]Table, error) {
 			ty := ""
 			// 先判断注解, 再判断扩展
 			annotateValues, remainComments := protoutil.NewComments(v.Comments.Leading).FindAnnotationValues2(annotation_Path, annotation_Key_Type)
-			if len(annotates) > 0 && annotateValues[0] != "" {
+			if len(annotateValues) > 0 && annotateValues[0] != "" {
 				ty = annotateValues[0]
 			} else {
 				messageFieldOptions := proto.GetExtension(v.Desc.Options(), seaql.E_Field)
