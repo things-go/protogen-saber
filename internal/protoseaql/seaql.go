@@ -8,9 +8,7 @@ import (
 	"github.com/things-go/protogen-saber/internal/infra"
 	"github.com/things-go/protogen-saber/internal/protoenum"
 	"github.com/things-go/protogen-saber/internal/protoutil"
-	"github.com/things-go/protogen-saber/protosaber/seaql"
 	"google.golang.org/protobuf/compiler/protogen"
-	"google.golang.org/protobuf/proto"
 )
 
 // annotation const value
@@ -82,6 +80,7 @@ func IntoTable(protoMessages []*protogen.Message) ([]Table, error) {
 			continue
 		}
 		rawTableName := string(pe.Desc.Name())
+
 		var tableName = rawTableName
 		var engine = "InnoDB"
 		var charset = "utf8mb4"
@@ -89,7 +88,6 @@ func IntoTable(protoMessages []*protogen.Message) ([]Table, error) {
 		var indexes []string
 		var foreignKey []string
 
-		// 先判断注解, 再判断扩展
 		annotates, remainComments := protoutil.NewComments(pe.Comments.Leading).FindAnnotation2(annotation_Path)
 		if len(annotates) > 0 {
 			for _, v := range annotates {
@@ -108,47 +106,19 @@ func IntoTable(protoMessages []*protogen.Message) ([]Table, error) {
 					foreignKey = append(foreignKey, v.Value)
 				}
 			}
-		} else {
-			messageOptions := proto.GetExtension(pe.Desc.Options(), seaql.E_Options)
-			seaOptions, ok := messageOptions.(*seaql.Options)
-			if !ok || seaOptions == nil {
-				continue
-			}
-			if seaOptions.TableName != "" {
-				tableName = seaOptions.TableName
-			}
-			if seaOptions.Engine != "" {
-				engine = seaOptions.Engine
-			}
-			if seaOptions.Charset != "" {
-				charset = seaOptions.Charset
-			}
-			if seaOptions.Collate != "" {
-				collate = seaOptions.Collate
-			}
-			indexes = seaOptions.Index
-			foreignKey = seaOptions.ForeignKey
 		}
 		comment := strings.TrimSpace(strings.TrimPrefix(remainComments.LineString(), rawTableName))
 
 		columns := make([]Column, 0, len(pe.Fields))
 		for _, v := range pe.Fields {
 			ty := ""
-			// 先判断注解, 再判断扩展
-			annotateValues, remainComments := protoutil.NewComments(v.Comments.Leading).FindAnnotationValues2(annotation_Path, annotation_Key_Type)
+			annotateValues, remainComments := protoutil.NewComments(v.Comments.Leading).
+				FindAnnotationValues2(annotation_Path, annotation_Key_Type)
 			if len(annotateValues) > 0 && annotateValues[0] != "" {
 				ty = annotateValues[0]
-			} else {
-				messageFieldOptions := proto.GetExtension(v.Desc.Options(), seaql.E_Field)
-				seaFieldOptions := messageFieldOptions.(*seaql.Field)
-				if seaFieldOptions == nil {
-					return nil, fmt.Errorf("seaql: message(%s) - field(%s) is not set seaql type", pe.Desc.Name(), string(v.Desc.Name()))
-				}
-				seaFieldOptions.Type = strings.TrimSpace(seaFieldOptions.Type)
-				if seaFieldOptions.Type == "" {
-					return nil, fmt.Errorf("seaql: message(%s) - field(%s) should be not empty", pe.Desc.Name(), string(v.Desc.Name()))
-				}
-				ty = seaFieldOptions.Type
+			}
+			if ty == "" {
+				return nil, fmt.Errorf("seaql: message(%s) - field(%s) type should be not empty", pe.Desc.Name(), string(v.Desc.Name()))
 			}
 
 			comment := strings.ReplaceAll(remainComments.LineString(), " ", "")

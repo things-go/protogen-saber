@@ -7,13 +7,10 @@ option java_multiple_files = true;
 option java_package = "cn.things-go.examples.enum";
 option java_outer_classname = "Enums";
 
-
-import "enumerate/enumerate.proto";
-
 message Nested {
   // Status 状态值
+   // #[Enum]
   enum Status {
-    option (things_go.enumerate.enabled) = true;
     // "unspecified"
     // aaaa
     Status_Unspecified = 0;
@@ -28,38 +25,14 @@ message Nested {
     // end
     Status_End = 999;
   }
-    // StatusAnnote 状态值
-  // #[Enum]
-  enum StatusAnnote {
-    // "unspecified"
-    // aaaa
-    StatusAnnote_Unspecified = 0;
-    // nested1
-    StatusAnnote_Up = 1;
-    // nested2
-    StatusAnnote_Down  = 2;
-    // nested3
-    StatusAnnote_Left  = 3;
-    StatusAnnote_Right  = 4;
-    // end
-    StatusAnnote_End = 999;
-  }
   message Nested1 {
     // Type 类型
+       // #[Enum]
     enum Type {
-      option (things_go.enumerate.enabled) = true;
       // 禁用
       Type_Disable = 0;
       // 启用
       Type_Enable = 1;
-    }
-    // TypeAnnote 类型
-    // #[Enum]
-    enum TypeAnnote {
-      // 禁用
-      TypeAnnote_Disable = 0;
-      // 启用
-      TypeAnnote_Enable = 1;
     }
   }
 }

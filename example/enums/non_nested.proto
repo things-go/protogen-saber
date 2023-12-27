@@ -7,27 +7,9 @@ option java_multiple_files = true;
 option java_package = "cn.things-go.examples.enum";
 option java_outer_classname = "Enums";
 
-import "enumerate/enumerate.proto";
-
-// NonNestedStatus 状态值
-enum NonNestedStatus {
-  option (things_go.enumerate.enabled) = true;
-
-  // 未定义
-  NonNestedStatus_Unspecified = 0;
-  // 打开
-  NonNestedStatus_Up = 1 [(things_go.enumerate.mapping) = "打开"];
-  // 关闭
-  NonNestedStatus_Down = 2 [(things_go.enumerate.mapping) = "关闭"];
-  // 左
-  NonNestedStatus_Left = 3 [(things_go.enumerate.mapping) = "左"];
-  // 右
-  NonNestedStatus_Right = 4 [(things_go.enumerate.mapping) = "右"];
-}
-
 // NonNestedStatus 状态值
 // #[Enum]
-enum NonNestedStatusAnnote {
+enum NonNestedStatus {
   // 未定义
   NonNestedStatusAnnote_Unspecified = 0;
   // 打开

@@ -7,7 +7,7 @@ import (
 	"google.golang.org/protobuf/compiler/protogen"
 )
 
-const version = "v0.3.0"
+const version = "v0.5.0"
 
 // annotation const value
 const (

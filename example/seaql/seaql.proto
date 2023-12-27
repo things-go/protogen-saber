@@ -7,62 +7,15 @@ option java_multiple_files = true;
 option java_package = "cn.things-go.examples.Seaql";
 option java_outer_classname = "Seaql";
 
-import "seaql/seaql.proto";
 import "enums.proto";
 
 // Dict 字典表
-message Dict {
-  option (things_go.seaql.options) = {
-    // table_name: "dict",
-    engine: 'InnoDB',
-    charset: "utf8mb4",
-    index: [
-      'PRIMARY KEY (`id`)'
-    ];
-};
-
-// 系统序号
-int64 id = 1 [(things_go.seaql.field) = { type: "bigint NOT NULL AUTO_INCREMENT" }];
-// 键
-// 值
-string key = 2 [(things_go.seaql.field) = { type: "varchar(64) NOT NULL DEFAULT ''" }];
-// 名称
-string name = 3 [(things_go.seaql.field) = { type: "varchar(64) NOT NULL DEFAULT ''" }];
-// 是否锁定
-bool is_pin = 4 [(things_go.seaql.field) = { type: "tinyint(1) NOT NULL" }];
-// 创建时间
-int64 created_at = 5 [(things_go.seaql.field) = { type: "datetime NOT NULL" }];
-// 更新时间
-int64 updated_at = 6 [(things_go.seaql.field) = { type: "datetime NOT NULL" }];
-}
-
-// DictItem 字典项表
-message DictItem {
-  option (things_go.seaql.options) = {
-  };
-
-  // 系统序号
-  int64 id = 1 [(things_go.seaql.field) = { type: "bigint NOT NULL AUTO_INCREMENT" }];
-  // 名称
-  string key = 2 [(things_go.seaql.field) = { type: "varchar(64) NOT NULL DEFAULT ''" }];
-  // 名称
-  string name = 3 [(things_go.seaql.field) = { type: "varchar(64) NOT NULL DEFAULT ''" }];
-  // 状态
-  // 这是状态
-  Infra.Status status = 4 [(things_go.seaql.field) = { type: "tinyint(3) unsigned NOT NULL" }];
-  // 创建时间
-  int64 created_at = 5 [(things_go.seaql.field) = { type: "datetime NOT NULL" }];
-  // 更新时间
-  int64 updated_at = 6 [(things_go.seaql.field) = { type: "datetime NOT NULL" }];
-}
-
-// DictAnnote 字典表
 // #[seaql(name="dict")]
 // #[seaql(engine="InnoDB")]
 // #[seaql(charset="utf8mb4")]
 // #[seaql(index="PRIMARY KEY (`id`)")]
 // #[seaql(index="UNIQUE KEY `uk_key_value` (`key`, `value`) USING BTREE")]
-message DictAnnote {
+message Dict {
   // 系统序号
   // #[seaql(type="bigint NOT NULL AUTO_INCREMENT")]
   int64 id = 1 ;
@@ -83,9 +36,9 @@ message DictAnnote {
   int64 updated_at = 6;
 }
 
-// DictItemAnnote 字典项表
+// DictItem 字典项表
 // #[seaql]
-message DictItemAnnote  {
+message DictItem  {
   // 系统序号
   // #[seaql(type="bigint NOT NULL AUTO_INCREMENT")]
   int64 id = 1;

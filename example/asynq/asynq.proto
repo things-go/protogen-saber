@@ -7,16 +7,12 @@ option java_multiple_files = true;
 option java_package = "cn.things-go.examples.asynq";
 option java_outer_classname = "Asynq";
 
-import "asynq/asynq.proto";
 import "google/protobuf/empty.proto";
 
 service User {
   // 异步创建用户
-  rpc CreateUser(CreateUserPayload) returns (google.protobuf.Empty) {
-    option (things_go.asynq.task) = {
-      pattern: "user:create"
-    };
-  };
+    // #[asynq(pattern="user:create")]
+  rpc CreateUser(CreateUserPayload) returns (google.protobuf.Empty);
   // 异步更新用户
   // #[asynq(pattern="user:update")]
   // #[asynq(cron_spec="@every 120s")]

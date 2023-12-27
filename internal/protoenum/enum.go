@@ -5,9 +5,7 @@ import (
 
 	"github.com/things-go/protogen-saber/internal/infra"
 	"github.com/things-go/protogen-saber/internal/protoutil"
-	"github.com/things-go/protogen-saber/protosaber/enumerate"
 	"google.golang.org/protobuf/compiler/protogen"
-	"google.golang.org/protobuf/proto"
 )
 
 // annotation const value
@@ -61,13 +59,9 @@ func IntoEnums(nestedMessageName string, protoEnums []*protogen.Enum) []*Enum {
 			continue
 		}
 
-		// 先判断注解, 再判断扩展
 		annotates, remainComments := protoutil.NewComments(pe.Comments.Leading).FindAnnotation2(annotation_Path)
 		if len(annotates) == 0 {
-			isEnabled := proto.GetExtension(pe.Desc.Options(), enumerate.E_Enabled)
-			if ok := isEnabled.(bool); !ok {
-				continue
-			}
+			continue
 		}
 
 		emName := string(pe.Desc.Name())
@@ -81,11 +75,7 @@ func IntoEnums(nestedMessageName string, protoEnums []*protogen.Enum) []*Enum {
 			if len(annotateValues) > 0 && annotateValues[0] != "" {
 				mappingValue = annotateValues[0]
 			} else {
-				mpv := proto.GetExtension(v.Desc.Options(), enumerate.E_Mapping)
-				mappingValue, _ = mpv.(string)
-				if mappingValue == "" {
-					mappingValue = comment
-				}
+				mappingValue = comment
 			}
 
 			comment = strings.ReplaceAll(strings.ReplaceAll(comment, "\n", ","), `"`, `\"`)
@@ -125,10 +115,7 @@ func IntoEnumComment(pe *protogen.Enum) string {
 	}
 	annotate := protoutil.NewComments(pe.Comments.Leading).FindAnnotation(annotation_Path)
 	if len(annotate) == 0 {
-		isEnabled := proto.GetExtension(pe.Desc.Options(), enumerate.E_Enabled)
-		if ok := isEnabled.(bool); !ok {
-			return ""
-		}
+		return ""
 	}
 
 	emValueMp := make(map[int]string, len(pe.Values))
@@ -138,11 +125,7 @@ func IntoEnumComment(pe *protogen.Enum) string {
 		if len(annotateVal) > 0 && annotateVal[0] != "" {
 			mappingValue = annotateVal[0]
 		} else {
-			mpv := proto.GetExtension(v.Desc.Options(), enumerate.E_Mapping)
-			mappingValue, _ = mpv.(string)
-			if mappingValue == "" {
-				mappingValue = strings.TrimSpace(strings.TrimSuffix(string(v.Comments.Leading), "\n"))
-			}
+			mappingValue = strings.TrimSpace(strings.TrimSuffix(string(v.Comments.Leading), "\n"))
 		}
 		mappingValue = strings.ReplaceAll(strings.ReplaceAll(mappingValue, "\n", ","), `"`, `\"`)
 		emValueMp[int(v.Desc.Number())] = mappingValue

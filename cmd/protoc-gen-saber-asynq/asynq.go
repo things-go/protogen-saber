@@ -6,9 +6,7 @@ import (
 	"strings"
 
 	"github.com/things-go/protogen-saber/internal/protoutil"
-	"github.com/things-go/protogen-saber/protosaber/asynq"
 	"google.golang.org/protobuf/compiler/protogen"
-	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/descriptorpb"
 	"google.golang.org/protobuf/types/pluginpb"
 )
@@ -97,14 +95,6 @@ func genService(gen *protogen.Plugin, file *protogen.File, g *protogen.Generated
 		rule, ok := MatchAsynqRule(method.Comments.Leading)
 		if ok {
 			sd.Methods = append(sd.Methods, buildAsynqRule(g, method, rule))
-		} else {
-			r, ok := proto.GetExtension(method.Desc.Options(), asynq.E_Task).(*asynq.Task)
-			if r != nil && ok {
-				sd.Methods = append(sd.Methods, buildAsynqRule(g, method, &Task{
-					Pattern:  r.Pattern,
-					CronSpec: r.CronSpec,
-				}))
-			}
 		}
 	}
 	if len(sd.Methods) == 0 {
@@ -125,11 +115,6 @@ func hasHTTPRule(services []*protogen.Service) bool {
 			}
 			if _, ok := MatchAsynqRule(method.Comments.Leading); ok {
 				return true
-			} else {
-				rule, ok := proto.GetExtension(method.Desc.Options(), asynq.E_Task).(*asynq.Task)
-				if rule != nil && ok {
-					return true
-				}
 			}
 		}
 	}
