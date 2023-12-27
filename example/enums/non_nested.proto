@@ -8,21 +8,21 @@ option java_package = "cn.things-go.examples.enum";
 option java_outer_classname = "Enums";
 
 // NonNestedStatus 状态值
-// #[Enum]
+// #[enum]
 enum NonNestedStatus {
   // 未定义
   NonNestedStatusAnnote_Unspecified = 0;
   // 打开
-  // #[Enum(mapping="打开")]
+  // #[enum(mapping="打开")]
   NonNestedStatusAnnote_Up = 1;
   // 关闭
-  // #[Enum(mapping="关闭")]
+  // #[enum(mapping="关闭")]
   NonNestedStatusAnnote_Down = 2;
   // 左
-  // #[Enum(mapping="左")]
+  // #[enum(mapping="左")]
   NonNestedStatusAnnote_Left = 3;
   // 右
-  // #[Enum(mapping="右")]
+  // #[enum(mapping="右")]
   NonNestedStatusAnnote_Right = 4;
 }
 

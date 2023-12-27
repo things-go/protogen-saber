@@ -13,4 +13,11 @@ tools:
 	go install github.com/things-go/protogen-saber/cmd/protoc-gen-saber-model
 	go install github.com/things-go/protogen-saber/cmd/protoc-gen-saber-rapier
 
+gen.asynq:
+	@./example/asynq/gen.sh
+gen.enum:
+	@./example/enums/gen.sh
+gen.seaql:
+	@./example/seaql/gen.sh
+
 .PHONY: generate tools

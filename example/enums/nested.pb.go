@@ -21,7 +21,7 @@ const (
 )
 
 // Status 状态值
-// #[Enum]
+// #[enum]
 type Nested_Status int32
 
 const (
@@ -88,7 +88,7 @@ func (Nested_Status) EnumDescriptor() ([]byte, []int) {
 }
 
 // Type 类型
-// #[Enum]
+// #[enum]
 type Nested_Nested1_Type int32
 
 const (

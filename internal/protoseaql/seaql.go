@@ -88,7 +88,7 @@ func IntoTable(protoMessages []*protogen.Message) ([]Table, error) {
 		var indexes []string
 		var foreignKey []string
 
-		annotates, remainComments := protoutil.NewComments(pe.Comments.Leading).FindAnnotation2(annotation_Path)
+		annotates, remainComments := protoutil.NewCommentLines(pe.Comments.Leading).FindAnnotation(annotation_Path)
 		if len(annotates) > 0 {
 			for _, v := range annotates {
 				switch v.Key {
@@ -112,8 +112,8 @@ func IntoTable(protoMessages []*protogen.Message) ([]Table, error) {
 		columns := make([]Column, 0, len(pe.Fields))
 		for _, v := range pe.Fields {
 			ty := ""
-			annotateValues, remainComments := protoutil.NewComments(v.Comments.Leading).
-				FindAnnotationValues2(annotation_Path, annotation_Key_Type)
+			annotateValues, remainComments := protoutil.NewCommentLines(v.Comments.Leading).
+				FindAnnotationValues(annotation_Path, annotation_Key_Type)
 			if len(annotateValues) > 0 && annotateValues[0] != "" {
 				ty = annotateValues[0]
 			}

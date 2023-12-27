@@ -6,68 +6,55 @@ import (
 	"google.golang.org/protobuf/compiler/protogen"
 )
 
-type Comments []string
+// CommentLines comment the line like `// xxxx`
+type CommentLines []string
 
-func NewComments(s protogen.Comments) Comments {
+func NewCommentLines(s protogen.Comments) CommentLines {
 	return strings.Split(strings.TrimSuffix(s.String(), "\n"), "\n")
 }
 
-func (c Comments) Append(s string) Comments {
-	return append(c, "// "+s)
+func (c *CommentLines) Append(s string) CommentLines {
+	*c = append(*c, "// "+s)
+	return *c
 }
 
-func (c Comments) Annotations() Annotations {
-	ms := make([]*Annotation, 0, len(c))
+// Annotations all match the annotation.
+func (c CommentLines) Annotations() Annotations {
+	ret := make([]*Annotation, 0, len(c))
 	for _, v := range c {
 		if m := MatchAnnotation(v); m != nil {
-			ms = append(ms, m)
+			ret = append(ret, m)
 		}
 	}
-	return ms
+	return ret
 }
 
-func (c Comments) FindAnnotation(path string) Annotations {
-	ms := make([]*Annotation, 0, len(c))
+// FindAnnotation all `path` annotation and remaining comment lines.
+// return the remaining comment line except the annotation
+func (c CommentLines) FindAnnotation(path string) (Annotations, CommentLines) {
+	remain := make(CommentLines, 0, len(c))
+	ret := make([]*Annotation, 0, len(c))
 	for _, v := range c {
 		m := MatchAnnotation(v)
-		if m != nil && strings.EqualFold(m.Path, path) {
-			ms = append(ms, m)
-		}
-	}
-	return ms
-}
-
-func (c Comments) FindAnnotation2(path string) (Annotations, Comments) {
-	remain := make(Comments, 0, len(c))
-	ms := make([]*Annotation, 0, len(c))
-	for _, v := range c {
-		m := MatchAnnotation(v)
-		if m != nil && strings.EqualFold(m.Path, path) {
-			ms = append(ms, m)
+		if m != nil &&
+			m.Path == path {
+			ret = append(ret, m)
 		} else {
 			remain = append(remain, v)
 		}
 	}
-	return ms, remain
+	return ret, remain
 }
 
-func (c Comments) FindAnnotationValues(path, key string) []string {
+// FindAnnotation all `path` and `key` annotation value and remaining comment lines.
+// return the remaining comment line except the annotation
+func (c CommentLines) FindAnnotationValues(path, key string) ([]string, CommentLines) {
+	remain := make(CommentLines, 0, len(c))
 	ms := make([]string, 0, len(c))
 	for _, v := range c {
 		m := MatchAnnotation(v)
-		if m != nil && strings.EqualFold(m.Path, path) && strings.EqualFold(m.Key, key) {
-			ms = append(ms, m.Value)
-		}
-	}
-	return ms
-}
-
-func (c Comments) FindAnnotationValues2(path, key string) ([]string, Comments) {
-	remain := make(Comments, 0, len(c))
-	ms := make([]string, 0, len(c))
-	for _, v := range c {
-		m := MatchAnnotation(v)
-		if m != nil && strings.EqualFold(m.Path, path) && strings.EqualFold(m.Key, key) {
+		if m != nil &&
+			m.Path == path && m.Key == key {
 			ms = append(ms, m.Value)
 		} else {
 			remain = append(remain, v)
@@ -76,7 +63,7 @@ func (c Comments) FindAnnotationValues2(path, key string) ([]string, Comments) {
 	return ms, remain
 }
 
-func (c Comments) String() string {
+func (c CommentLines) String() string {
 	if len(c) == 0 {
 		return ""
 	}
@@ -90,7 +77,8 @@ func (c Comments) String() string {
 	return string(b)
 }
 
-func (c Comments) LineString() string {
+// LineString one line string.
+func (c CommentLines) LineString() string {
 	if len(c) == 0 {
 		return ""
 	}

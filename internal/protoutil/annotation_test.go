@@ -132,3 +132,9 @@ func TestMatchAnnotation(t *testing.T) {
 		})
 	}
 }
+
+func TestXxx(t *testing.T) {
+	a := CommentLines{"// a", "// b"}
+	b := a.Append("c")
+	t.Log(reflect.DeepEqual(a, b))
+}

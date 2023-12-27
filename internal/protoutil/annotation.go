@@ -2,12 +2,11 @@ package protoutil
 
 import (
 	"regexp"
-	"strings"
 )
 
 // annotation matches the following pattern
-// `// #[Enum]“ will get `// #[enum]`,`Enum`,“,“,“
-// `// #[Enum(mapping="aaa")]` will get `// #[Enum(mapping="aaa")]`, "Enum", `(mapping="aaa")`, `mapping`, `aaa`
+// `// #[Enum]` will find `// #[enum]`,`Enum`,“,“,“
+// `// #[Enum(mapping="aaa")]` will find `// #[Enum(mapping="aaa")]`, "Enum", `(mapping="aaa")`, `mapping`, `aaa`
 var rxAnnotation = regexp.MustCompile(`^//\s*#\[(\w+)\s*(\(\s*(\w+)\s*=\s*"(.*)"\s*\))?\s*\].*$`)
 
 type Annotation struct {
@@ -16,6 +15,9 @@ type Annotation struct {
 	Value string
 }
 
+// MatchAnnotation 匹配注解
+// `// #[xxx]`
+// `// #[xxx(xx="xxxx")]`
 func MatchAnnotation(s string) *Annotation {
 	matches := rxAnnotation.FindStringSubmatch(s)
 	if len(matches) != 5 {
@@ -30,26 +32,30 @@ func MatchAnnotation(s string) *Annotation {
 
 type Annotations []*Annotation
 
+// Len
 func (c Annotations) Len() int {
 	return len(c)
 }
 
-func (c Annotations) FindValues(path, key string) []string {
-	vs := make([]string, 0, len(c))
+// Find all `path` annotation
+func (c Annotations) Find(path string) Annotations {
+	ret := make([]*Annotation, 0, len(c))
 	for _, v := range c {
-		if strings.EqualFold(v.Path, path) && strings.EqualFold(v.Key, key) {
-			vs = append(vs, v.Value)
+		if v.Path == path {
+			ret = append(ret, v)
 		}
 	}
-	return vs
+	return ret
 }
 
-func (c Annotations) Find(path string) Annotations {
-	vs := make([]*Annotation, 0, len(c))
+// Find all `path` and `key` annotation value
+func (c Annotations) FindValues(path, key string) []string {
+	ret := make([]string, 0, len(c))
 	for _, v := range c {
-		if strings.EqualFold(v.Path, path) {
-			vs = append(vs, v)
+		if v.Path == path &&
+			v.Key == key {
+			ret = append(ret, v.Value)
 		}
 	}
-	return vs
+	return ret
 }

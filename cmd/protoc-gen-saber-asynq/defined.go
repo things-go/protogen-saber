@@ -1,8 +1,6 @@
 package main
 
 import (
-	"strings"
-
 	"github.com/things-go/protogen-saber/internal/protoutil"
 	"google.golang.org/protobuf/compiler/protogen"
 )
@@ -40,13 +38,14 @@ type Task struct {
 }
 
 func MatchAsynqRule(c protogen.Comments) (*Task, bool) {
-	annotes := protoutil.NewComments(c).FindAnnotation(annotation_Path)
+	annotes, _ := protoutil.NewCommentLines(c).FindAnnotation(annotation_Path)
 	if len(annotes) > 0 {
 		t := &Task{}
 		for _, v := range annotes {
-			if strings.EqualFold(v.Key, annotation_Key_Pattern) {
+			switch v.Key {
+			case annotation_Key_Pattern:
 				t.Pattern = v.Value
-			} else if strings.EqualFold(v.Key, annotation_Key_CronSpec) {
+			case annotation_Key_CronSpec:
 				t.CronSpec = v.Value
 			}
 		}

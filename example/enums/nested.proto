@@ -9,7 +9,7 @@ option java_outer_classname = "Enums";
 
 message Nested {
   // Status 状态值
-   // #[Enum]
+   // #[enum]
   enum Status {
     // "unspecified"
     // aaaa
@@ -27,7 +27,7 @@ message Nested {
   }
   message Nested1 {
     // Type 类型
-       // #[Enum]
+    // #[enum]
     enum Type {
       // 禁用
       Type_Disable = 0;

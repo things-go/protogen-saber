@@ -58,8 +58,8 @@ func IntoEnums(nestedMessageName string, protoEnums []*protogen.Enum) []*Enum {
 		if len(pe.Values) == 0 {
 			continue
 		}
-
-		annotates, remainComments := protoutil.NewComments(pe.Comments.Leading).FindAnnotation2(annotation_Path)
+		annotates, remainComments := protoutil.NewCommentLines(pe.Comments.Leading).
+			FindAnnotation(annotation_Path)
 		if len(annotates) == 0 {
 			continue
 		}
@@ -71,7 +71,8 @@ func IntoEnums(nestedMessageName string, protoEnums []*protogen.Enum) []*Enum {
 			mappingValue := ""
 			comment := strings.TrimSpace(strings.TrimSuffix(string(v.Comments.Leading), "\n"))
 			// 先判断注解, 再判断扩展
-			annotateValues := protoutil.NewComments(v.Comments.Leading).FindAnnotationValues(annotation_Path, annotation_Key_Mapping)
+			annotateValues, _ := protoutil.NewCommentLines(v.Comments.Leading).
+				FindAnnotationValues(annotation_Path, annotation_Key_Mapping)
 			if len(annotateValues) > 0 && annotateValues[0] != "" {
 				mappingValue = annotateValues[0]
 			} else {
@@ -97,7 +98,7 @@ func IntoEnums(nestedMessageName string, protoEnums []*protogen.Enum) []*Enum {
 			emValues = append(emValues, ev)
 		}
 
-		comment := remainComments.Append(infra.ToArrayString(emValueMp)).String()
+		comment := remainComments.Append(protoutil.ToArrayString(emValueMp)).String()
 		enums = append(enums, &Enum{
 			MessageName: nestedMessageName,
 			Name:        emName,
@@ -113,7 +114,7 @@ func IntoEnumComment(pe *protogen.Enum) string {
 	if pe == nil || len(pe.Values) == 0 {
 		return ""
 	}
-	annotate := protoutil.NewComments(pe.Comments.Leading).FindAnnotation(annotation_Path)
+	annotate, _ := protoutil.NewCommentLines(pe.Comments.Leading).FindAnnotation(annotation_Path)
 	if len(annotate) == 0 {
 		return ""
 	}
@@ -121,7 +122,7 @@ func IntoEnumComment(pe *protogen.Enum) string {
 	emValueMp := make(map[int]string, len(pe.Values))
 	for _, v := range pe.Values {
 		mappingValue := ""
-		annotateVal := protoutil.NewComments(v.Comments.Leading).FindAnnotationValues(annotation_Path, annotation_Key_Mapping)
+		annotateVal, _ := protoutil.NewCommentLines(v.Comments.Leading).FindAnnotationValues(annotation_Path, annotation_Key_Mapping)
 		if len(annotateVal) > 0 && annotateVal[0] != "" {
 			mappingValue = annotateVal[0]
 		} else {
@@ -130,5 +131,5 @@ func IntoEnumComment(pe *protogen.Enum) string {
 		mappingValue = strings.ReplaceAll(strings.ReplaceAll(mappingValue, "\n", ","), `"`, `\"`)
 		emValueMp[int(v.Desc.Number())] = mappingValue
 	}
-	return infra.ToArrayString(emValueMp)
+	return protoutil.ToArrayString(emValueMp)
 }

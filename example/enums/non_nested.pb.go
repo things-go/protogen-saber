@@ -21,23 +21,23 @@ const (
 )
 
 // NonNestedStatus 状态值
-// #[Enum]
+// #[enum]
 type NonNestedStatus int32
 
 const (
 	// 未定义
 	NonNestedStatus_NonNestedStatusAnnote_Unspecified NonNestedStatus = 0
 	// 打开
-	// #[Enum(mapping="打开")]
+	// #[enum(mapping="打开")]
 	NonNestedStatus_NonNestedStatusAnnote_Up NonNestedStatus = 1
 	// 关闭
-	// #[Enum(mapping="关闭")]
+	// #[enum(mapping="关闭")]
 	NonNestedStatus_NonNestedStatusAnnote_Down NonNestedStatus = 2
 	// 左
-	// #[Enum(mapping="左")]
+	// #[enum(mapping="左")]
 	NonNestedStatus_NonNestedStatusAnnote_Left NonNestedStatus = 3
 	// 右
-	// #[Enum(mapping="右")]
+	// #[enum(mapping="右")]
 	NonNestedStatus_NonNestedStatusAnnote_Right NonNestedStatus = 4
 )
 
