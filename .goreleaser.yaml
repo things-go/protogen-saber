@@ -29,10 +29,10 @@ builds:
     goarch:
       - amd64
       - arm64
-      - "386"
-      - arm
-    goarm:
-      - "7"
+    #   - "386"
+    #   - arm
+    # goarm:
+    #   - "7"
     mod_timestamp: "{{ .CommitTimestamp }}"
     flags:
       - -trimpath
@@ -51,10 +51,10 @@ builds:
     goarch:
       - amd64
       - arm64
-      - "386"
-      - arm
-    goarm:
-      - "7"
+    #   - "386"
+    #   - arm
+    # goarm:
+    #   - "7"
     mod_timestamp: "{{ .CommitTimestamp }}"
     flags:
       - -trimpath
@@ -117,10 +117,10 @@ builds:
     goarch:
       - amd64
       - arm64
-      - "386"
-      - arm
-    goarm:
-      - "7"
+    #   - "386"
+    #   - arm
+    # goarm:
+    #   - "7"
     mod_timestamp: "{{ .CommitTimestamp }}"
     flags:
       - -trimpath
