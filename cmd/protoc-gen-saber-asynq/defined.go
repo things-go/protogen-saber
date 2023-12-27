@@ -50,7 +50,7 @@ func MatchAsynqRule(c protogen.Comments) (*Task, bool) {
 				t.CronSpec = v.Value
 			}
 		}
-		if t.Pattern != "" && t.CronSpec != "" {
+		if t.Pattern != "" {
 			return t, true
 		}
 	}
