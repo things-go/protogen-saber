@@ -15,7 +15,7 @@ message Infra {
     STATUS_UNSPECIFIED = 0;
     // nested1
     STATUS_UP = 1;
-    // 关闭
+    // 关 闭
     STATUS_DOWN = 2;
     // 左
     STATUS_LEFT = 3;

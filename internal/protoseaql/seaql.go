@@ -151,10 +151,10 @@ func IntoTable(protoMessages []*protogen.Message) ([]Table, error) {
 				ty = seaFieldOptions.Type
 			}
 
-			if enumComment := protoenum.IntoEnumComment(v.Enum); enumComment != "" {
-				remainComments = remainComments.Append(enumComment)
-			}
 			comment := strings.ReplaceAll(remainComments.LineString(), " ", "")
+			if enumComment := protoenum.IntoEnumComment(v.Enum); enumComment != "" {
+				comment += "," + enumComment
+			}
 
 			columns = append(columns, Column{
 				Name:    string(v.Desc.Name()),
