@@ -8,12 +8,6 @@ import (
 	"google.golang.org/protobuf/compiler/protogen"
 )
 
-// annotation const value
-const (
-	annotation_Path        = "enum"
-	annotation_Key_Mapping = "mapping"
-)
-
 // EnumValue 枚举的枚举项
 type EnumValue struct {
 	Number      int    // 编号
@@ -58,9 +52,8 @@ func IntoEnums(nestedMessageName string, protoEnums []*protogen.Enum) []*Enum {
 		if len(pe.Values) == 0 {
 			continue
 		}
-		annotates, remainComments := protoutil.NewCommentLines(pe.Comments.Leading).
-			FindAnnotation(annotation_Path)
-		if len(annotates) == 0 {
+		enumAnnotate, remainComments := ParseAnnotationEnum(pe.Comments.Leading)
+		if !enumAnnotate.Enabled {
 			continue
 		}
 
@@ -70,11 +63,10 @@ func IntoEnums(nestedMessageName string, protoEnums []*protogen.Enum) []*Enum {
 		for _, v := range pe.Values {
 			mappingValue := ""
 			comment := strings.TrimSpace(strings.TrimSuffix(string(v.Comments.Leading), "\n"))
-			// 先判断注解, 再判断扩展
-			annotateValues, _ := protoutil.NewCommentLines(v.Comments.Leading).
-				FindAnnotationValues(annotation_Path, annotation_Key_Mapping)
-			if len(annotateValues) > 0 && annotateValues[0] != "" {
-				mappingValue = annotateValues[0]
+
+			annotateEnumValue, _ := ParseAnnotationEnumValue(v.Comments.Leading)
+			if annotateEnumValue.Mapping != "" {
+				mappingValue = annotateEnumValue.Mapping
 			} else {
 				mappingValue = comment
 			}
@@ -114,17 +106,17 @@ func IntoEnumComment(pe *protogen.Enum) string {
 	if pe == nil || len(pe.Values) == 0 {
 		return ""
 	}
-	annotate, _ := protoutil.NewCommentLines(pe.Comments.Leading).FindAnnotation(annotation_Path)
-	if len(annotate) == 0 {
+	enumAnnotate, _ := ParseAnnotationEnum(pe.Comments.Leading)
+	if !enumAnnotate.Enabled {
 		return ""
 	}
 
 	emValueMp := make(map[int]string, len(pe.Values))
 	for _, v := range pe.Values {
 		mappingValue := ""
-		annotateVal, _ := protoutil.NewCommentLines(v.Comments.Leading).FindAnnotationValues(annotation_Path, annotation_Key_Mapping)
-		if len(annotateVal) > 0 && annotateVal[0] != "" {
-			mappingValue = annotateVal[0]
+		enumValueAnnotate, _ := ParseAnnotationEnumValue(v.Comments.Leading)
+		if enumValueAnnotate.Mapping != "" {
+			mappingValue = enumValueAnnotate.Mapping
 		} else {
 			mappingValue = strings.TrimSpace(strings.TrimSuffix(string(v.Comments.Leading), "\n"))
 		}

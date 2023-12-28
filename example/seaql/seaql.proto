@@ -10,9 +10,8 @@ option java_outer_classname = "Seaql";
 import "enums.proto";
 
 // Dict 字典表
-// #[seaql(name="dict")]
-// #[seaql(engine="InnoDB")]
-// #[seaql(charset="utf8mb4")]
+// #[seaql]
+// #[seaql(name="dict",engine="InnoDB",charset="utf8mb4")]
 // #[seaql(index="PRIMARY KEY (`id`)")]
 // #[seaql(index="UNIQUE KEY `uk_key_value` (`key`, `value`) USING BTREE")]
 message Dict {

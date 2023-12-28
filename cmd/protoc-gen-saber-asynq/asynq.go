@@ -92,9 +92,14 @@ func genService(gen *protogen.Plugin, file *protogen.File, g *protogen.Generated
 		if method.Desc.IsStreamingClient() || method.Desc.IsStreamingServer() {
 			continue
 		}
-		rule, ok := MatchAsynqRule(method.Comments.Leading)
-		if ok {
-			sd.Methods = append(sd.Methods, buildAsynqRule(g, method, rule))
+		rule := ParserAnnotationTask(method.Comments.Leading)
+		if rule.Enabled {
+			if rule.Pattern != "" {
+				sd.Methods = append(sd.Methods, buildAsynqRule(g, method, rule))
+			} else {
+				_, _ = fmt.Fprintf(os.Stderr,
+					"\u001B[31mWARN\u001B[m: [file(%v) service(%v) method(%v)] enabled asynq annotation but 'Pattern' is empty.\n", file.Desc.Path(), service.GoName, method.GoName)
+			}
 		}
 	}
 	if len(sd.Methods) == 0 {
@@ -113,7 +118,7 @@ func hasHTTPRule(services []*protogen.Service) bool {
 			if method.Desc.IsStreamingClient() || method.Desc.IsStreamingServer() {
 				continue
 			}
-			if _, ok := MatchAsynqRule(method.Comments.Leading); ok {
+			if ok := IsAnnotationTaskEnabled(method.Comments.Leading); ok {
 				return true
 			}
 		}

@@ -7,20 +7,7 @@ import (
 
 	"github.com/things-go/protogen-saber/internal/infra"
 	"github.com/things-go/protogen-saber/internal/protoenum"
-	"github.com/things-go/protogen-saber/internal/protoutil"
 	"google.golang.org/protobuf/compiler/protogen"
-)
-
-// annotation const value
-const (
-	annotation_Path           = "seaql"
-	annotation_Key_Name       = "table_name"
-	annotation_Key_Engine     = "engine"
-	annotation_Key_Charset    = "charset"
-	annotation_Key_Collate    = "collate"
-	annotation_Key_Index      = "index"
-	annotation_Key_ForeignKey = "foreign_key"
-	annotation_Key_Type       = "type"
 )
 
 type Schema struct {
@@ -79,45 +66,15 @@ func IntoTable(protoMessages []*protogen.Message) ([]Table, error) {
 		if len(pe.Fields) == 0 {
 			continue
 		}
-		rawTableName := string(pe.Desc.Name())
-
-		var tableName = rawTableName
-		var engine = "InnoDB"
-		var charset = "utf8mb4"
-		var collate = "utf8mb4_general_ci"
-		var indexes []string
-		var foreignKey []string
-
-		annotates, remainComments := protoutil.NewCommentLines(pe.Comments.Leading).FindAnnotation(annotation_Path)
-		if len(annotates) == 0 {
+		seaqlAnnotation := ParseAnnotationEnum(string(pe.Desc.Name()), pe.Comments.Leading)
+		if !seaqlAnnotation.Enabled {
 			continue
 		}
-		for _, v := range annotates {
-			switch v.Key {
-			case annotation_Key_Name:
-				tableName = v.Value
-			case annotation_Key_Engine:
-				engine = v.Value
-			case annotation_Key_Charset:
-				charset = v.Value
-			case annotation_Key_Collate:
-				collate = v.Value
-			case annotation_Key_Index:
-				indexes = append(indexes, v.Value)
-			case annotation_Key_ForeignKey:
-				foreignKey = append(foreignKey, v.Value)
-			}
-		}
-		comment := strings.TrimSpace(strings.TrimPrefix(remainComments.LineString(), rawTableName))
 
 		columns := make([]Column, 0, len(pe.Fields))
 		for _, v := range pe.Fields {
-			ty := ""
-			annotateValues, remainComments := protoutil.NewCommentLines(v.Comments.Leading).
-				FindAnnotationValues(annotation_Path, annotation_Key_Type)
-			if len(annotateValues) > 0 && annotateValues[0] != "" {
-				ty = annotateValues[0]
-			}
+			seaqlValueAnnotate, remainComments := ParseAnnotationSeaqlValue(v.Comments.Leading)
+			ty := seaqlValueAnnotate.Type
 			if ty == "" {
 				return nil, fmt.Errorf("seaql: message(%s) - field(%s) type should be not empty", pe.Desc.Name(), string(v.Desc.Name()))
 			}
@@ -135,14 +92,14 @@ func IntoTable(protoMessages []*protogen.Message) ([]Table, error) {
 		}
 
 		tables = append(tables, Table{
-			Name:        infra.SnakeCase(tableName),
-			Comment:     comment,
-			Engine:      engine,
-			Charset:     charset,
-			Collate:     collate,
+			Name:        infra.SnakeCase(seaqlAnnotation.Name),
+			Comment:     seaqlAnnotation.Comment,
+			Engine:      seaqlAnnotation.Engine,
+			Charset:     seaqlAnnotation.Charset,
+			Collate:     seaqlAnnotation.Collate,
+			Indexes:     seaqlAnnotation.Indexes,
+			ForeignKeys: seaqlAnnotation.ForeignKeys,
 			Columns:     columns,
-			Indexes:     indexes,
-			ForeignKeys: foreignKey,
 		})
 		if len(pe.Messages) > 0 {
 			tbs, err := IntoTable(pe.Messages)

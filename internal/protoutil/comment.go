@@ -3,6 +3,7 @@ package protoutil
 import (
 	"strings"
 
+	"github.com/things-go/protogen-saber/internal/annotation"
 	"google.golang.org/protobuf/compiler/protogen"
 )
 
@@ -13,54 +14,37 @@ func NewCommentLines(s protogen.Comments) CommentLines {
 	return strings.Split(strings.TrimSuffix(s.String(), "\n"), "\n")
 }
 
-func (c *CommentLines) Append(s string) CommentLines {
-	*c = append(*c, "// "+s)
-	return *c
-}
-
-// Annotations all match the annotation.
-func (c CommentLines) Annotations() Annotations {
-	ret := make([]*Annotation, 0, len(c))
-	for _, v := range c {
-		if m := MatchAnnotation(v); m != nil {
-			ret = append(ret, m)
-		}
-	}
-	return ret
-}
-
-// FindAnnotation all `path` annotation and remaining comment lines.
-// return the remaining comment line except the annotation
-func (c CommentLines) FindAnnotation(path string) (Annotations, CommentLines) {
+// Annotations all match the annotation and remaining comment lines.
+func (c CommentLines) Annotations() (annotation.Annotations, CommentLines) {
 	remain := make(CommentLines, 0, len(c))
-	ret := make([]*Annotation, 0, len(c))
-	for _, v := range c {
-		m := MatchAnnotation(v)
-		if m != nil &&
-			m.Path == path {
-			ret = append(ret, m)
+	ret := make([]*annotation.Annotation, 0, len(c))
+	for _, s := range c {
+		if m, err := annotation.Match(strings.TrimSpace(strings.TrimPrefix(s, "//"))); err != nil {
+			remain = append(remain, s)
 		} else {
-			remain = append(remain, v)
+			ret = append(ret, m)
 		}
 	}
 	return ret, remain
 }
 
-// FindAnnotation all `path` and `key` annotation value and remaining comment lines.
-// return the remaining comment line except the annotation
-func (c CommentLines) FindAnnotationValues(path, key string) ([]string, CommentLines) {
+// Annotations find `identifier` match the annotation and remaining comment lines.
+func (c CommentLines) FindAnnotations(identifier string) (annotation.Annotations, CommentLines) {
 	remain := make(CommentLines, 0, len(c))
-	ms := make([]string, 0, len(c))
-	for _, v := range c {
-		m := MatchAnnotation(v)
-		if m != nil &&
-			m.Path == path && m.Key == key {
-			ms = append(ms, m.Value)
-		} else {
-			remain = append(remain, v)
+	ret := make([]*annotation.Annotation, 0, len(c))
+	for _, s := range c {
+		if m, err := annotation.Match(strings.TrimSpace(strings.TrimPrefix(s, "//"))); err != nil {
+			remain = append(remain, s)
+		} else if m.Identifier == identifier {
+			ret = append(ret, m)
 		}
 	}
-	return ms, remain
+	return ret, remain
+}
+
+func (c *CommentLines) Append(s string) CommentLines {
+	*c = append(*c, "// "+s)
+	return *c
 }
 
 func (c CommentLines) String() string {

@@ -11,9 +11,11 @@ import "google/protobuf/empty.proto";
 
 service User {
   // 异步创建用户
-    // #[asynq(pattern="user:create")]
+  // #[asynq]
+  // #[asynq(pattern="user:create")]
   rpc CreateUser(CreateUserPayload) returns (google.protobuf.Empty);
   // 异步更新用户
+  // #[asynq]
   // #[asynq(pattern="user:update")]
   // #[asynq(cron_spec="@every 120s")]
   rpc UpdateUser(UpdateUserPayload) returns (google.protobuf.Empty);

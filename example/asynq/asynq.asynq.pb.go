@@ -21,15 +21,12 @@ var _ = context.TODO
 var _ = asynq.NewServeMux
 var _ = new(emptypb.Empty)
 
-const Pattern_User_CreateUser = "user:create"
 const Pattern_User_UpdateUser = "user:update"
 const CronSpec_User_UpdateUser = "@every 120s"
 
 type UserTaskHandler interface {
-	// CreateUser 异步创建用户
-	// #[asynq(pattern="user:create")]
-	CreateUser(context.Context, *CreateUserPayload) error
 	// UpdateUser 异步更新用户
+	// #[asynq]
 	// #[asynq(pattern="user:update")]
 	// #[asynq(cron_spec="@every 120s")]
 	UpdateUser(context.Context, *UpdateUserPayload) error
@@ -37,19 +34,7 @@ type UserTaskHandler interface {
 
 func RegisterUserTaskHandler(mux *asynq.ServeMux, srv UserTaskHandler, opts ...asynq_auxiliary.HandlerOption) {
 	settings := asynq_auxiliary.NewHandlerSettings(opts...)
-	mux.HandleFunc(Pattern_User_CreateUser, _User_CreateUser_Task_Handler(srv, settings))
 	mux.HandleFunc(Pattern_User_UpdateUser, _User_UpdateUser_Task_Handler(srv, settings))
-}
-
-func _User_CreateUser_Task_Handler(srv UserTaskHandler, settings *asynq_auxiliary.HandlerSettings) func(context.Context, *asynq.Task) error {
-	return func(ctx context.Context, task *asynq.Task) error {
-		var in CreateUserPayload
-
-		if err := settings.Unmarshaler.UnmarshalBinary(task.Payload(), &in); err != nil {
-			return err
-		}
-		return srv.CreateUser(ctx, &in)
-	}
 }
 
 func _User_UpdateUser_Task_Handler(srv UserTaskHandler, settings *asynq_auxiliary.HandlerSettings) func(context.Context, *asynq.Task) error {
@@ -64,10 +49,8 @@ func _User_UpdateUser_Task_Handler(srv UserTaskHandler, settings *asynq_auxiliar
 }
 
 type UserTaskClient interface {
-	// CreateUser 异步创建用户
-	// #[asynq(pattern="user:create")]
-	CreateUser(context.Context, *CreateUserPayload, ...asynq.Option) (*asynq.TaskInfo, error)
 	// UpdateUser 异步更新用户
+	// #[asynq]
 	// #[asynq(pattern="user:update")]
 	// #[asynq(cron_spec="@every 120s")]
 	UpdateUser(context.Context, *UpdateUserPayload, ...asynq.Option) (*asynq.TaskInfo, error)
@@ -87,18 +70,8 @@ func NewUserTaskClient(client *asynq.Client, opts ...asynq_auxiliary.ClientOptio
 	}
 }
 
-// CreateUser 异步创建用户
-// #[asynq(pattern="user:create")]
-func (c *UserTaskClientImpl) CreateUser(ctx context.Context, in *CreateUserPayload, opts ...asynq.Option) (*asynq.TaskInfo, error) {
-	payload, err := c.settings.Marshaler.MarshalBinary(in)
-	if err != nil {
-		return nil, err
-	}
-	task := asynq.NewTask(Pattern_User_CreateUser, payload, opts...)
-	return c.cc.Enqueue(task)
-}
-
 // UpdateUser 异步更新用户
+// #[asynq]
 // #[asynq(pattern="user:update")]
 // #[asynq(cron_spec="@every 120s")]
 func (c *UserTaskClientImpl) UpdateUser(ctx context.Context, in *UpdateUserPayload, opts ...asynq.Option) (*asynq.TaskInfo, error) {

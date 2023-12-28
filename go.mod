@@ -3,6 +3,7 @@ module github.com/things-go/protogen-saber
 go 1.21
 
 require (
+	github.com/alecthomas/participle/v2 v2.1.1
 	github.com/hibiken/asynq v0.24.1
 	github.com/things-go/ens v0.1.0
 	google.golang.org/protobuf v1.32.0
