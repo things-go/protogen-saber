@@ -1,5 +1,15 @@
 package annotation
 
+// NameValue like `#[ident(name=value]`
+type NameValue struct {
+	// name
+	Name string `parser:"@Ident '='"`
+	// one of follow
+	// String, Integer, Float, Bool,
+	// StringList, IntegerList, FloatList, BoolList,
+	Value Value `parser:"@@"`
+}
+
 type Value interface {
 	value()
 }

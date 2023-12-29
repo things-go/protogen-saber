@@ -92,7 +92,7 @@ func genService(gen *protogen.Plugin, file *protogen.File, g *protogen.Generated
 		if method.Desc.IsStreamingClient() || method.Desc.IsStreamingServer() {
 			continue
 		}
-		rule := ParserAnnotationTask(method.Comments.Leading)
+		rule := ParserDeriveTask(method.Comments.Leading)
 		if rule.Enabled {
 			if rule.Pattern != "" {
 				sd.Methods = append(sd.Methods, buildAsynqRule(g, method, rule))
@@ -118,7 +118,7 @@ func hasHTTPRule(services []*protogen.Service) bool {
 			if method.Desc.IsStreamingClient() || method.Desc.IsStreamingServer() {
 				continue
 			}
-			if ok := IsAnnotationTaskEnabled(method.Comments.Leading); ok {
+			if ok := IsDeriveTaskEnabled(method.Comments.Leading); ok {
 				return true
 			}
 		}

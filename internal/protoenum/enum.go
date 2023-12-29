@@ -52,7 +52,7 @@ func IntoEnums(nestedMessageName string, protoEnums []*protogen.Enum) []*Enum {
 		if len(pe.Values) == 0 {
 			continue
 		}
-		enumAnnotate, remainComments := ParseAnnotationEnum(pe.Comments.Leading)
+		enumAnnotate, remainComments := ParseDeriveEnum(pe.Comments.Leading)
 		if !enumAnnotate.Enabled {
 			continue
 		}
@@ -64,7 +64,7 @@ func IntoEnums(nestedMessageName string, protoEnums []*protogen.Enum) []*Enum {
 			mappingValue := ""
 			comment := strings.TrimSpace(strings.TrimSuffix(string(v.Comments.Leading), "\n"))
 
-			annotateEnumValue, _ := ParseAnnotationEnumValue(v.Comments.Leading)
+			annotateEnumValue, _ := ParseDeriveEnumValue(v.Comments.Leading)
 			if annotateEnumValue.Mapping != "" {
 				mappingValue = annotateEnumValue.Mapping
 			} else {
@@ -106,7 +106,7 @@ func IntoEnumComment(pe *protogen.Enum) string {
 	if pe == nil || len(pe.Values) == 0 {
 		return ""
 	}
-	enumAnnotate, _ := ParseAnnotationEnum(pe.Comments.Leading)
+	enumAnnotate, _ := ParseDeriveEnum(pe.Comments.Leading)
 	if !enumAnnotate.Enabled {
 		return ""
 	}
@@ -114,7 +114,7 @@ func IntoEnumComment(pe *protogen.Enum) string {
 	emValueMp := make(map[int]string, len(pe.Values))
 	for _, v := range pe.Values {
 		mappingValue := ""
-		enumValueAnnotate, _ := ParseAnnotationEnumValue(v.Comments.Leading)
+		enumValueAnnotate, _ := ParseDeriveEnumValue(v.Comments.Leading)
 		if enumValueAnnotate.Mapping != "" {
 			mappingValue = enumValueAnnotate.Mapping
 		} else {

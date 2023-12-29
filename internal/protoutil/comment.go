@@ -14,10 +14,10 @@ func NewCommentLines(s protogen.Comments) CommentLines {
 	return strings.Split(strings.TrimSuffix(s.String(), "\n"), "\n")
 }
 
-// Annotations all match the annotation and remaining comment lines.
-func (c CommentLines) Annotations() (annotation.Annotations, CommentLines) {
+// Derives all match the derive and remaining comment lines.
+func (c CommentLines) Derives() (annotation.Derives, CommentLines) {
 	remain := make(CommentLines, 0, len(c))
-	ret := make([]*annotation.Annotation, 0, len(c))
+	ret := make([]*annotation.Derive, 0, len(c))
 	for _, s := range c {
 		if m, err := annotation.Match(strings.TrimSpace(strings.TrimPrefix(s, "//"))); err != nil {
 			remain = append(remain, s)
@@ -28,14 +28,14 @@ func (c CommentLines) Annotations() (annotation.Annotations, CommentLines) {
 	return ret, remain
 }
 
-// Annotations find `identifier` match the annotation and remaining comment lines.
-func (c CommentLines) FindAnnotations(identifier string) (annotation.Annotations, CommentLines) {
+// Annotations find `identity` match the annotation and remaining comment lines.
+func (c CommentLines) FindDerives(identity string) (annotation.Derives, CommentLines) {
 	remain := make(CommentLines, 0, len(c))
-	ret := make([]*annotation.Annotation, 0, len(c))
+	ret := make([]*annotation.Derive, 0, len(c))
 	for _, s := range c {
 		if m, err := annotation.Match(strings.TrimSpace(strings.TrimPrefix(s, "//"))); err != nil {
 			remain = append(remain, s)
-		} else if m.Identifier == identifier {
+		} else if m.Identity == identity {
 			ret = append(ret, m)
 		}
 	}

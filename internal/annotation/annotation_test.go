@@ -9,39 +9,39 @@ func TestMatch(t *testing.T) {
 	tests := []struct {
 		name    string
 		input   string
-		want    *Annotation
+		want    *Derive
 		wantErr bool
 	}{
 		{
-			name:  "仅identifier",
+			name:  "仅identity",
 			input: "#[ident]",
-			want: &Annotation{
-				Identifier: "ident",
-				Attrs:      nil,
-				Empty:      struct{}{},
+			want: &Derive{
+				Identity: "ident",
+				Attrs:    nil,
+				// Empty:      struct{}{},
 			},
 			wantErr: false,
 		},
 		{
 			name:  "单个键值对 -> 值-字符串",
 			input: `#[ident(k1="v1")]`,
-			want: &Annotation{
-				Identifier: "ident",
+			want: &Derive{
+				Identity: "ident",
 				Attrs: []*NameValue{
 					{
 						Name:  "k1",
 						Value: String{Value: "v1"},
 					},
 				},
-				Empty: struct{}{},
+				// Empty:   struct{}{},
 			},
 			wantErr: false,
 		},
 		{
 			name:  "单个键值对 -> 值-字符串数组",
 			input: `#[ident(k1=["1", "2","3"])]`,
-			want: &Annotation{
-				Identifier: "ident",
+			want: &Derive{
+				Identity: "ident",
 				Attrs: []*NameValue{
 					{
 						Name: "k1",
@@ -50,30 +50,30 @@ func TestMatch(t *testing.T) {
 						},
 					},
 				},
-				Empty: struct{}{},
+				// Empty:   struct{}{},
 			},
 			wantErr: false,
 		},
 		{
 			name:  "单个键值对 -> 值-整数",
 			input: `#[ident(k1=1)]`,
-			want: &Annotation{
-				Identifier: "ident",
+			want: &Derive{
+				Identity: "ident",
 				Attrs: []*NameValue{
 					{
 						Name:  "k1",
 						Value: Integer{Value: 1},
 					},
 				},
-				Empty: struct{}{},
+				// Empty:   struct{}{},
 			},
 			wantErr: false,
 		},
 		{
 			name:  "单个键值对 -> 值-整数数组",
 			input: `#[ident(k1=[1, 2, 3])]`,
-			want: &Annotation{
-				Identifier: "ident",
+			want: &Derive{
+				Identity: "ident",
 				Attrs: []*NameValue{
 					{
 						Name: "k1",
@@ -82,30 +82,30 @@ func TestMatch(t *testing.T) {
 						},
 					},
 				},
-				Empty: struct{}{},
+				// Empty:   struct{}{},
 			},
 			wantErr: false,
 		},
 		{
 			name:  "单个键值对 -> 值-浮点数",
 			input: `#[ident(k1=1.1)]`,
-			want: &Annotation{
-				Identifier: "ident",
+			want: &Derive{
+				Identity: "ident",
 				Attrs: []*NameValue{
 					{
 						Name:  "k1",
 						Value: Float{Value: 1.1},
 					},
 				},
-				Empty: struct{}{},
+				// Empty:   struct{}{},
 			},
 			wantErr: false,
 		},
 		{
 			name:  "单个键值对 -> 值-浮点数组",
 			input: `#[ident(k1=[1.1, 2, 3])]`,
-			want: &Annotation{
-				Identifier: "ident",
+			want: &Derive{
+				Identity: "ident",
 				Attrs: []*NameValue{
 					{
 						Name: "k1",
@@ -114,30 +114,30 @@ func TestMatch(t *testing.T) {
 						},
 					},
 				},
-				Empty: struct{}{},
+				// Empty:   struct{}{},
 			},
 			wantErr: false,
 		},
 		{
 			name:  "单个键值对 -> 值-布尔",
 			input: `#[ident(k1=true)]`,
-			want: &Annotation{
-				Identifier: "ident",
+			want: &Derive{
+				Identity: "ident",
 				Attrs: []*NameValue{
 					{
 						Name:  "k1",
 						Value: Bool{Value: true},
 					},
 				},
-				Empty: struct{}{},
+				// Empty:   struct{}{},
 			},
 			wantErr: false,
 		},
 		{
 			name:  "单个键值对 -> 值-布尔数组",
 			input: `#[ident(k1=[true, false, false])]`,
-			want: &Annotation{
-				Identifier: "ident",
+			want: &Derive{
+				Identity: "ident",
 				Attrs: []*NameValue{
 					{
 						Name: "k1",
@@ -146,15 +146,15 @@ func TestMatch(t *testing.T) {
 						},
 					},
 				},
-				Empty: struct{}{},
+				// Empty:   struct{}{},
 			},
 			wantErr: false,
 		},
 		{
 			name:  "多个键值对",
 			input: `#[ident(k1="v1",k2=1,k3=1.1,k4=false,k5=["1","2","3"],k6=[1,2,3],k7=[1.1,2,3],k8=[true, false, false])]`,
-			want: &Annotation{
-				Identifier: "ident",
+			want: &Derive{
+				Identity: "ident",
 				Attrs: []*NameValue{
 					{
 						Name:  "k1",
@@ -197,7 +197,7 @@ func TestMatch(t *testing.T) {
 						},
 					},
 				},
-				Empty: struct{}{},
+				// Empty:   struct{}{},
 			},
 			wantErr: false,
 		},

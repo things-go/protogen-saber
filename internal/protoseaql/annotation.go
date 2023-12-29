@@ -10,7 +10,7 @@ import (
 
 // annotation const value
 const (
-	Identifier                = "seaql"
+	Identity                  = "seaql"
 	Attribute_Name_Name       = "name"
 	Attribute_Name_Engine     = "engine"
 	Attribute_Name_Charset    = "charset"
@@ -20,7 +20,7 @@ const (
 	Attribute_Name_Type       = "type"
 )
 
-type SeaqlAnnotation struct {
+type SeaqlDerive struct {
 	Enabled     bool
 	Name        string   // 表名
 	Comment     string   // 注释
@@ -31,8 +31,8 @@ type SeaqlAnnotation struct {
 	ForeignKeys []string // 外键
 }
 
-func ParseAnnotationEnum(rawTableName string, s protogen.Comments) *SeaqlAnnotation {
-	ret := &SeaqlAnnotation{
+func ParseSeaqlDerive(rawTableName string, s protogen.Comments) *SeaqlDerive {
+	ret := &SeaqlDerive{
 		Enabled:     false,
 		Name:        rawTableName,
 		Comment:     "",
@@ -42,14 +42,14 @@ func ParseAnnotationEnum(rawTableName string, s protogen.Comments) *SeaqlAnnotat
 		Indexes:     []string{},
 		ForeignKeys: []string{},
 	}
-	annotates, remainComments := protoutil.NewCommentLines(s).FindAnnotations(Identifier)
+	derives, remainComments := protoutil.NewCommentLines(s).FindDerives(Identity)
 	ret.Comment = strings.TrimSpace(strings.TrimPrefix(remainComments.LineString(), rawTableName))
-	for _, annotate := range annotates {
-		if len(annotate.Attrs) == 0 {
+	for _, d := range derives {
+		if len(d.Attrs) == 0 {
 			ret.Enabled = true
 			continue
 		}
-		for _, v := range annotate.Attrs {
+		for _, v := range d.Attrs {
 			switch v.Name {
 			case Attribute_Name_Name:
 				if vv, ok := v.Value.(annotation.String); ok && vv.Value != "" {
@@ -99,14 +99,14 @@ func ParseAnnotationEnum(rawTableName string, s protogen.Comments) *SeaqlAnnotat
 	return ret
 }
 
-type SeaqlValueAnnotation struct {
+type SeaqlValueDerive struct {
 	Type string
 }
 
-func ParseAnnotationSeaqlValue(s protogen.Comments) (*SeaqlValueAnnotation, protoutil.CommentLines) {
-	ret := &SeaqlValueAnnotation{Type: ""}
-	annotes, remainComments := protoutil.NewCommentLines(s).FindAnnotations(Identifier)
-	values := annotes.FindValue(Identifier, Attribute_Name_Type)
+func ParseSeaqlValueDerive(s protogen.Comments) (*SeaqlValueDerive, protoutil.CommentLines) {
+	ret := &SeaqlValueDerive{Type: ""}
+	derives, remainComments := protoutil.NewCommentLines(s).FindDerives(Identity)
+	values := derives.FindValue(Identity, Attribute_Name_Type)
 	for _, v := range values {
 		if v, ok := v.(annotation.String); ok {
 			ret.Type = v.Value

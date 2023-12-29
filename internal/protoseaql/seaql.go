@@ -66,14 +66,14 @@ func IntoTable(protoMessages []*protogen.Message) ([]Table, error) {
 		if len(pe.Fields) == 0 {
 			continue
 		}
-		seaqlAnnotation := ParseAnnotationEnum(string(pe.Desc.Name()), pe.Comments.Leading)
+		seaqlAnnotation := ParseSeaqlDerive(string(pe.Desc.Name()), pe.Comments.Leading)
 		if !seaqlAnnotation.Enabled {
 			continue
 		}
 
 		columns := make([]Column, 0, len(pe.Fields))
 		for _, v := range pe.Fields {
-			seaqlValueAnnotate, remainComments := ParseAnnotationSeaqlValue(v.Comments.Leading)
+			seaqlValueAnnotate, remainComments := ParseSeaqlValueDerive(v.Comments.Leading)
 			ty := seaqlValueAnnotate.Type
 			if ty == "" {
 				return nil, fmt.Errorf("seaql: message(%s) - field(%s) type should be not empty", pe.Desc.Name(), string(v.Desc.Name()))

@@ -8,7 +8,7 @@ import (
 
 // annotation const value
 const (
-	Identifier             = "enum"
+	Identity               = "enum"
 	Attribute_Name_Mapping = "mapping"
 )
 
@@ -16,10 +16,10 @@ type EnumAnnotation struct {
 	Enabled bool
 }
 
-func ParseAnnotationEnum(s protogen.Comments) (*EnumAnnotation, protoutil.CommentLines) {
+func ParseDeriveEnum(s protogen.Comments) (*EnumAnnotation, protoutil.CommentLines) {
 	ret := &EnumAnnotation{Enabled: false}
-	annotes, remainComments := protoutil.NewCommentLines(s).FindAnnotations(Identifier)
-	ret.Enabled = annotes.ContainHeadless(Identifier)
+	derives, remainComments := protoutil.NewCommentLines(s).FindDerives(Identity)
+	ret.Enabled = derives.ContainHeadless(Identity)
 	return ret, remainComments
 }
 
@@ -27,10 +27,10 @@ type EnumValueAnnotation struct {
 	Mapping string
 }
 
-func ParseAnnotationEnumValue(s protogen.Comments) (*EnumValueAnnotation, protoutil.CommentLines) {
+func ParseDeriveEnumValue(s protogen.Comments) (*EnumValueAnnotation, protoutil.CommentLines) {
 	ret := &EnumValueAnnotation{Mapping: ""}
-	annotates, remainComments := protoutil.NewCommentLines(s).FindAnnotations(Identifier)
-	values := annotates.FindValue(Identifier, Attribute_Name_Mapping)
+	derives, remainComments := protoutil.NewCommentLines(s).FindDerives(Identity)
+	values := derives.FindValue(Identity, Attribute_Name_Mapping)
 	for _, v := range values {
 		if v, ok := v.(annotation.String); ok {
 			ret.Mapping = v.Value

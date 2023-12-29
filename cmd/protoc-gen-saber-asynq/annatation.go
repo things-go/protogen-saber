@@ -8,7 +8,7 @@ import (
 
 // annotation const value
 const (
-	Identifier              = "asynq"
+	Identity                = "asynq"
 	Attribute_Name_Pattern  = "pattern"
 	Attribute_Name_CronSpec = "cron_spec"
 )
@@ -19,15 +19,15 @@ type Task struct {
 	CronSpec string
 }
 
-func IsAnnotationTaskEnabled(s protogen.Comments) bool {
-	annotates, _ := protoutil.NewCommentLines(s).FindAnnotations(Identifier)
-	return annotates.ContainHeadless(Identifier)
+func IsDeriveTaskEnabled(s protogen.Comments) bool {
+	derives, _ := protoutil.NewCommentLines(s).FindDerives(Identity)
+	return derives.ContainHeadless(Identity)
 }
 
-func ParserAnnotationTask(s protogen.Comments) *Task {
+func ParserDeriveTask(s protogen.Comments) *Task {
 	ret := &Task{}
-	annotates, _ := protoutil.NewCommentLines(s).FindAnnotations(Identifier)
-	for _, annotate := range annotates {
+	derives, _ := protoutil.NewCommentLines(s).FindDerives(Identity)
+	for _, annotate := range derives {
 		if annotate.IsHeadless() {
 			ret.Enabled = true
 			continue
