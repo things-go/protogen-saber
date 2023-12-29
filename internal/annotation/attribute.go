@@ -7,36 +7,36 @@ type NameValue struct {
 	// one of follow
 	// String, Integer, Float, Bool,
 	// StringList, IntegerList, FloatList, BoolList,
-	Value Value `parser:"@@"`
+	Value ValueType `parser:"@@"`
 }
 
-type Value interface {
-	value()
+type ValueType interface {
+	Type() string
 }
 
 type String struct {
 	Value string `parser:"@String"`
 }
 
-func (String) value() {}
+func (String) Type() string { return "string" }
 
 type Integer struct {
 	Value int64 `parser:"@Int"`
 }
 
-func (Integer) value() {}
+func (Integer) Type() string { return "integer" }
 
 type Float struct {
 	Value float64 `parser:"@Float"`
 }
 
-func (Float) value() {}
+func (Float) Type() string { return "float" }
 
 type Bool struct {
 	Value Boolean `parser:"@('true' | 'false')"`
 }
 
-func (Bool) value() {}
+func (Bool) Type() string { return "bool" }
 
 type Boolean bool
 
@@ -49,23 +49,23 @@ type StringList struct {
 	Value []string `parser:"'[' (@String (',' @String)*)? ']'"`
 }
 
-func (StringList) value() {}
+func (StringList) Type() string { return "slice<string>" }
 
 type IntegerList struct {
 	Value []int64 `parser:"'[' (@Int (',' @Int)*)? ']'"`
 }
 
-func (IntegerList) value() {}
+func (IntegerList) Type() string { return "slice<integer>" }
 
 // NOTE: FloatList float list. must be first is float.
 type FloatList struct {
 	Value []float64 `parser:"'[' (@Float (',' (@Float | @Int))*)? ']'"`
 }
 
-func (FloatList) value() {}
+func (FloatList) Type() string { return "slice<float>" }
 
 type BoolList struct {
 	Value []Boolean `parser:"'[' (@('true' | 'false') (',' @('true' | 'false'))*)? ']'"`
 }
 
-func (BoolList) value() {}
+func (BoolList) Type() string { return "slice<bool>" }

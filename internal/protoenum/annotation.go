@@ -12,23 +12,23 @@ const (
 	Attribute_Name_Mapping = "mapping"
 )
 
-type EnumAnnotation struct {
+type EnumDerive struct {
 	Enabled bool
 }
 
-func ParseDeriveEnum(s protogen.Comments) (*EnumAnnotation, protoutil.CommentLines) {
-	ret := &EnumAnnotation{Enabled: false}
+func ParseDeriveEnum(s protogen.Comments) (*EnumDerive, protoutil.CommentLines) {
+	ret := &EnumDerive{Enabled: false}
 	derives, remainComments := protoutil.NewCommentLines(s).FindDerives(Identity)
 	ret.Enabled = derives.ContainHeadless(Identity)
 	return ret, remainComments
 }
 
-type EnumValueAnnotation struct {
+type EnumValueDerive struct {
 	Mapping string
 }
 
-func ParseDeriveEnumValue(s protogen.Comments) (*EnumValueAnnotation, protoutil.CommentLines) {
-	ret := &EnumValueAnnotation{Mapping: ""}
+func ParseDeriveEnumValue(s protogen.Comments) (*EnumValueDerive, protoutil.CommentLines) {
+	ret := &EnumValueDerive{Mapping: ""}
 	derives, remainComments := protoutil.NewCommentLines(s).FindDerives(Identity)
 	values := derives.FindValue(Identity, Attribute_Name_Mapping)
 	for _, v := range values {

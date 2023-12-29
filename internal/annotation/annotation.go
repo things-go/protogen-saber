@@ -6,7 +6,7 @@ import (
 
 var parser = participle.MustBuild[Annotation](
 	participle.Unquote(),
-	participle.Union[Value](
+	participle.Union[ValueType](
 		String{}, Integer{}, Float{}, Bool{},
 		StringList{}, IntegerList{}, FloatList{}, BoolList{},
 	),

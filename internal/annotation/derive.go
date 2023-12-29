@@ -36,8 +36,8 @@ func (a Derives) Find(identity string) Derives {
 	return ret
 }
 
-func (a Derives) FindValue(identity, name string) []Value {
-	ret := make([]Value, 0, len(a))
+func (a Derives) FindValue(identity, name string) []ValueType {
+	ret := make([]ValueType, 0, len(a))
 	for _, v := range a {
 		if v.Identity == identity {
 			for _, vv := range v.Attrs {
