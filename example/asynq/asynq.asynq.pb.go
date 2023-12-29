@@ -8,9 +8,9 @@ package asynq
 
 import (
 	context "context"
+	json "encoding/json"
 	errors "errors"
 	asynq "github.com/hibiken/asynq"
-	asynq_auxiliary "github.com/things-go/protogen-saber/core/asynq_auxiliary"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
@@ -37,28 +37,27 @@ type UserTaskHandler interface {
 	UpdateUser(context.Context, *UpdateUserPayload) error
 }
 
-func RegisterUserTaskHandler(mux *asynq.ServeMux, srv UserTaskHandler, opts ...asynq_auxiliary.HandlerOption) {
-	settings := asynq_auxiliary.NewHandlerSettings(opts...)
-	mux.HandleFunc(Pattern_User_CreateUser, _User_CreateUser_Task_Handler(srv, settings))
-	mux.HandleFunc(Pattern_User_UpdateUser, _User_UpdateUser_Task_Handler(srv, settings))
+func RegisterUserTaskHandler(mux *asynq.ServeMux, srv UserTaskHandler) {
+	mux.HandleFunc(Pattern_User_CreateUser, _User_CreateUser_Task_Handler(srv))
+	mux.HandleFunc(Pattern_User_UpdateUser, _User_UpdateUser_Task_Handler(srv))
 }
 
-func _User_CreateUser_Task_Handler(srv UserTaskHandler, settings *asynq_auxiliary.HandlerSettings) func(context.Context, *asynq.Task) error {
+func _User_CreateUser_Task_Handler(srv UserTaskHandler) func(context.Context, *asynq.Task) error {
 	return func(ctx context.Context, task *asynq.Task) error {
 		var in CreateUserPayload
 
-		if err := settings.Unmarshaler.UnmarshalBinary(task.Payload(), &in); err != nil {
+		if err := json.Unmarshal(task.Payload(), &in); err != nil {
 			return err
 		}
 		return srv.CreateUser(ctx, &in)
 	}
 }
 
-func _User_UpdateUser_Task_Handler(srv UserTaskHandler, settings *asynq_auxiliary.HandlerSettings) func(context.Context, *asynq.Task) error {
+func _User_UpdateUser_Task_Handler(srv UserTaskHandler) func(context.Context, *asynq.Task) error {
 	return func(ctx context.Context, task *asynq.Task) error {
 		var in UpdateUserPayload
 
-		if err := settings.Unmarshaler.UnmarshalBinary(task.Payload(), &in); err != nil {
+		if err := json.Unmarshal(task.Payload(), &in); err != nil {
 			return err
 		}
 		return srv.UpdateUser(ctx, &in)
@@ -78,16 +77,13 @@ type UserTaskClient interface {
 }
 
 type UserTaskClientImpl struct {
-	cc       *asynq.Client
-	settings *asynq_auxiliary.ClientSettings
+	cc *asynq.Client
 }
 
 // NewUserTaskClient new client.
-func NewUserTaskClient(client *asynq.Client, opts ...asynq_auxiliary.ClientOption) UserTaskClient {
-	settings := asynq_auxiliary.NewClientSettings(opts...)
+func NewUserTaskClient(client *asynq.Client) UserTaskClient {
 	return &UserTaskClientImpl{
-		cc:       client,
-		settings: settings,
+		cc: client,
 	}
 }
 
@@ -95,7 +91,7 @@ func NewUserTaskClient(client *asynq.Client, opts ...asynq_auxiliary.ClientOptio
 // #[asynq]
 // #[asynq(pattern="user:create")]
 func (c *UserTaskClientImpl) CreateUser(ctx context.Context, in *CreateUserPayload, opts ...asynq.Option) (*asynq.TaskInfo, error) {
-	payload, err := c.settings.Marshaler.MarshalBinary(in)
+	payload, err := json.Marshal(in)
 	if err != nil {
 		return nil, err
 	}
@@ -108,7 +104,7 @@ func (c *UserTaskClientImpl) CreateUser(ctx context.Context, in *CreateUserPaylo
 // #[asynq(pattern="user:update")]
 // #[asynq(cron_spec="@every 120s")]
 func (c *UserTaskClientImpl) UpdateUser(ctx context.Context, in *UpdateUserPayload, opts ...asynq.Option) (*asynq.TaskInfo, error) {
-	payload, err := c.settings.Marshaler.MarshalBinary(in)
+	payload, err := json.Marshal(in)
 	if err != nil {
 		return nil, err
 	}
@@ -116,11 +112,8 @@ func (c *UserTaskClientImpl) UpdateUser(ctx context.Context, in *UpdateUserPaylo
 	return c.cc.Enqueue(task)
 }
 
-func RegisterScheduler_User_UpdateUser(scheduler *asynq.Scheduler, settings *asynq_auxiliary.ClientSettings, in *UpdateUserPayload, opts ...asynq.Option) (entryId string, err error) {
-	if settings == nil {
-		settings = asynq_auxiliary.NewClientSettings()
-	}
-	payload, err := settings.Marshaler.MarshalBinary(in)
+func RegisterScheduler_User_UpdateUser(scheduler *asynq.Scheduler, in *UpdateUserPayload, opts ...asynq.Option) (entryId string, err error) {
+	payload, err := json.Marshal(in)
 	if err != nil {
 		return "", err
 	}

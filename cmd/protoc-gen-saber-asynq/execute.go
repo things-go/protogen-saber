@@ -10,9 +10,6 @@ func execute(g *protogen.GeneratedFile, s *serviceDesc) error {
 	schedulerMethods := make([]*methodDesc, 0, len(s.Methods))
 	// pattern constants
 	for _, m := range s.Methods {
-		if m.Pattern == "" {
-			return fmt.Errorf("service %s(%s) pattern should be not empty", s.ServiceType, m.Name)
-		}
 		g.P("const ", patternConstant(s.ServiceType, m.Name), ` = "`, m.Pattern, `"`)
 		if m.CronSpec != "" {
 			g.P("const ", cronSpecConstant(s.ServiceType, m.Name), ` = "`, m.CronSpec, `"`)
@@ -32,22 +29,38 @@ func execute(g *protogen.GeneratedFile, s *serviceDesc) error {
 		g.P("}")
 		g.P()
 		// server factory
-		g.P("func Register", s.ServiceType, "TaskHandler(mux *", g.QualifiedGoIdent(asynqPackage.Ident("ServeMux")), ", srv ", serverInterfaceName(s.ServiceType), ", opts ...", g.QualifiedGoIdent(asynqAuxiliaryPackage.Ident("HandlerOption")), ") {")
-		g.P("settings :=", g.QualifiedGoIdent(asynqAuxiliaryPackage.Ident("NewHandlerSettings(opts...)")))
+		if !args.DisableSaber {
+			g.P("func Register", s.ServiceType, "TaskHandler(mux *", g.QualifiedGoIdent(asynqPackage.Ident("ServeMux")), ", srv ", serverInterfaceName(s.ServiceType), ", opts ...", g.QualifiedGoIdent(asynqAuxiliaryPackage.Ident("HandlerOption")), ") {")
+			g.P("settings :=", g.QualifiedGoIdent(asynqAuxiliaryPackage.Ident("NewHandlerSettings(opts...)")))
+		} else {
+			g.P("func Register", s.ServiceType, "TaskHandler(mux *", g.QualifiedGoIdent(asynqPackage.Ident("ServeMux")), ", srv ", serverInterfaceName(s.ServiceType), ") {")
+		}
 		for _, m := range s.Methods {
-			g.P("mux.HandleFunc(", patternConstant(s.ServiceType, m.Name), ", ", serviceHandlerMethodName(s.ServiceType, m.Name), "(srv, settings))")
+			if !args.DisableSaber {
+				g.P("mux.HandleFunc(", patternConstant(s.ServiceType, m.Name), ", ", serviceHandlerMethodName(s.ServiceType, m.Name), "(srv, settings))")
+			} else {
+				g.P("mux.HandleFunc(", patternConstant(s.ServiceType, m.Name), ", ", serviceHandlerMethodName(s.ServiceType, m.Name), "(srv))")
+			}
 		}
 		g.P("}")
 		g.P()
 
 		// server handler
 		for _, m := range s.Methods {
-			g.P("func ", serviceHandlerMethodName(s.ServiceType, m.Name), "(srv ", serverInterfaceName(s.ServiceType), ", settings *", g.QualifiedGoIdent(asynqAuxiliaryPackage.Ident("HandlerSettings")), ") ", asynqHandler(g, true), " {")
+			if !args.DisableSaber {
+				g.P("func ", serviceHandlerMethodName(s.ServiceType, m.Name), "(srv ", serverInterfaceName(s.ServiceType), ", settings *", g.QualifiedGoIdent(asynqAuxiliaryPackage.Ident("HandlerSettings")), ") ", asynqHandler(g, true), " {")
+			} else {
+				g.P("func ", serviceHandlerMethodName(s.ServiceType, m.Name), "(srv ", serverInterfaceName(s.ServiceType), ") ", asynqHandler(g, true), " {")
+			}
 			{ // closure
 				g.P("return ", asynqHandler(g, false), " {")
 				g.P("var in ", m.Request)
 				g.P()
-				g.P("if err := settings.Unmarshaler.UnmarshalBinary(task.Payload(), &in); err != nil {")
+				if !args.DisableSaber {
+					g.P("if err := settings.Unmarshaler.UnmarshalBinary(task.Payload(), &in); err != nil {")
+				} else {
+					g.P("if err := ", g.QualifiedGoIdent(codecPackage().Ident("Unmarshal")), "(task.Payload(), &in); err != nil {")
+				}
 				g.P("return err")
 				g.P("}")
 				g.P("return srv.", m.Name, "(ctx, &in)")
@@ -72,17 +85,27 @@ func execute(g *protogen.GeneratedFile, s *serviceDesc) error {
 		// client impl
 		g.P("type ", clientImplStructName(s.ServiceType), " struct {")
 		g.P("cc *", g.QualifiedGoIdent(asynqPackage.Ident("Client")))
-		g.P("settings *", g.QualifiedGoIdent(asynqAuxiliaryPackage.Ident("ClientSettings")))
+		if !args.DisableSaber {
+			g.P("settings *", g.QualifiedGoIdent(asynqAuxiliaryPackage.Ident("ClientSettings")))
+		}
 		g.P("}")
 		g.P()
 		// client factory
 		g.P("// ", clientFactoryMethodName(s.ServiceType), " new client.")
-		g.P("func ", clientFactoryMethodName(s.ServiceType), " (client *", g.QualifiedGoIdent(asynqPackage.Ident("Client")), ", opts ...", g.QualifiedGoIdent(asynqAuxiliaryPackage.Ident("ClientOption")), ") ", clientInterfaceName(s.ServiceType), " {")
+		if !args.DisableSaber {
+			g.P("func ", clientFactoryMethodName(s.ServiceType), " (client *", g.QualifiedGoIdent(asynqPackage.Ident("Client")), ", opts ...", g.QualifiedGoIdent(asynqAuxiliaryPackage.Ident("ClientOption")), ") ", clientInterfaceName(s.ServiceType), " {")
+		} else {
+			g.P("func ", clientFactoryMethodName(s.ServiceType), " (client *", g.QualifiedGoIdent(asynqPackage.Ident("Client")), ") ", clientInterfaceName(s.ServiceType), " {")
+		}
 		{ // closure
-			g.P("settings := ", g.QualifiedGoIdent(asynqAuxiliaryPackage.Ident("NewClientSettings(opts...)")))
+			if !args.DisableSaber {
+				g.P("settings := ", g.QualifiedGoIdent(asynqAuxiliaryPackage.Ident("NewClientSettings(opts...)")))
+			}
 			g.P("return &", clientImplStructName(s.ServiceType), " {")
 			g.P("cc: client,")
-			g.P("settings: settings,")
+			if !args.DisableSaber {
+				g.P("settings: settings,")
+			}
 			g.P("}")
 		}
 		g.P("}")
@@ -91,7 +114,11 @@ func execute(g *protogen.GeneratedFile, s *serviceDesc) error {
 		for _, m := range s.Methods {
 			g.P(m.Comment)
 			g.P("func (c *", clientImplStructName(s.ServiceType), ")", clientMethodDefinition(g, m, false), " {")
-			g.P("payload, err := c.settings.Marshaler.MarshalBinary(in)")
+			if !args.DisableSaber {
+				g.P("payload, err := c.settings.Marshaler.MarshalBinary(in)")
+			} else {
+				g.P("payload, err := ", g.QualifiedGoIdent(codecPackage().Ident("Marshal")), "(in)")
+			}
 			g.P("if err != nil {")
 			g.P("return nil, err")
 			g.P("}")
@@ -103,15 +130,23 @@ func execute(g *protogen.GeneratedFile, s *serviceDesc) error {
 	}
 	if len(schedulerMethods) > 0 {
 		for _, m := range schedulerMethods {
-			g.P("func RegisterScheduler_", s.ServiceType, "_", m.Name,
-				"(scheduler *", g.QualifiedGoIdent(asynqPackage.Ident("Scheduler")),
-				", settings *", g.QualifiedGoIdent(asynqAuxiliaryPackage.Ident("ClientSettings")),
-				", in *", m.Request,
-				", opts ..."+g.QualifiedGoIdent(asynqPackage.Ident("Option")), ") (entryId string, err error) {")
-			g.P("if settings == nil {")
-			g.P("settings = ", g.QualifiedGoIdent(asynqAuxiliaryPackage.Ident("NewClientSettings()")))
-			g.P("}")
-			g.P("payload, err := settings.Marshaler.MarshalBinary(in)")
+			if !args.DisableSaber {
+				g.P("func RegisterScheduler_", s.ServiceType, "_", m.Name,
+					"(scheduler *", g.QualifiedGoIdent(asynqPackage.Ident("Scheduler")),
+					", settings *", g.QualifiedGoIdent(asynqAuxiliaryPackage.Ident("ClientSettings")),
+					", in *", m.Request,
+					", opts ..."+g.QualifiedGoIdent(asynqPackage.Ident("Option")), ") (entryId string, err error) {")
+				g.P("if settings == nil {")
+				g.P("settings = ", g.QualifiedGoIdent(asynqAuxiliaryPackage.Ident("NewClientSettings()")))
+				g.P("}")
+				g.P("payload, err := settings.Marshaler.MarshalBinary(in)")
+			} else {
+				g.P("func RegisterScheduler_", s.ServiceType, "_", m.Name,
+					"(scheduler *", g.QualifiedGoIdent(asynqPackage.Ident("Scheduler")),
+					", in *", m.Request,
+					", opts ..."+g.QualifiedGoIdent(asynqPackage.Ident("Option")), ") (entryId string, err error) {")
+				g.P("payload, err := ", g.QualifiedGoIdent(codecPackage().Ident("Marshal")), "(in)")
+			}
 			g.P("if err != nil {")
 			g.P("return \"\", err")
 			g.P("}")
@@ -178,16 +213,32 @@ func asynqHandler(g *protogen.GeneratedFile, isDeclaration bool) string {
 		taskParam + " *" + g.QualifiedGoIdent(asynqPackage.Ident("Task")) + ") error"
 }
 
-// func defaultHandlerUnmarshalBinary(g *protogen.GeneratedFile) string {
-// 	var f string
-// 	switch args.Serialize {
-// 	case "json":
-// 		f = g.QualifiedGoIdent(jsonPackage.Ident("Unmarshal"))
-// 	case "protobuf":
-// 		fallthrough
-// 	default:
-// 		f = "func(b []byte, v any) error { return " + g.QualifiedGoIdent(jsonPackage.Ident("Unmarshal")) + "(b, v.(proto.Message)) }"
-// 	}
-// 	return g.QualifiedGoIdent(asynqAuxiliaryPackage.Ident("WithHandlerUnmarshalBinary")) +
-// 		"(" + f + ")"
-// }
+var codec = map[string]protogen.GoImportPath{
+	"proto": protogen.GoImportPath("google.golang.org/protobuf/proto"),
+	"json":  protogen.GoImportPath("encoding/json"),
+}
+
+func checkSupportedCodec() error {
+	if args.Codec == "custom" && args.CodecPackage != "" {
+		return nil
+	}
+	if _, ok := codec[args.Codec]; ok {
+		return nil
+	}
+	keys := make([]string, 0, len(codec)+1)
+	for k := range codec {
+		keys = append(keys, k)
+	}
+	keys = append(keys, "custom")
+	return fmt.Errorf("`codec` only supported: %v", keys)
+}
+
+func codecPackage() protogen.GoImportPath {
+	if args.Codec == "custom" {
+		return protogen.GoImportPath(args.CodecPackage)
+	}
+	if v, ok := codec[args.Codec]; ok {
+		return v
+	}
+	return codec["proto"]
+}

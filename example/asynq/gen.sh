@@ -17,4 +17,6 @@ protoc \
     --go_opt paths=source_relative \
     --saber-asynq_out ${out_dir} \
     --saber-asynq_opt paths=source_relative \
+    --saber-asynq_opt disable_saber=true \
+    --saber-asynq_opt codec=json \
     asynq.proto

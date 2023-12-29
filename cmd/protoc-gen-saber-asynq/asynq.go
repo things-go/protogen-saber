@@ -19,13 +19,17 @@ var (
 	asynqPackage          = protogen.GoImportPath("github.com/hibiken/asynq")
 	emptyPackage          = protogen.GoImportPath("google.golang.org/protobuf/types/known/emptypb")
 	asynqAuxiliaryPackage = protogen.GoImportPath("github.com/things-go/protogen-saber/core/asynq_auxiliary")
-	// protoPackage          = protogen.GoImportPath("google.golang.org/protobuf/proto")
-	// jsonPackage           = protogen.GoImportPath("encoding/json")
 )
 
 var methodSets = make(map[string]int)
 
 func runProtoGen(gen *protogen.Plugin) error {
+	if args.DisableSaber {
+		if err := checkSupportedCodec(); err != nil {
+			return err
+		}
+	}
+
 	gen.SupportedFeatures = uint64(pluginpb.CodeGeneratorResponse_FEATURE_PROTO3_OPTIONAL)
 	for _, f := range gen.Files {
 		if !f.Generate {
