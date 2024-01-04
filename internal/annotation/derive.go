@@ -10,15 +10,15 @@ type Derive struct {
 }
 
 // `#[ident]` only, not contain any attributes.
-func (a *Derive) IsHeadless() bool {
-	return len(a.Attrs) == 0
+func (d *Derive) IsHeadless() bool {
+	return len(d.Attrs) == 0
 }
 
 type Derives []*Derive
 
 // ContainHeadless contain headless
-func (a Derives) ContainHeadless(identity string) bool {
-	for _, v := range a {
+func (ds Derives) ContainHeadless(identity string) bool {
+	for _, v := range ds {
 		if v.Identity == identity && v.IsHeadless() {
 			return true
 		}
@@ -26,9 +26,9 @@ func (a Derives) ContainHeadless(identity string) bool {
 	return false
 }
 
-func (a Derives) Find(identity string) Derives {
-	ret := make(Derives, 0, len(a))
-	for _, v := range a {
+func (ds Derives) Find(identity string) Derives {
+	ret := make(Derives, 0, len(ds))
+	for _, v := range ds {
 		if v.Identity == identity {
 			ret = append(ret, v)
 		}
@@ -36,9 +36,9 @@ func (a Derives) Find(identity string) Derives {
 	return ret
 }
 
-func (a Derives) FindValue(identity, name string) []ValueType {
-	ret := make([]ValueType, 0, len(a))
-	for _, v := range a {
+func (ds Derives) FindValue(identity, name string) []ValueType {
+	ret := make([]ValueType, 0, len(ds))
+	for _, v := range ds {
 		if v.Identity == identity {
 			for _, vv := range v.Attrs {
 				if vv.Name == name {
