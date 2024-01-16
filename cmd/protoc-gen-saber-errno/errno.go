@@ -53,9 +53,6 @@ func runProtoGen(gen *protogen.Plugin) error {
 		g.P("var _ = ", fmtPackage.Ident("Errorf"))
 		g.P("var _ = ", protogen.GoImportPath(args.ErrorsPackage).Ident("New"))
 		g.P()
-		g.P("// This is a compile-time assertion to ensure that this generated file")
-		g.P("// is compatible with the errors package it is being compiled against.")
-		g.P()
 
 		mt := &errorWrapper{Errors: enums}
 		err := mt.execute(usedTemplate, g)
