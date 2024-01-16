@@ -64,7 +64,6 @@ func ParseDeriveErrnoValue(status, code int, s protogen.Comments) (*ErrnoValueDe
 				if v, ok := v.Value.(annotation.String); ok {
 					ret.Message = v.Value
 				}
-
 			}
 		}
 	}
