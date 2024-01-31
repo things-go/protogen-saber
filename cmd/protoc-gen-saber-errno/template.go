@@ -18,8 +18,14 @@ var (
 	estTpl = tpl.Lookup("est.tpl")
 )
 
-type errorWrapper struct {
-	Errors []*protoerrno.Enum
+type ErrnoFile struct {
+	Version       string
+	ProtocVersion string
+	IsDeprecated  bool
+	Source        string
+	Package       string
+	Epk           string
+	Errors        []*protoerrno.Enum
 }
 
 func GetUsedTemplate() (*template.Template, error) {
@@ -37,7 +43,7 @@ func GetUsedTemplate() (*template.Template, error) {
 	}
 }
 
-func (e *errorWrapper) execute(t *template.Template, w io.Writer) error {
+func (e *ErrnoFile) execute(t *template.Template, w io.Writer) error {
 	return t.Execute(w, e)
 }
 
