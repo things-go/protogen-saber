@@ -5,12 +5,12 @@ go 1.21
 require (
 	github.com/alecthomas/participle/v2 v2.1.1
 	github.com/hibiken/asynq v0.24.1
-	github.com/things-go/ens v0.1.0
+	github.com/things-go/ens v0.1.1
 	google.golang.org/protobuf v1.32.0
 )
 
 require (
-	ariga.io/atlas v0.16.0 // indirect
+	ariga.io/atlas v0.18.0 // indirect
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
@@ -42,10 +42,10 @@ require (
 	golang.org/x/sys v0.15.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 	golang.org/x/time v0.5.0 // indirect
-	golang.org/x/tools v0.16.1 // indirect
+	golang.org/x/tools v0.17.0 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1 // indirect
 	gorm.io/datatypes v1.2.0 // indirect
 	gorm.io/driver/mysql v1.5.2 // indirect
-	gorm.io/gorm v1.25.5 // indirect
+	gorm.io/gorm v1.25.6 // indirect
 	gorm.io/plugin/soft_delete v1.2.1 // indirect
 )
