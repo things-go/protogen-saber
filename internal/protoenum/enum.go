@@ -102,6 +102,7 @@ func IntoEnums(nestedMessageName string, protoEnums []*protogen.Enum) []*Enum {
 }
 
 // IntoEnumComment generates enum comment if it exists
+// format: @EnumValue[xxx]
 func IntoEnumComment(pe *protogen.Enum) string {
 	if pe == nil || len(pe.Values) == 0 {
 		return ""
@@ -123,5 +124,5 @@ func IntoEnumComment(pe *protogen.Enum) string {
 		mappingValue = strings.ReplaceAll(strings.ReplaceAll(mappingValue, "\n", ","), `"`, `\"`)
 		emValueMp[int(v.Desc.Number())] = mappingValue
 	}
-	return protoutil.ToArrayString(emValueMp)
+	return "@EnumValue" + protoutil.ToArrayString(emValueMp)
 }
