@@ -5,7 +5,7 @@ go 1.22
 require (
 	github.com/alecthomas/participle/v2 v2.1.1
 	github.com/hibiken/asynq v0.24.1
-	github.com/things-go/ens v0.3.0
+	github.com/things-go/ens v0.3.1
 	google.golang.org/protobuf v1.33.0
 )
 
