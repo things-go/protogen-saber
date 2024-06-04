@@ -3,8 +3,7 @@ package protoseaql
 import (
 	"strings"
 
-	"github.com/things-go/protogen-saber/internal/annotation"
-	"github.com/things-go/protogen-saber/internal/protoutil"
+	"github.com/things-go/proc/proc"
 	"google.golang.org/protobuf/compiler/protogen"
 )
 
@@ -42,7 +41,7 @@ func ParseSeaqlDerive(rawTableName string, s protogen.Comments) *SeaqlDerive {
 		Indexes:     []string{},
 		ForeignKeys: []string{},
 	}
-	derives, remainComments := protoutil.NewCommentLines(s).FindDerives(Identity)
+	derives, remainComments := proc.NewCommentLines(string(s)).FindDerives(Identity)
 	ret.Comment = strings.TrimSpace(strings.TrimPrefix(remainComments.LineString(), rawTableName))
 	for _, d := range derives {
 		if len(d.Attrs) == 0 {
@@ -52,28 +51,28 @@ func ParseSeaqlDerive(rawTableName string, s protogen.Comments) *SeaqlDerive {
 		for _, v := range d.Attrs {
 			switch v.Name {
 			case Attribute_Name_Name:
-				if vv, ok := v.Value.(annotation.String); ok && vv.Value != "" {
+				if vv, ok := v.Value.(proc.String); ok && vv.Value != "" {
 					ret.Name = vv.Value
 				}
 			case Attribute_Name_Engine:
-				if vv, ok := v.Value.(annotation.String); ok && vv.Value != "" {
+				if vv, ok := v.Value.(proc.String); ok && vv.Value != "" {
 					ret.Engine = vv.Value
 				}
 			case Attribute_Name_Charset:
-				if vv, ok := v.Value.(annotation.String); ok && vv.Value != "" {
+				if vv, ok := v.Value.(proc.String); ok && vv.Value != "" {
 					ret.Charset = vv.Value
 				}
 			case Attribute_Name_Collate:
-				if vv, ok := v.Value.(annotation.String); ok && vv.Value != "" {
+				if vv, ok := v.Value.(proc.String); ok && vv.Value != "" {
 					ret.Collate = vv.Value
 				}
 			case Attribute_Name_Index:
 				switch vv := v.Value.(type) {
-				case annotation.String:
+				case proc.String:
 					if vv.Value != "" {
 						ret.Indexes = append(ret.Indexes, vv.Value)
 					}
-				case annotation.StringList:
+				case proc.StringList:
 					for _, s := range vv.Value {
 						if s != "" {
 							ret.Indexes = append(ret.Indexes, s)
@@ -82,11 +81,11 @@ func ParseSeaqlDerive(rawTableName string, s protogen.Comments) *SeaqlDerive {
 				}
 			case Attribute_Name_ForeignKey:
 				switch vv := v.Value.(type) {
-				case annotation.String:
+				case proc.String:
 					if vv.Value != "" {
 						ret.ForeignKeys = append(ret.ForeignKeys, vv.Value)
 					}
-				case annotation.StringList:
+				case proc.StringList:
 					for _, s := range vv.Value {
 						if s != "" {
 							ret.ForeignKeys = append(ret.ForeignKeys, s)
@@ -103,12 +102,12 @@ type SeaqlValueDerive struct {
 	Type string
 }
 
-func ParseSeaqlValueDerive(s protogen.Comments) (*SeaqlValueDerive, protoutil.CommentLines) {
+func ParseSeaqlValueDerive(s protogen.Comments) (*SeaqlValueDerive, proc.CommentLines) {
 	ret := &SeaqlValueDerive{Type: ""}
-	derives, remainComments := protoutil.NewCommentLines(s).FindDerives(Identity)
-	values := derives.FindValue(Identity, Attribute_Name_Type)
+	derives, remainComments := proc.NewCommentLines(string(s)).FindDerives(Identity)
+	values := proc.Derives(derives).FindValue(Identity, Attribute_Name_Type)
 	for _, v := range values {
-		if v, ok := v.(annotation.String); ok {
+		if v, ok := v.(proc.String); ok {
 			ret.Type = v.Value
 			break
 		}

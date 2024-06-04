@@ -3,8 +3,7 @@ package protoerrno
 import (
 	"strings"
 
-	"github.com/things-go/protogen-saber/internal/annotation"
-	"github.com/things-go/protogen-saber/internal/protoutil"
+	"github.com/things-go/proc/proc"
 	"google.golang.org/protobuf/compiler/protogen"
 )
 
@@ -21,15 +20,15 @@ type ErrnoDerive struct {
 	Status  int
 }
 
-func ParseDeriveErrno(s protogen.Comments) (*ErrnoDerive, protoutil.CommentLines) {
-	derives, remainComments := protoutil.NewCommentLines(s).FindDerives(Identity)
+func ParseDeriveErrno(s protogen.Comments) (*ErrnoDerive, proc.CommentLines) {
+	derives, remainComments := proc.NewCommentLines(string(s)).FindDerives(Identity)
 	ret := &ErrnoDerive{
-		Enabled: derives.ContainHeadless(Identity),
+		Enabled: proc.Derives(derives).ContainHeadless(Identity),
 		Status:  500,
 	}
-	values := derives.FindValue(Identity, Attribute_Name_Status)
+	values := proc.Derives(derives).FindValue(Identity, Attribute_Name_Status)
 	for _, value := range values {
-		if v, ok := value.(annotation.Integer); ok && v.Value > 0 && v.Value < 1000 {
+		if v, ok := value.(proc.Integer); ok && v.Value > 0 && v.Value < 1000 {
 			ret.Status = int(v.Value)
 		}
 	}
@@ -42,8 +41,8 @@ type ErrnoValueDerive struct {
 	Message string
 }
 
-func ParseDeriveErrnoValue(status, code int, s protogen.Comments) (*ErrnoValueDerive, protoutil.CommentLines) {
-	derives, remainComments := protoutil.NewCommentLines(s).FindDerives(Identity)
+func ParseDeriveErrnoValue(status, code int, s protogen.Comments) (*ErrnoValueDerive, proc.CommentLines) {
+	derives, remainComments := proc.NewCommentLines(string(s)).FindDerives(Identity)
 	ret := &ErrnoValueDerive{
 		Status:  status,
 		Code:    code,
@@ -53,15 +52,15 @@ func ParseDeriveErrnoValue(status, code int, s protogen.Comments) (*ErrnoValueDe
 		for _, v := range d.Attrs {
 			switch v.Name {
 			case Attribute_Name_Status:
-				if v, ok := v.Value.(annotation.Integer); ok {
+				if v, ok := v.Value.(proc.Integer); ok {
 					ret.Status = int(v.Value)
 				}
 			case Attribute_Name_Code:
-				if v, ok := v.Value.(annotation.Integer); ok {
+				if v, ok := v.Value.(proc.Integer); ok {
 					ret.Code = int(v.Value)
 				}
 			case Attribute_Name_Message:
-				if v, ok := v.Value.(annotation.String); ok {
+				if v, ok := v.Value.(proc.String); ok {
 					ret.Message = v.Value
 				}
 			}

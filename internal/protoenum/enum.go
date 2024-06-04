@@ -3,7 +3,7 @@ package protoenum
 import (
 	"strings"
 
-	"github.com/things-go/protogen-saber/internal/infra"
+	"github.com/things-go/proc/infra"
 	"github.com/things-go/protogen-saber/internal/protoutil"
 	"google.golang.org/protobuf/compiler/protogen"
 )
@@ -78,7 +78,7 @@ func IntoEnums(nestedMessageName string, protoEnums []*protogen.Enum) []*Enum {
 			ev := &EnumValue{
 				Number:     int(v.Desc.Number()),
 				Value:      enumValueName,
-				CamelValue: infra.CamelCase(enumValueName),
+				CamelValue: infra.PascalCase(enumValueName),
 				TrimValue:  strings.TrimPrefix(strings.TrimPrefix(enumValueName, emName), "_"),
 				Mapping:    mappingValue,
 				Comment:    comment,

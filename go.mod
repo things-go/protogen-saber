@@ -3,9 +3,9 @@ module github.com/things-go/protogen-saber
 go 1.22
 
 require (
-	github.com/alecthomas/participle/v2 v2.1.1
 	github.com/hibiken/asynq v0.24.1
 	github.com/things-go/ens v0.17.0
+	github.com/things-go/proc v0.0.0-20240604033139-ede210b00b88
 	google.golang.org/protobuf v1.34.1
 )
 
@@ -13,6 +13,7 @@ require (
 	ariga.io/atlas v0.21.0 // indirect
 	filippo.io/edwards25519 v1.1.0 // indirect
 	github.com/agext/levenshtein v1.2.3 // indirect
+	github.com/alecthomas/participle/v2 v2.1.1 // indirect
 	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
 	github.com/cznic/mathutil v0.0.0-20181122101859-297441e03548 // indirect

@@ -3,7 +3,7 @@ package protoerrno
 import (
 	"strings"
 
-	"github.com/things-go/protogen-saber/internal/infra"
+	"github.com/things-go/proc/infra"
 	"google.golang.org/protobuf/compiler/protogen"
 )
 
@@ -66,7 +66,7 @@ func IntoEnums(nestedMessageName string, protoEnums []*protogen.Enum) []*Enum {
 			ev := &EnumValue{
 				Number:      int(v.Desc.Number()),
 				Value:       enumValueName,
-				CamelValue:  infra.CamelCase(enumValueName),
+				CamelValue:  infra.PascalCase(enumValueName),
 				Comment:     strings.ReplaceAll(strings.ReplaceAll(remainComments.LineString(), "\n", ","), `"`, `\"`),
 				IsDuplicate: false,
 				Status:      annotateEnumValue.Status,

@@ -6,7 +6,7 @@ import (
 	"io"
 	"text/template"
 
-	"github.com/things-go/protogen-saber/internal/infra"
+	"github.com/things-go/proc/infra"
 	"github.com/things-go/protogen-saber/internal/protoenum"
 )
 
@@ -17,7 +17,7 @@ var TemplateFuncs = template.FuncMap{
 	"add":            func(a, b int) int { return a + b },
 	"snakecase":      func(s string) string { return infra.SnakeCase(s) },
 	"kebabcase":      func(s string) string { return infra.Kebab(s) },
-	"camelcase":      func(s string) string { return infra.CamelCase(s) },
+	"camelcase":      func(s string) string { return infra.PascalCase(s) },
 	"smallcamelcase": func(s string) string { return infra.SmallCamelCase(s) },
 }
 var enumTemplate = template.Must(template.New("components").

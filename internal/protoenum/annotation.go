@@ -1,8 +1,7 @@
 package protoenum
 
 import (
-	"github.com/things-go/protogen-saber/internal/annotation"
-	"github.com/things-go/protogen-saber/internal/protoutil"
+	"github.com/things-go/proc/proc"
 	"google.golang.org/protobuf/compiler/protogen"
 )
 
@@ -16,10 +15,10 @@ type EnumDerive struct {
 	Enabled bool
 }
 
-func ParseDeriveEnum(s protogen.Comments) (*EnumDerive, protoutil.CommentLines) {
+func ParseDeriveEnum(s protogen.Comments) (*EnumDerive, proc.CommentLines) {
 	ret := &EnumDerive{Enabled: false}
-	derives, remainComments := protoutil.NewCommentLines(s).FindDerives(Identity)
-	ret.Enabled = derives.ContainHeadless(Identity)
+	derives, remainComments := proc.NewCommentLines(string(s)).FindDerives(Identity)
+	ret.Enabled = proc.Derives(derives).ContainHeadless(Identity)
 	return ret, remainComments
 }
 
@@ -27,12 +26,12 @@ type EnumValueDerive struct {
 	Mapping string
 }
 
-func ParseDeriveEnumValue(s protogen.Comments) (*EnumValueDerive, protoutil.CommentLines) {
+func ParseDeriveEnumValue(s protogen.Comments) (*EnumValueDerive, proc.CommentLines) {
 	ret := &EnumValueDerive{Mapping: ""}
-	derives, remainComments := protoutil.NewCommentLines(s).FindDerives(Identity)
-	values := derives.FindValue(Identity, Attribute_Name_Mapping)
+	derives, remainComments := proc.NewCommentLines(string(s)).FindDerives(Identity)
+	values := proc.Derives(derives).FindValue(Identity, Attribute_Name_Mapping)
 	for _, v := range values {
-		if v, ok := v.(annotation.String); ok {
+		if v, ok := v.(proc.String); ok {
 			ret.Mapping = v.Value
 			break
 		}

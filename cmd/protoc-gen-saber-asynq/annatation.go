@@ -1,8 +1,7 @@
 package main
 
 import (
-	"github.com/things-go/protogen-saber/internal/annotation"
-	"github.com/things-go/protogen-saber/internal/protoutil"
+	"github.com/things-go/proc/proc"
 	"google.golang.org/protobuf/compiler/protogen"
 )
 
@@ -20,26 +19,26 @@ type Task struct {
 }
 
 func IsDeriveTaskEnabled(s protogen.Comments) bool {
-	derives, _ := protoutil.NewCommentLines(s).FindDerives(Identity)
-	return derives.ContainHeadless(Identity)
+	derives, _ := proc.NewCommentLines(string(s)).FindDerives(Identity)
+	return proc.Derives(derives).ContainHeadless(Identity)
 }
 
 func ParserDeriveTask(s protogen.Comments) *Task {
 	ret := &Task{}
-	derives, _ := protoutil.NewCommentLines(s).FindDerives(Identity)
+	derives, _ := proc.NewCommentLines(string(s)).FindDerives(Identity)
 	for _, annotate := range derives {
-		if annotate.IsHeadless() {
+		if annotate.Headless() {
 			ret.Enabled = true
 			continue
 		}
 		for _, attr := range annotate.Attrs {
 			switch attr.Name {
 			case Attribute_Name_Pattern:
-				if vv, ok := attr.Value.(annotation.String); ok {
+				if vv, ok := attr.Value.(proc.String); ok {
 					ret.Pattern = vv.Value
 				}
 			case Attribute_Name_CronSpec:
-				if vv, ok := attr.Value.(annotation.String); ok {
+				if vv, ok := attr.Value.(proc.String); ok {
 					ret.CronSpec = vv.Value
 				}
 			}

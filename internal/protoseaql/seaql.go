@@ -5,7 +5,7 @@ import (
 	"io"
 	"strings"
 
-	"github.com/things-go/protogen-saber/internal/infra"
+	"github.com/things-go/proc/infra"
 	"github.com/things-go/protogen-saber/internal/protoenum"
 	"google.golang.org/protobuf/compiler/protogen"
 )
