@@ -6,7 +6,7 @@ require (
 	github.com/hibiken/asynq v0.24.1
 	github.com/things-go/ens v0.17.0
 	github.com/things-go/proc v0.0.0-20240604033139-ede210b00b88
-	google.golang.org/protobuf v1.34.2
+	google.golang.org/protobuf v1.35.1
 )
 
 require (
